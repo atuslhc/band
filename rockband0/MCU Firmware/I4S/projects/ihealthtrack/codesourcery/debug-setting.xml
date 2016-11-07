@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cdtprojectproperties>
+<section name="org.eclipse.cdt.internal.ui.wizards.settingswizards.IncludePaths">
+<language name="holder for library settings">
+
+</language>
+<language name="Assembly">
+<includepath>${ProjDirPath}/os/FreeRTOS/portable/GCC/ARM_CM3</includepath>
+<includepath>${ProjDirPath}/os/FreeRTOS/include</includepath>
+<includepath>${ProjDirPath}/mcu/arm/EFM32/emlib/inc</includepath>
+<includepath>${ProjDirPath}/mcu/arm/CMSIS/Include</includepath>
+<includepath>${WINDOWSCS}\lib\gcc\arm-none-eabi\4.7.3\include</includepath>
+<includepath>${WINDOWSCS}\lib\gcc\arm-none-eabi\4.7.3\include-fixed</includepath>
+<includepath>${WINDOWSCS}\arm-none-eabi\include</includepath>
+<includepath>${ProjDirPath}/mcu/arm/EFM32/Device/EnergyMicro/EFM32GG/Include</includepath>
+<includepath>${ProjDirPath}/projects/ihealthtrack/src</includepath>
+
+</language>
+<language name="GNU C++">
+<includepath>${ProjDirPath}/os/FreeRTOS/portable/GCC/ARM_CM3</includepath>
+<includepath>${ProjDirPath}/os/FreeRTOS/include</includepath>
+<includepath>${ProjDirPath}/mcu/arm/EFM32/emlib/inc</includepath>
+<includepath>${ProjDirPath}/mcu/arm/CMSIS/Include</includepath>
+<includepath>${WINDOWSCS}\lib\gcc\arm-none-eabi\4.7.3\include</includepath>
+<includepath>${WINDOWSCS}\lib\gcc\arm-none-eabi\4.7.3\include-fixed</includepath>
+<includepath>${WINDOWSCS}\arm-none-eabi\include</includepath>
+<includepath>${ProjDirPath}/mcu/arm/EFM32/Device/EnergyMicro/EFM32GG/Include</includepath>
+<includepath>${ProjDirPath}/projects/ihealthtrack/src</includepath>
+
+</language>
+<language name="GNU C">
+<includepath>${ProjDirPath}/projects/ihealthtrack/src</includepath>
+<includepath>${ProjDirPath}/os/FreeRTOS/portable/GCC/ARM_CM3</includepath>
+<includepath>${ProjDirPath}/os/FreeRTOS/include</includepath>
+<includepath>${ProjDirPath}/mcu/arm/EFM32/Device/EnergyMicro/EFM32GG/Include</includepath>
+<includepath>${ProjDirPath}/mcu/arm/EFM32/emlib/inc</includepath>
+<includepath>${ProjDirPath}/mcu/arm/CMSIS/Include</includepath>
+<includepath>${WINDOWSCS}\lib\gcc\arm-none-eabi\4.7.3\include</includepath>
+<includepath>${WINDOWSCS}\lib\gcc\arm-none-eabi\4.7.3\include-fixed</includepath>
+<includepath>${WINDOWSCS}\arm-none-eabi\include</includepath>
+
+</language>
+</section>
+<section name="org.eclipse.cdt.internal.ui.wizards.settingswizards.Macros">
+<language name="holder for library settings">
+
+</language>
+<language name="Assembly">
+<macro>
+<name>EFM32GG330F1024</name><value/>
+</macro>
+
+</language>
+<language name="GNU C++">
+<macro>
+<name>EFM32GG330F1024</name><value/>
+</macro>
+
+</language>
+<language name="GNU C">
+<macro>
+<name>EFM32GG330F1024</name><value/>
+</macro>
+
+</language>
+</section>
+</cdtprojectproperties>

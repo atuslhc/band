@@ -1,0 +1,65 @@
+[DebugChecksum]
+Checksum=-1972209788
+[Stack]
+FillEnabled=0
+OverflowWarningsEnabled=1
+WarningThreshold=90
+SpWarningsEnabled=1
+WarnLogOnly=1
+UseTrigger=1
+TriggerName=main
+LimitSize=0
+ByteLimit=50
+[CallStack]
+ShowArgs=0
+[Disassembly]
+MixedMode=1
+[SfrWindow]
+Show=1 1
+Sort=4 0
+[struct_types]
+Fmt0=struct attAttribute_t-handle	4	0
+[array_types]
+Fmt0=uint8 [2]	4	0
+[watch_formats]
+Fmt0={W}0:fTemp	4	7
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
+[ChipconEmu]
+Stop timers on halt=0
+Leave target running=1
+[InterruptLog]
+LogEnabled=0
+SumEnabled=0
+GraphEnabled=0
+ShowTimeLog=1
+ShowTimeSum=1
+SumSortOrder=0
+[Breakpoints]
+Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\..\Profiles\SensorProfile\accelerometerservice.c}.660.6@1" 1 0 0 0 "" 0 ""
+Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\..\Profiles\SensorProfile\accelerometerservice.c}.649.1@1" 1 0 0 0 "" 0 ""
+Count=2
+[Interrupts]
+Enabled=1
+[MemoryMap]
+Enabled=0
+Base=0
+UseAuto=0
+TypeViolation=1
+UnspecRange=1
+ActionState=1
+[Aliases]
+A0=_ "E:\project\01BLE\SensorTag2014-03-15\Projects\ble\SensorTag\Source\SensorTag_Main.c" ""
+A1=_ "E:\project\01BLE\SensorTag2014-03-15\Projects\ble\common\cc2540\OnBoard.c" ""
+A2=_ "E:\project\01BLE\SensorTag2014-06-11\Components\hal\target\CC2540EB\hal_dma.c" ""
+A3=_ "E:\project\01BLE\SensorTag2014-06-11\Components\osal\common\OSAL_Timers.c" ""
+Count=4
+SuppressDialog=1
+[TraceHelper]
+Enabled=0
+ShowSource=1
