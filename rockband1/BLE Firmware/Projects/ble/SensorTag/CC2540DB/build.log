@@ -1,0 +1,60 @@
+Building configuration: SensorTag - cc2540SBL-CONSUMER
+Updating build tree...
+
+99  file(s) deleted.
+Updating build tree...
+DeviceConfigService.c 
+ImmediateAlert.c 
+NotificationSignalService.c 
+OSAL.c 
+OSAL_ClockBLE.c 
+OSAL_Memory.c 
+OSAL_PwrMgr.c 
+OSAL_SensorTag.c 
+OSAL_Timers.c 
+OnBoard.c 
+SensorTag.c 
+D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\SensorTag\Source\SensorTag.c(282) : Warning[Pe550]: variable "connectedToLastAddress" was set but never used
+D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\SensorTag\Source\SensorTag.c(285) : Warning[Pe550]: variable "gapProfileState" was set but never used
+D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\SensorTag\Source\SensorTag.c(2285) : Warning[Pe177]: function "timeAppDisconnected" was declared but never referenced
+SensorTag_Main.c 
+SerialApp.c 
+accelerometerservice.c 
+battservice.c 
+devinfoservice-st.c 
+gap.c 
+gapbondmgr.c 
+gatt_uuid.c 
+gyroservice.c 
+hal_adc.c 
+hal_aes.c 
+hal_crc.c 
+hal_dma.c 
+hal_drivers.c 
+hal_flash.c 
+hal_key.c 
+hal_lcd.c 
+hal_led.c 
+hal_sleep.c 
+hal_startup.c 
+hal_timer.c 
+hal_uart.c 
+heartrateservice.c 
+irtempservice.c 
+npi.c 
+osal_bufmgr.c 
+osal_cbtimer.c 
+osal_snv.c 
+peripheral.c 
+D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\Profiles\Roles\peripheral.c(446) : Warning[Pa084]: pointless integer comparison, the result is always true
+serial2service.c 
+st_util.c 
+testAlertNotification.c 
+thermometerservice.c 
+timeapp_config.c 
+timeapp_discovery.c 
+timeapp_ind.c 
+Linking
+
+Total number of errors: 0
+Total number of warnings: 4

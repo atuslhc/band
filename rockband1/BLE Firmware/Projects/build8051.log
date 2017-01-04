@@ -1,0 +1,312 @@
+$PROJ_DIR$\..\..\common\cc2540\cc254x_f256_uvu.xcl
+
+Deleting outputs for configuration cc2540SBL-HEALTHCARE
+Updating build tree...
+
+48  file(s) deleted.
+Building configuration: SensorTag - cc2540SBL-HEALTHCARE
+Updating build tree...
+
+8  file(s) deleted.
+Updating build tree...
+DeviceConfigService.c 
+ImmediateAlert.c 
+NotificationSignalService.c 
+OSAL.c 
+OSAL_ClockBLE.c 
+OSAL_Memory.c 
+OSAL_PwrMgr.c 
+OSAL_SensorTag.c 
+OSAL_Timers.c 
+OnBoard.c 
+SensorTag.c 
+D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\SensorTag\Source\SensorTag.c(283) : Warning[Pe550]: variable "connectedToLastAddress" was set but never used
+D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\SensorTag\Source\SensorTag.c(286) : Warning[Pe550]: variable "gapProfileState" was set but never used
+D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\SensorTag\Source\SensorTag.c(2314) : Warning[Pe177]: function "timeAppDisconnected" was declared but never referenced
+SensorTag_Main.c 
+SerialApp.c 
+accelerometerservice.c 
+battservice.c 
+devinfoservice-st.c 
+gap.c 
+gapbondmgr.c 
+gatt_uuid.c 
+gyroservice.c 
+hal_adc.c 
+hal_aes.c 
+hal_crc.c 
+hal_dma.c 
+hal_drivers.c 
+hal_flash.c 
+hal_key.c 
+hal_lcd.c 
+hal_led.c 
+hal_sleep.c 
+hal_startup.c 
+hal_timer.c 
+hal_uart.c 
+heartrateservice.c 
+irtempservice.c 
+npi.c 
+osal_bufmgr.c 
+osal_cbtimer.c 
+osal_snv.c 
+peripheral.c 
+D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\Profiles\Roles\peripheral.c(446) : Warning[Pa084]: pointless integer comparison, the result is always true
+serial2service.c 
+st_util.c 
+testAlertNotification.c 
+thermometerservice.c 
+timeapp_config.c 
+timeapp_discovery.c 
+timeapp_ind.c 
+Linking
+
+Total number of errors: 0
+Total number of warnings: 4
+Deleting outputs for configuration cc2540SBL-HEALTHCARE
+Updating build tree...
+
+63  file(s) deleted.
+Building configuration: SensorTag - cc2540SBL-HEALTHCARE
+Updating build tree...
+
+22  file(s) deleted.
+Updating build tree...
+DeviceConfigService.c 
+ImmediateAlert.c 
+NotificationSignalService.c 
+OSAL.c 
+OSAL_ClockBLE.c 
+OSAL_Memory.c 
+OSAL_PwrMgr.c 
+OSAL_SensorTag.c 
+OSAL_Timers.c 
+OnBoard.c 
+SensorTag.c 
+D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\SensorTag\Source\SensorTag.c(283) : Warning[Pe550]: variable "connectedToLastAddress" was set but never used
+D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\SensorTag\Source\SensorTag.c(286) : Warning[Pe550]: variable "gapProfileState" was set but never used
+D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\SensorTag\Source\SensorTag.c(2314) : Warning[Pe177]: function "timeAppDisconnected" was declared but never referenced
+SensorTag_Main.c 
+SerialApp.c 
+accelerometerservice.c 
+battservice.c 
+devinfoservice-st.c 
+gap.c 
+gapbondmgr.c 
+gatt_uuid.c 
+gyroservice.c 
+hal_adc.c 
+hal_aes.c 
+hal_crc.c 
+hal_dma.c 
+hal_drivers.c 
+hal_flash.c 
+hal_key.c 
+hal_lcd.c 
+hal_led.c 
+hal_sleep.c 
+hal_startup.c 
+hal_timer.c 
+hal_uart.c 
+heartrateservice.c 
+irtempservice.c 
+npi.c 
+osal_bufmgr.c 
+osal_cbtimer.c 
+osal_snv.c 
+peripheral.c 
+D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\Profiles\Roles\peripheral.c(446) : Warning[Pa084]: pointless integer comparison, the result is always true
+serial2service.c 
+st_util.c 
+testAlertNotification.c 
+thermometerservice.c 
+timeapp_config.c 
+timeapp_discovery.c 
+timeapp_ind.c 
+Linking
+Error[e16]: Segment XDATA_ROM_C (size: 0x1109 align: 0x2) is too long for segment definition. At least 0xfb1 more bytes needed. The problem occurred while processing the segment placement command "-Z(CONST)XDATA_ROM_C=_XDATA0_START-_XDATA0_END", where at the moment of placement the available memory ranges were "XDATA:1da6-1eff"
+   Reserved ranges relevant to this placement:
+   XDATA:1-280          XSTACK
+   XDATA:281-e11        XDATA_Z
+   XDATA:e12-13df       XDATA_I
+   XDATA:13e0-1da5      XDATA_N
+   XDATA:1da6-1eff      XDATA_ROM_C
+   BIT:0-7              BREG
+   BIT:80-97            SFR_AN
+   BIT:a0-af            SFR_AN
+   BIT:b8-c7            SFR_AN
+   BIT:e8-ef            SFR_AN
+   BIT:f8-ff            SFR_AN
+Error while running Linker
+
+Build aborted.
+Building configuration: SensorTag - cc2540SBL-HEALTHCARE
+Updating build tree...
+Linking
+Error[e16]: Segment XDATA_ROM_C (size: 0x1109 align: 0x2) is too long for segment definition. At least 0xfb1 more bytes needed. The problem occurred while processing the segment placement command "-Z(CONST)XDATA_ROM_C=_XDATA0_START-_XDATA0_END", where at the moment of placement the available memory ranges were "XDATA:1da6-1eff"
+   Reserved ranges relevant to this placement:
+   XDATA:1-280          XSTACK
+   XDATA:281-e11        XDATA_Z
+   XDATA:e12-13df       XDATA_I
+   XDATA:13e0-1da5      XDATA_N
+   XDATA:1da6-1eff      XDATA_ROM_C
+   BIT:0-7              BREG
+   BIT:80-97            SFR_AN
+   BIT:a0-af            SFR_AN
+   BIT:b8-c7            SFR_AN
+   BIT:e8-ef            SFR_AN
+   BIT:f8-ff            SFR_AN
+Error while running Linker
+
+Build aborted.
+Building configuration: SensorTag - cc2540SBL-HEALTHCARE
+Updating build tree...
+
+64  file(s) deleted.
+Updating build tree...
+DeviceConfigService.c 
+ImmediateAlert.c 
+NotificationSignalService.c 
+OSAL.c 
+OSAL_ClockBLE.c 
+OSAL_Memory.c 
+OSAL_PwrMgr.c 
+OSAL_SensorTag.c 
+OSAL_Timers.c 
+OnBoard.c 
+SensorTag.c 
+D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\SensorTag\Source\SensorTag.c(283) : Warning[Pe550]: variable "connectedToLastAddress" was set but never used
+D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\SensorTag\Source\SensorTag.c(286) : Warning[Pe550]: variable "gapProfileState" was set but never used
+D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\SensorTag\Source\SensorTag.c(2314) : Warning[Pe177]: function "timeAppDisconnected" was declared but never referenced
+SensorTag_Main.c 
+SerialApp.c 
+accelerometerservice.c 
+battservice.c 
+devinfoservice-st.c 
+gap.c 
+gapbondmgr.c 
+gatt_uuid.c 
+gyroservice.c 
+hal_adc.c 
+hal_aes.c 
+hal_crc.c 
+hal_dma.c 
+hal_drivers.c 
+hal_flash.c 
+hal_key.c 
+hal_lcd.c 
+hal_led.c 
+hal_sleep.c 
+hal_startup.c 
+hal_timer.c 
+hal_uart.c 
+heartrateservice.c 
+irtempservice.c 
+npi.c 
+osal_bufmgr.c 
+osal_cbtimer.c 
+osal_snv.c 
+peripheral.c 
+D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\Profiles\Roles\peripheral.c(446) : Warning[Pa084]: pointless integer comparison, the result is always true
+serial2service.c 
+st_util.c 
+testAlertNotification.c 
+thermometerservice.c 
+timeapp_config.c 
+timeapp_discovery.c 
+timeapp_ind.c 
+Linking
+Error[e16]: Segment XDATA_ROM_C (size: 0x1109 align: 0x2) is too long for segment definition. At least 0xfb1 more bytes needed. The problem occurred while processing the segment placement command "-Z(CONST)XDATA_ROM_C=_XDATA0_START-_XDATA0_END", where at the moment of placement the available memory ranges were "XDATA:1da6-1eff"
+   Reserved ranges relevant to this placement:
+   XDATA:1-280          XSTACK
+   XDATA:281-e11        XDATA_Z
+   XDATA:e12-13df       XDATA_I
+   XDATA:13e0-1da5      XDATA_N
+   XDATA:1da6-1eff      XDATA_ROM_C
+   BIT:0-7              BREG
+   BIT:80-97            SFR_AN
+   BIT:a0-af            SFR_AN
+   BIT:b8-c7            SFR_AN
+   BIT:e8-ef            SFR_AN
+   BIT:f8-ff            SFR_AN
+Error while running Linker
+
+Build aborted.
+Deleting outputs for configuration cc2540SBL-HEALTHCARE
+Updating build tree...
+
+70  file(s) deleted.
+Building configuration: SensorTag - cc2540SBL-HEALTHCARE
+Updating build tree...
+
+6  file(s) deleted.
+Updating build tree...
+DeviceConfigService.c 
+ImmediateAlert.c 
+NotificationSignalService.c 
+OSAL.c 
+OSAL_ClockBLE.c 
+OSAL_Memory.c 
+OSAL_PwrMgr.c 
+OSAL_SensorTag.c 
+OSAL_Timers.c 
+OnBoard.c 
+SensorTag.c 
+D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\SensorTag\Source\SensorTag.c(283) : Warning[Pe550]: variable "connectedToLastAddress" was set but never used
+D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\SensorTag\Source\SensorTag.c(286) : Warning[Pe550]: variable "gapProfileState" was set but never used
+D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\SensorTag\Source\SensorTag.c(2314) : Warning[Pe177]: function "timeAppDisconnected" was declared but never referenced
+SensorTag_Main.c 
+SerialApp.c 
+accelerometerservice.c 
+battservice.c 
+devinfoservice-st.c 
+gap.c 
+gapbondmgr.c 
+gatt_uuid.c 
+gyroservice.c 
+hal_adc.c 
+hal_aes.c 
+hal_crc.c 
+hal_dma.c 
+hal_drivers.c 
+hal_flash.c 
+hal_key.c 
+hal_lcd.c 
+hal_led.c 
+hal_sleep.c 
+hal_startup.c 
+hal_timer.c 
+hal_uart.c 
+heartrateservice.c 
+irtempservice.c 
+npi.c 
+osal_bufmgr.c 
+osal_cbtimer.c 
+osal_snv.c 
+peripheral.c 
+D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\Profiles\Roles\peripheral.c(446) : Warning[Pa084]: pointless integer comparison, the result is always true
+serial2service.c 
+st_util.c 
+testAlertNotification.c 
+thermometerservice.c 
+timeapp_config.c 
+timeapp_discovery.c 
+timeapp_ind.c 
+Linking
+Error[e16]: Segment XDATA_ROM_C (size: 0x1109 align: 0x2) is too long for segment definition. At least 0xfb1 more bytes needed. The problem occurred while processing the segment placement command "-Z(CONST)XDATA_ROM_C=_XDATA0_START-_XDATA0_END", where at the moment of placement the available memory ranges were "XDATA:1da6-1eff"
+   Reserved ranges relevant to this placement:
+   XDATA:1-280          XSTACK
+   XDATA:281-e11        XDATA_Z
+   XDATA:e12-13df       XDATA_I
+   XDATA:13e0-1da5      XDATA_N
+   XDATA:1da6-1eff      XDATA_ROM_C
+   BIT:0-7              BREG
+   BIT:80-97            SFR_AN
+   BIT:a0-af            SFR_AN
+   BIT:b8-c7            SFR_AN
+   BIT:e8-ef            SFR_AN
+   BIT:f8-ff            SFR_AN
+Error while running Linker
+
+Build aborted.

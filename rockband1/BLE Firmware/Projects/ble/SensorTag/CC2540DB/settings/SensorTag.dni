@@ -1,0 +1,83 @@
+[DebugChecksum]
+Checksum=1082102578
+[Stack]
+FillEnabled=0
+OverflowWarningsEnabled=1
+WarningThreshold=90
+SpWarningsEnabled=1
+WarnLogOnly=1
+UseTrigger=1
+TriggerName=main
+LimitSize=0
+ByteLimit=50
+[CallStack]
+ShowArgs=0
+[Disassembly]
+MixedMode=1
+[SfrWindow]
+Show=1 1
+Sort=4 0
+[TraceHelper]
+Enabled=0
+ShowSource=1
+[BreakpointUsageDialog]
+Placement=_ 2460 301 3050 648
+[struct_types]
+Fmt0=struct attAttribute_t-handle	4	0
+[array_types]
+Fmt0=uint8 [2]	4	0
+[watch_formats]
+Fmt0={W}0:fTemp	4	7
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
+[Breakpoints]
+Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\..\Profiles\SensorProfile\accelerometerservice.c}.660.6@1" 1 0 0 0 "" 0 ""
+Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\..\Profiles\SensorProfile\accelerometerservice.c}.651.6@1" 1 0 0 0 "" 0 ""
+Bp2=_ "STD_CODE" "{$PROJ_DIR$\..\Source\SensorTag.c}.804.9" 0 0 0 0 "" 0 ""
+Bp3=_ "STD_CODE" "{$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_flash.c}.124.3" 0 0 0 0 "" 0 ""
+Bp4=_ "STD_CODE" "{$PROJ_DIR$\..\Source\SensorTag_Main.c}.247.2" 1 0 0 0 "" 0 ""
+Count=5
+[ChipconEmu]
+Stop timers on halt=1
+Leave target running=1
+[InterruptLog]
+LogEnabled=0
+GraphEnabled=0
+ShowTimeLog=1
+SumEnabled=0
+ShowTimeSum=1
+SumSortOrder=0
+[DataLog]
+LogEnabled=0
+GraphEnabled=0
+ShowTimeLog=1
+SumEnabled=0
+ShowTimeSum=1
+[Breakpoints2]
+Count=0
+[Interrupts]
+Enabled=1
+[MemoryMap]
+Enabled=0
+Base=0
+UseAuto=0
+TypeViolation=1
+UnspecRange=1
+ActionState=1
+[Trace1]
+Enabled=0
+ShowSource=1
+[Aliases]
+A0=_ "E:\project\01BLE\SensorTag2014-03-15\Projects\ble\SensorTag\Source\SensorTag_Main.c" ""
+A1=_ "E:\project\01BLE\SensorTag2014-03-15\Projects\ble\common\cc2540\OnBoard.c" ""
+A2=_ "E:\project\01BLE\SensorTag2014-06-11\Components\hal\target\CC2540EB\hal_dma.c" ""
+A3=_ "E:\project\01BLE\SensorTag2014-06-11\Components\osal\common\OSAL_Timers.c" ""
+Count=4
+SuppressDialog=1
+[Simulator]
+Freq=50000000
