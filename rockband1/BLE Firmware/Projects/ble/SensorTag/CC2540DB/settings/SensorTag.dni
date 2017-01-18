@@ -35,16 +35,6 @@ Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
-[Breakpoints]
-Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\..\Profiles\SensorProfile\accelerometerservice.c}.660.6@1" 1 0 0 0 "" 0 ""
-Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\..\Profiles\SensorProfile\accelerometerservice.c}.651.6@1" 1 0 0 0 "" 0 ""
-Bp2=_ "STD_CODE" "{$PROJ_DIR$\..\Source\SensorTag.c}.804.9" 0 0 0 0 "" 0 ""
-Bp3=_ "STD_CODE" "{$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_flash.c}.124.3" 0 0 0 0 "" 0 ""
-Bp4=_ "STD_CODE" "{$PROJ_DIR$\..\Source\SensorTag_Main.c}.247.2" 1 0 0 0 "" 0 ""
-Count=5
-[ChipconEmu]
-Stop timers on halt=1
-Leave target running=1
 [InterruptLog]
 LogEnabled=0
 GraphEnabled=0
@@ -72,6 +62,18 @@ ActionState=1
 [Trace1]
 Enabled=0
 ShowSource=1
+[Simulator]
+Freq=50000000
+[Breakpoints]
+Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\..\Profiles\SensorProfile\accelerometerservice.c}.660.6@1" 1 0 0 0 "" 0 ""
+Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\..\Profiles\SensorProfile\accelerometerservice.c}.651.6@1" 1 0 0 0 "" 0 ""
+Bp2=_ "STD_CODE" "{$PROJ_DIR$\..\Source\SensorTag.c}.804.9" 0 0 0 0 "" 0 ""
+Bp3=_ "STD_CODE" "{$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_flash.c}.124.3" 0 0 0 0 "" 0 ""
+Bp4=_ "STD_CODE" "{$PROJ_DIR$\..\Source\SensorTag_Main.c}.247.2" 1 0 0 0 "" 0 ""
+Count=5
+[ChipconEmu]
+Stop timers on halt=1
+Leave target running=1
 [Aliases]
 A0=_ "E:\project\01BLE\SensorTag2014-03-15\Projects\ble\SensorTag\Source\SensorTag_Main.c" ""
 A1=_ "E:\project\01BLE\SensorTag2014-03-15\Projects\ble\common\cc2540\OnBoard.c" ""
@@ -79,5 +81,3 @@ A2=_ "E:\project\01BLE\SensorTag2014-06-11\Components\hal\target\CC2540EB\hal_dm
 A3=_ "E:\project\01BLE\SensorTag2014-06-11\Components\osal\common\OSAL_Timers.c" ""
 Count=4
 SuppressDialog=1
-[Simulator]
-Freq=50000000
