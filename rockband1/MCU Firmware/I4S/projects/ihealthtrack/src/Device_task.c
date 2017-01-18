@@ -53,7 +53,7 @@ bool volatile isFactoryReleased = true;
 QueueHandle_t hEvtQueueDevice = 0;
 
 
-
+#if 0 //move to device_task.h
 typedef struct _BACKUP_DATA
 {
 	uint32_t headFlag;
@@ -62,10 +62,11 @@ typedef struct _BACKUP_DATA
 	int backupCalories;
 	uint32_t trailFlag;
 } BACKUP_DATA;
+#endif
 
 BACKUP_DATA* backupDCS;
 
-BACKUP_DATA* backupDCS = (BACKUP_DATA*)0x20007fe0;
+BACKUP_DATA* backupDCS = (BACKUP_DATA*)BACKUP_ADDRESS; //0x20007fe0;
 /********************新加进来的*******************************/
 
 //uint16_t HardKeyActivedStatus = 0;
@@ -380,8 +381,7 @@ void DoActionsInReleaseMode()
 //bool xxxFlag = false;
 void LoadBackupData()
 {
-
-	if(((uint32_t) * (uint32_t*)0x20007fe0 == 0x12345678) && ((uint32_t) * ((uint32_t*)(0x20007fe0) + 4) == 0xabcdef00))
+    if ((backupDCS->headFlag == BACKUP_HEADFLAG) && (backupDCS->tailFlag == BACKUP_TAILFLAG))
 	{
 		iCalories = backupDCS->backupCalories;
 		iDistance = backupDCS->backupDistance;
@@ -447,9 +447,10 @@ void onSystemStartup()
 	//	}
 #endif
 
-
-	capSenseSwitchModel(KEYsSCAN);//为了一开始按键灵敏，2015年5月18日11:15:24
-
+#if (CAP_SUPPORT==1)
+	capSenseSwitchModel(KEYsSCAN); //为了一开始按键灵敏，2015年5月18日11:15:24
+#endif
+    //FIXME: We need a control set start.
 	// =====================================================================
 	if(systemSetting.SystemMode == SYSTEM_MODE_RELEASED)
 	{
@@ -1123,15 +1124,21 @@ void DeviceTask(void* argument)
 #if (BLE_SUPPORT==1)
 	BLE_INIT();
 #endif
+
+#if (CAP_SUPPORT==1)
 	CAPLESENSE_Init();
-	//vTaskDelay(50);
+#endif
+ 	//vTaskDelay(50);
+#if (BLE_SUPPORT==1)
 	BLE_Open();
 	//BLE_Close();
 	EnableLongTimer(LONG_TIMER_FLAG_BLE_HEART_BEAT, true, 60, onBleHeartBeatCheck, NULL);
-
+#endif
 
 	//MEMS_MOTION_MONITOR();
+#if (ACCELEROMETER_SUPPORT==1)
 	MEMS_FIFO_INIT();
+#endif
 
 	//
 	lastKeyTouchTime = time(NULL);
@@ -1257,10 +1264,10 @@ void DeviceTask(void* argument)
 				//
 				onRealtimeClockTick();
 
-				//在这里备份距离，步数，卡路里
+				//Backup the accumulative data which we want here.
 //				iCalories,iSteps,iCalories,
-				backupDCS->headFlag = 0x12345678;
-				backupDCS->trailFlag = 0xabcdef00;
+				backupDCS->headFlag = BACKUP_HEADFLAG; //0x12345678;
+				backupDCS->tailFlag = BACKUP_TAILFLAG; //0xabcdef00;
 
 				backupDCS->backupDistance = iDistance;
 				backupDCS->backupSteps    = iSteps;
@@ -1414,7 +1421,7 @@ void DeviceTask(void* argument)
 				break;
 			}
 
-			case BLE_RX_MSG:
+			case BLE_RX_MSG: //5
 
 				ParseBleUartPak();
 				break;
@@ -1487,30 +1494,30 @@ void DeviceTask(void* argument)
 				break;
 			}
 
-			case MEMS_INT1_Message:
+			case MEMS_INT1_Message: //22
 				if (systemStatus.blHRSensorOn == false)
 				{
 					Mems_Proc();
 				}
 
 				break;
-#if (BOARD_TYPE==2)
 			case MEMS_INT2_Message:
 
 				Mems_WakeUp();
 
 				break;
 				
-			case KEY1_INT2_Message:				
+#if (BOARD_TYPE==2)
+			case KEY1_INT2_Message:	//push button1 event.		
 				LEDR_ON();
-			getBleDeviceInfo();	
-	LEDR_OFF();
+                getBleDeviceInfo();	
+                LEDR_OFF();
 				break;
 				
-			case KEY2_INT5_Message:			
-	LEDR_OFF();
-	LEDG_OFF();
-	LEDB_OFF();
+			case KEY2_INT5_Message: //push button2 event.
+                LEDR_OFF();
+                LEDG_OFF();
+                LEDB_OFF();
 				break;
 #endif
 			case AFE_Message:

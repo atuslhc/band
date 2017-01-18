@@ -79,7 +79,7 @@
 #define P_DA	0x01
 
 
-
+void LPS22HB_IIC_Init(void);
 void LPS22HB_Init(void);
 
 void LPS22HB_start_conversion(void);

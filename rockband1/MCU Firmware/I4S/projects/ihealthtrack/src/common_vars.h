@@ -256,52 +256,51 @@ typedef enum _FLASH_STATUS
 /* message definition, send to deviceTask. */
 typedef enum _MESSAGES
 {
-	MESSAGE_SYSTEM_FIRST_BOOTUP = 1,	// system first time bootup, by check the systemsetting.checkTag initialized or not.
-	MESSAGE_SYSTEM_POWER_UP, // 2		// system power on,after MESSAGE_SYSTEM_FIRST_BOOTUP, wait the user press button to activated.
-	MESSAGE_SYSTEM_STARTUP, // 3		// system startup, after MESSAGE_SYSTEM_POWER_UP, the user press button after power on.
-	MESSAGE_SYSTEM_MODE_CHANGED, 		// system mode changed. Ex. change from manufactoring to release, or release to activated.
+	MESSAGE_SYSTEM_FIRST_BOOTUP = 1,	//1, system first time bootup, by check the systemsetting.checkTag initialized or not.
+	MESSAGE_SYSTEM_POWER_UP,     //2, system power on,after MESSAGE_SYSTEM_FIRST_BOOTUP, wait the user press button to activated.
+	MESSAGE_SYSTEM_STARTUP,     //3, system startup, after MESSAGE_SYSTEM_POWER_UP, the user press button after power on.
+	MESSAGE_SYSTEM_MODE_CHANGED, //4, system mode changed. Ex. change from manufactoring to release, or release to activated.
 
-	BLE_RX_MSG, // =  4,
-	Simu_BLE_Data,// = 5,
-//	TEMP_Message,// = 6,
-	AFE_Message,// = 7,
-	TOUCH_Message,// = 8,
-	HardKey_Message,// = 9,
-	//SKINTOUCH_Message,// = a,
+	BLE_RX_MSG,                 //5,
+	Simu_BLE_Data,              //6,
+//	TEMP_Message,// = 7,
+	AFE_Message,                //7,
+	TOUCH_Message,              //8,
+	HardKey_Message,            //9,
+	//SKINTOUCH_Message,// = 10,
 
-	MESSAGE_SENSOR_ACTIVATED,		// sensor activated
-	MESSAGE_SENSOR_DEACTIVATED,		// sensor deactivated
+	MESSAGE_SENSOR_ACTIVATED,	//10,sensor activated
+	MESSAGE_SENSOR_DEACTIVATED,	//11, sensor deactivated
 
-	MESSAGE_FLASH_OPERATION_DONE,  // d
-	TICK_Message,//  e
-	MESSAGE_TIMER,
-	MESSAGE_CLOCK_SYNC,// f
-	MESSAGE_ALARM_SYNC,
-	LCD_DMA_Message,// 10
-	MESSAGE_BATTERY_CHARGING,		// battery charging status(charging/not charging(normal))
-	MESSAGE_BATTERY_LEVEL,			// battery power changed(power level)
-	MESSAGE_USB_CONNECTED, //  12
-	MESSAGE_USB_DISCONNECTED, //13
-	MEMS_INT1_Message,  // 14
-//	ThisisthefirstInit, // 14		// replace by MESSAGE_SYSTEM_STARTUP
-	TouchSensorMsg,
-	MESSAGE_BLE_TIMING_Event,
-	MEMS_INT2_Message,  // 17
+	MESSAGE_FLASH_OPERATION_DONE,  //12
+	TICK_Message,               //13
+	MESSAGE_TIMER,              //14
+	MESSAGE_CLOCK_SYNC,         //15
+	MESSAGE_ALARM_SYNC,         //16
+	LCD_DMA_Message,            //17
+	MESSAGE_BATTERY_CHARGING,	//18,battery charging status(charging/not charging(normal))
+	MESSAGE_BATTERY_LEVEL,		//19,battery power changed(power level)
+	MESSAGE_USB_CONNECTED,      //20
+	MESSAGE_USB_DISCONNECTED,   //21
+	MEMS_INT1_Message,          // 22
+	TouchSensorMsg,             //23
+	MESSAGE_BLE_TIMING_Event,   //24
+	MEMS_INT2_Message,          //25
 
-	MESSAGE_FIND_ME,
-	NOTIFICATION,				// one of notification event
+	MESSAGE_FIND_ME,            //26
+	NOTIFICATION,				//27, one of notification event
 
-	MESSAGE_ENTER_MENU,			// swtich to a menu, parameter is the menu type.
-	MESSAGE_MENU_ACTION,			// a long press button in a menu, the parameter is the menu type.
+	MESSAGE_ENTER_MENU,			//28, swtich to a menu, parameter is the menu type.
+	MESSAGE_MENU_ACTION,		// 29,a long press button in a menu, the parameter is the menu type.
 
-	MESSAGE_TASK_HEARTBEAT,			// task of heart beat inform, the displayTask/flashTask send to deviceTask per second, to issue a keepalive.
+	MESSAGE_TASK_HEARTBEAT,		//30, task of heart beat inform, the displayTask/flashTask send to deviceTask per second, to issue a keepalive.
 #if (GYRO_SUPPORT)
-    MESSAGE_L3GD20H_INT1,
-    MESSAGE_L3GD20H_INT2,
+    MESSAGE_L3GD20H_INT1,       //31
+    MESSAGE_L3GD20H_INT2,       //32
 #endif
 #if (BOARD_TYPE==2)
-    KEY1_INT2_Message,  //for test button1
-    KEY2_INT5_Message,  //for test button2
+    KEY1_INT2_Message,          //33, for test button1
+    KEY2_INT5_Message,          //34, for test button2
 #endif
 } MESSAGE_TYPES;
 

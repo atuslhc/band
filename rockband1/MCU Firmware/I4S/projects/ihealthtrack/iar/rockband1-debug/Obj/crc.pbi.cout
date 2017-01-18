@@ -1,4 +1,4 @@
-"D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU Firmware\I4S\projects\ihealthtrack\src\BLE-LEUART-DMA.c"
+"D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU Firmware\I4S\projects\ihealthtrack\src\crc.c"
 -std=c99
 -ferror-limit=100
 -I
@@ -285,7 +285,7 @@ D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU Firmware\I4S\mcu\arm\CMSIS\Include
 -D__IAR_COMPILERBASE__=594182
 -D_GOANNA=1
 -D__DATE__="Jan  6 2017"
--D__TIME__="22:59:11"
+-D__TIME__="22:59:21"
 -D__STDC__=1
 -D__STDC_VERSION__=199901L
 -D__STDC_HOSTED__=1

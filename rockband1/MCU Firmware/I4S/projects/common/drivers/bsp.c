@@ -178,7 +178,7 @@ void BspInit(void)
 	LED_OFF();
 
 #elif (BOARD_TYPE==2)
-    GPIO_PinModeSet(LED_GPIOPORT, LEDC_PIN, gpioModePushPull, 1);  //Atus: should be input config.
+    GPIO_PinModeSet(LED_GPIOPORT, LEDC_PIN, gpioModePushPull, 1);  //Atus: should be input config. In power test can check if disable.
 #if (DEBUG)
     unsigned int ledc=0;
     ledc=GetLEDC();

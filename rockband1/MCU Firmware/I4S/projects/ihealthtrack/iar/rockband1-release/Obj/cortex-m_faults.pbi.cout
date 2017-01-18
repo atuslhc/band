@@ -1,4 +1,4 @@
-"D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU Firmware\I4S\projects\ihealthtrack\src\BLE-LEUART-DMA.c"
+"D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU Firmware\I4S\projects\ihealthtrack\src\cortex-m_faults.c"
 -std=c99
 -ferror-limit=100
 -I
@@ -69,7 +69,7 @@ D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU Firmware\I4S\mcu\arm\EFM32\Device\E
 D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU Firmware\I4S\mcu\arm\EFM32\emlib\inc
 -I
 D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU Firmware\I4S\mcu\arm\CMSIS\Include
--DDEBUG=1
+-DNDEBUG=1
 -DEFM32WG395F256=1
 -Dewarm=1
 -DARM_MATH_CM4=1
@@ -80,7 +80,6 @@ D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU Firmware\I4S\mcu\arm\CMSIS\Include
 -DFALL_DETECT_SUPPORT=1
 -DSOS_HIT_SUPPORT=1
 -DBATTERY_LIFE_OPTIMIZATION2=1
--DBGXXX=1
 -D__CHAR_BITS__=8
 -D__CHAR_MAX__=0xff
 -D__CHAR_MIN__=0
@@ -285,7 +284,7 @@ D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU Firmware\I4S\mcu\arm\CMSIS\Include
 -D__IAR_COMPILERBASE__=594182
 -D_GOANNA=1
 -D__DATE__="Jan  6 2017"
--D__TIME__="22:59:11"
+-D__TIME__="22:58:36"
 -D__STDC__=1
 -D__STDC_VERSION__=199901L
 -D__STDC_HOSTED__=1

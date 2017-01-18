@@ -169,11 +169,11 @@ void ResetParaSettings(void)
 	systemSetting.SystemRstTimes = 0; //Atus add.
 	//systemSetting.FactoryTime = time(NULL); //Atus: remark to keep original factory time before release command;
 	//
-//#ifdef DEBUG_MODE
+#if (BOARD_TYPE==0 || BOARD_TYPE==1)
 	systemSetting.SystemMode = SYSTEM_MODE_MANUFACTORING;
-//#else
-//	systemSetting.SystemMode = SYSTEM_MODE_ACTIVATED;
-//#endif
+#else
+	systemSetting.SystemMode = SYSTEM_MODE_ACTIVATED;
+#endif
 	systemSetting.reserved = 0; //Atus add.
 
 	/* device findMe setting */

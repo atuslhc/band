@@ -107,7 +107,7 @@
 
 #define timer_interval  20      //timer interval, unit: ms
 
-#define WatchDogON 1
+//#define WatchDogON 1
 
 #ifdef NDEBUG
 

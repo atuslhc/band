@@ -2003,12 +2003,13 @@ void CallBackSubMenuTesting(void)
 				error_buff[error++] = 'U';
 			}
 
+#if (AFE44x0_SUPPORT==1)
 			AFE44xx_PowerOn_Init();
-
 			if(afe_online == false)
 			{
 				error_buff[error++] = 'P';
 			}
+#endif
 
 			if(BLE_ONLINE == false)
 			{
@@ -2223,33 +2224,40 @@ void CallBackSubMenuTesting(void)
 #endif
 #if BGXXX
 #if 0   //skip the AFE44xx LED force on, avoid the LED always on, just skip it.
-                        if(systemStatus.blHRSensorOn == false && test_menu_loopcount<5) //force turn on for inspection temporary
-                        {
+            if(systemStatus.blHRSensorOn == false && test_menu_loopcount<5) //force turn on for inspection temporary
+            {
+                          
+#if (AFE44x0_SUPPORT==1)
                                 AFE44xx_PowerOn_Init();
                                 //SysCtlDelay(9000);
-                        }
-
+#endif
+            }
+#if (AFE44x0_SUPPORT==1)    //should not check while without AFE44x0
 			if(systemStatus.blHRSensorOnline == false)
 			{
 				error_buff[idx] = 'P';
 				error++;
 			}
+#endif
 
-                        if(systemStatus.blSkinTouched == false && test_menu_loopcount >=5 && systemStatus.blHRSensorOn == true) //force turn off after inspection with no SkinTouch
-                        {
-                                //vTaskDelay(200); //
-                                //SysCtlDelay(50000);
-                                AFE44xx_Shutoff();
-                        }
+            if(systemStatus.blSkinTouched == false && test_menu_loopcount >=5 && systemStatus.blHRSensorOn == true) //force turn off after inspection with no SkinTouch
+            {
+                //vTaskDelay(200); //
+                //SysCtlDelay(50000);
+#if (AFE44x0_SUPPORT==1)
+                AFE44xx_Shutoff();
+#endif
+            }
 #endif
 #else
+#if (AFE44x0_SUPPORT==1)
 			AFE44xx_PowerOn_Init();
-
 			if(systemStatus.blHRSensorOnline == false)
 			{
 				error_buff[idx] = 'P';
 				error++;
 			}
+#endif
 #endif
 
 			idx++;
@@ -2450,7 +2458,9 @@ extern int WR_SEC_COUNT;
 #if BGXXX
 				JumpToMenu(MENU_TYPE_Testing);
 #else
+#if (AFE44x0_SUPPORT==1)                
 				AFE44xx_Shutoff();
+#endif
 				ForceShowMenu(1, MENU_TYPE_Testing);
 #endif
 

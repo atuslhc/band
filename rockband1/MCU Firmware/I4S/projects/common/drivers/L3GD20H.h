@@ -649,6 +649,7 @@ typedef enum
 
 
 /* Exported functions --------------------------------------------------------*/
+void L3GD20H_Init(void);
 //Sensor Configuration Functions
 gyrostatus_t L3GD20H_SetODR(uint8_t ov);
 gyrostatus_t L3GD20H_SetPOWERMode(L3GD20H_Mode_t md);

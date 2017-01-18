@@ -451,7 +451,6 @@ void AFE44xx_Default_Reg_Init(void)
         //itest ++; //BG013_2, i
 }
 
-//这里amb_uA是什么意思？
 void LED_Val_AMB_Cancellation(int32_t led_val, int32_t amb_uA)
 {
 

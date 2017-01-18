@@ -29,17 +29,6 @@
 #include "em_msc.h"
 //#include "data_gather.h"
 
-#if (0)
-#include "LPS22HB.h"
-#include "BMM150.h"
-#include "L3GD20H.h"
-#include "AD7156.h"
-
-
-extern void LPS22HB_IIC_Init(void);
-extern BMM150_RETURN_FUNCTION_TYPE BMM150_init(void);
-extern void AD7156_IIC_Init(void);
-#endif
 //=================================
 // delay function, loop asm code. use in usecond unit.
 void SysCtlDelay(unsigned long ulCount)
@@ -206,15 +195,12 @@ void initSystemStatus()
 }
 
 /*
-默认情况下hardFault是被使能的。默认情况下其他非hardfault异常被禁止。hardfault异常处理程序的执行条件：
-1）其他非hardfault异常被禁止时，有异常发生；2）当执行一个非hardfault异常处理程序时，其他非hardfault的异常又发生了。
-hardFault异常有固定色优先级，但是其他三个非hardfault异常没有固定优先级，他们的优先级可以设置，通过函数NVIC_SetPriority ( UsageFault_IRQn, 0x10);
-或者通过寄存器SCB->SHP[]来设置。
+In the default, hardFault is enable, the others is disable. The hardfaultn exception trigger condition:
+1）The others none hardfault is disable, and exception occurs. 2）Process a none hardfault exception, another none hardfault occurs.
+The hardFault exception with fix priority, but the other three none hardFault have not the fix priority, their priority are configable
+via NVIC_SetPriority ( UsageFault_IRQn, 0x10) or via register SCB->SHP[] setup.
 
-
-通过SCB->SHCSR寄存器可以使能一些非hardfault的异常。
-
-
+ access SCB->SHCSR register can enable the none hardfault exception.
 */
 
 //bool errflag = false;
@@ -266,7 +252,13 @@ int main(void)
 	/* Perform the necessary hardware configuration. */
 	BspInit();
 
-#if 0
+#if 0   //for ICE debug test only.
+#include "LPS22HB.h"
+#include "BMM150.h"
+#include "L3GD20H.h"
+#include "AD7156.h"
+    uint8_t nobuf, databuf;
+    uint32_t addbuf;
 	///AD7156_IIC_Init();
 	LPS22HB_IIC_Init();
 	I2CReadNByte(AD7156_I2C, AD7156_IIC_ADDR, 

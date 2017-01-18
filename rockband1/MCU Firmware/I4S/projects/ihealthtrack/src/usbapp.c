@@ -1,7 +1,7 @@
 /*
  * usb_task.c
  *
- *  Created on: 2013-6-16
+ *  Created on: 2015-10-27
  *      Author: Administrator
  */
 #include <assert.h>
@@ -9,7 +9,9 @@
 #include <stdio.h>
 //#include "debug.h"
 
-#include "cmsis_os.h"
+//#include "cmsis_os.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "em_usb.h"
 #include "usbconfig.h"
 #include "config.h"
@@ -17,28 +19,32 @@
 #include "main.h"
 #include "descriptors.h"
 #include "em_msc.h"
-
+#include "m00930.h"
 #include "ble.h"
 #include "flash_task.h"
+#include "subMenu.h"
+
+#define USB_RX_SIZE  64*3
+#define POLL_TIMER              0
+#define INTR_IN_EP_ADDR         0x81
+#define DEFAULT_POLL_TIMEOUT    24
+#define UPGRADE_STATUS_LOW_POWER 0xf0
 
 union _USB_PACKET gHIDOutPacket, gHIDInPacket __attribute__ ((aligned(4)));
-
 static int pollTimeout = DEFAULT_POLL_TIMEOUT;
 static uint8_t  idleRate;
 static uint32_t SetIdleBuffer;
+static bool onceReadFirmwareHead = false;
 
-#define USB_RX_SIZE  64*3
 
 uint8_t USB_RX_BUFF[USB_RX_SIZE] __attribute__ ((aligned(4)));
 uint8_t USB_WR_BUFF[128];
 
-uint8_t USB_RX_RP,USB_RX_WP;
-uint32_t BLE_Updata_Packet_Count,USB_RX_LEFT_COUNT;
+uint8_t USB_RX_RP, USB_RX_WP;
+uint32_t BLE_Updata_Packet_Count, USB_RX_LEFT_COUNT;
 
 
-#define POLL_TIMER              0
-#define INTR_IN_EP_ADDR         0x81
-#define DEFAULT_POLL_TIMEOUT    24
+
 
 int  OutputReportReceived(USB_Status_TypeDef status,
                           uint32_t xferred,
@@ -48,14 +54,19 @@ int  InputReportTransmitted(USB_Status_TypeDef status,
                             uint32_t remaining);
 void StateChange(USBD_State_TypeDef oldState,
                  USBD_State_TypeDef newState);
-int SetupCmd(const USB_Setup_TypeDef *setup);
-void USBReadDeviceAckPacket(uint8_t ack);
+int SetupCmd(const USB_Setup_TypeDef* setup);
 void  USBHIDDATAPARSING(void);
 static void PollTimeout(void);
 void UsbAppInit(void);
 uint8_t VerifyUSBPacketChecksum(void);
 void USBAckPacket(uint8_t ack);
 
+void onGetDevInfo(uint8_t ack);
+void onStartUpgradeFirmware(uint8_t ack, uint8_t* data);
+void onGetSectorCRC(uint8_t ack, uint8_t* data);
+void onEraseFlashSector(uint8_t ack, uint8_t* data);
+void onWritingFlashSector(uint8_t ack, uint8_t* data);
+void onWriteFlashSector(uint8_t ack, uint8_t* data);
 union _UPGRADE_PARAM gUpgrade;
 
 
@@ -324,7 +335,7 @@ void AssembleUSBPacket(uint8_t ack, void* data, int size)
 }
 
 
-// get usb command:DATA_GET_LATEST_TIMESTAMP
+// get usb command£ºDATA_GET_LATEST_TIMESTAMP
 // request get the latest timestamp
 void onUsbCmdGetLatestTimestamp()
 {
@@ -349,10 +360,10 @@ void onUsbCmdGetLatestTimestamp()
 void onUsbCmdPrepareUpload(time_t t)
 {
 	// search all sector, and find the maximum of close <= t 
-	time_t st = searchMatchedTimestamp(t);
-	
-	//
-	AssembleUSBPacket(CMD_ACK, &st, sizeof(time_t));
+//	time_t st = searchMatchedTimestamp(t);
+//
+//	//
+	//	AssembleUSBPacket(CMD_ACK, &st, sizeof(time_t));  //remark 2015/10/22 10:55:44
 }
 
 // Start transmit(upload) via USB
@@ -369,23 +380,29 @@ void onUsbCmdStartUpload()
 
 
 	// send command to flash_task, transmit data in the task.
-	FLASH_COMMAND* cmd = (FLASH_COMMAND*) osMailCAlloc(hFlashCommandQueue, 0);
-	cmd->cmd = FLASH_CMD_UPLOAD;
+//	FLASH_COMMAND* cmd = (FLASH_COMMAND*) osMailCAlloc(hFlashCommandQueue, 0);
+//	cmd->cmd = FLASH_CMD_UPLOAD;
 //	cmd->data.p = (void*) &(gHIDInPacket.Packet);
 
-	osMailPut(hFlashCommandQueue, cmd);
+// Remark some protocol here.
+//	MESSAGE msg;
+//	msg.params.type = FLASH_CMD_UPLOAD;
+//
+//	xQueueSend(hEvtQueueUSB, &msg.id, 0);
+
+//	osMailPut(hFlashCommandQueue, cmd);
 }
 
 void onUsbCmdDoUpload()
 {
 	CCTRACE("\n^^ on command upload ...\n");
 
-	doFlashUpload();
+	//  doFlashUpload(); //remark 2015/10/22 10:55:08
 //	// send response command first
 //	USBAckPacket(CMD_ACK);
 //	USBD_Write(0, (void*) &gHIDInPacket, sizeof(struct _PACKET), 0);
 //
-//	
+//
 //	// send command to flash_task, transmit data in the task
 //	FLASH_COMMAND* cmd = (FLASH_COMMAND*) osMailCAlloc(hFlashCommandQueue, 0);
 //	cmd->cmd = FLASH_CMD_UPLOAD;
@@ -397,14 +414,15 @@ void onUsbCmdDoUpload()
 void USBHIDDATAPARSING(void)
 
 {
-	uint8_t ret, i,command;
-	//uint16_t FlashCRC;
+	uint8_t ret, i, command;
+
 	uint32_t CheckSum;
 
 	//Verify USBPacket Checksum
-	ret=false;
+	ret = false;
+
 	if(VerifyUSBPacketChecksum())
-		ret=true;
+		ret = true;
 
 	if (gHIDOutPacket.Packet.FrameHeader == FRAME_CMD_HEADER)
 	{
@@ -419,7 +437,7 @@ void USBHIDDATAPARSING(void)
 		ret = true;
 	}
 	else
-		ret=false;
+		ret = false;
 
 	if (ret == false)
 	{
@@ -431,135 +449,33 @@ void USBHIDDATAPARSING(void)
 
 	switch(command)
 	{
-		case UPGRADE_READDEVICE:
-
-            getBleDeviceInfo();
-			
+		case GET_DEV_INFO:
 			//Feedback Device Information packet
-			USBReadDeviceAckPacket(CMD_ACK);//  also to send the BLE info.
+			onGetDevInfo(CMD_ACK);//  also to send the BLE info.
 
 			break;
 
-		case APP_UPGRADE:
-			USBAckPacket(CMD_ACK);
-			MSC_Init();
-			MSC_WriteWord((uint32_t *)(DevChip.Device.memFlash*1024-4),(uint32_t *)&CheckSum,4);
-			//MSC_Deinit()
-			SysCtlDelay(60000);
-			/* Write to the Application Interrupt/Reset Command Register to reset
-			       * the EFM32. See section 9.3.7 in the reference manual. */
-			RESET_MCU();
+		case FW_Update_COMM:
+			//start upgrade
+			onStartUpgradeFirmware(CMD_ACK, &gHIDOutPacket.Packet.Data[1]);
 			break;
 
-		// update BLE firmare
-		//=======================================
-
-		case BLE_SWITCH_TO_BOOTLOAD:
-
-			if(BLE_ONLINE==true)
-			{
-				if(BLE_DevChip.BLE_Device.WORKSTA==BLE_APP)
-				{
-					BLE_ONLINE=false;//because it need to reset
-					BLE_Update_Start();
-				}
-				else
-				{
-				}
-			}
-
-			USBAckPacket(CMD_ACK);
-
+		case FW_CRC_GET:
+			onGetSectorCRC(CMD_ACK, &gHIDOutPacket.Packet.Data[1]);
 			break;
 
-		case BLE_UPGRADE_START:
-
-			memcpy(gUpgrade.data, gHIDOutPacket.Packet.Data, 60);
-			USB_RX_RP=0;
-			USB_RX_WP=0;
-			USB_RX_LEFT_COUNT=0;
-			BLE_Updata_Packet_Count=(0x3D800-0x800)/128;
-
-#if 1
-			//BLE_Responsed=false;
-			BLE_Update_Start();
-
-			//while(BLE_Responsed==false)
-			//{
-			//	EMU_EnterEM1();//DMA Not Done
-			//};
-#endif
-			USBAckPacket(CMD_ACK);
+		case ERASE_SECTOR_COMM:
+			onEraseFlashSector(CMD_ACK, &gHIDOutPacket.Packet.Data[1]);
 			break;
 
-		case BLE_UPGRADE_RUNNING:
-			//TEST_L();
-
-			if(BLE_Updata_Packet_Count)
-			{
-				for (i=0; i<PACKET_DATA_LEN; i++) // 60 bytes each packet
-				{
-					USB_RX_BUFF[USB_RX_RP++] = gHIDOutPacket.Packet.Data[i];
-					USB_RX_RP%=USB_RX_SIZE;
-				}
-
-				USB_RX_LEFT_COUNT+=PACKET_DATA_LEN;
-
-				if(USB_RX_LEFT_COUNT>=128)
-				{
-					USB_RX_LEFT_COUNT-=128;
-					for (i=0; i<128; i++)
-					{
-						USB_WR_BUFF[i]=USB_RX_BUFF[USB_RX_WP++];
-						USB_RX_WP%=USB_RX_SIZE;
-					}
-
-					//BLE_Responsed=false;
-					WriteCC254xFlash(USB_WR_BUFF);
-					//while(BLE_Responsed==false)
-					//{
-					// EMU_EnterEM1();//DMA Not Done
-					//};
-					//BLE_Updata_Packet_Count--;
-				}
-			}
-			USBAckPacket(CMD_ACK);
-			// TEST_H();
+		case WR_SECTOR_COMM:
+			onWriteFlashSector(CMD_ACK, &gHIDOutPacket.Packet.Data[1]);
 			break;
 
-
-		case BLE_UPGRADE_DONE:
-
-			BLE_Update_End(gUpgrade.Param.FlashCRC);
-			USBAckPacket(CMD_ACK);
-			BLE_ONLINE=false;
+		case FW_Update_DATA:
+			onWritingFlashSector(CMD_ACK, &gHIDOutPacket.Packet.Data[1]);
 			break;
 
-		case DATA_PREPARE_UPLOAD:
-		{
-			time_t t;
-			memcpy(&t, gHIDOutPacket.Packet.Data + 1, sizeof(time_t));
-			
-			onUsbCmdPrepareUpload(t);
-			
-			break;
-		}
-
-		case DATA_START_UPLOAD:
-		{
-//			onUsbCmdStartUpload();
-			onUsbCmdDoUpload();
-			
-			break;
-		}
-
-//		case DATA_CONTINUE_UPLOAD:
-//		{
-//			onUsbCmdContinueUpload();
-//			
-//			break;
-//		}
-		
 		//=======================================
 		default:
 			break;
@@ -572,20 +488,24 @@ uint8_t VerifyUSBPacketChecksum(void)
 	uint8_t ret = true;
 	uint16_t packetCRC;
 
-	if ((gHIDOutPacket.Packet.FrameHeader != FRAME_CMD_HEADER)&&
+	if ((gHIDOutPacket.Packet.FrameHeader != FRAME_CMD_HEADER) &&
 	        (gHIDOutPacket.Packet.FrameHeader != FRAME_DATA_HEADER))
 	{
 		ret = false;
 	}
+
 	if(gHIDOutPacket.Packet.FrameTail != FRAME_TAIL)
 	{
 		ret = false;
 	}
-	packetCRC = CRC_calc(gHIDOutPacket.Packet.Data, (&gHIDOutPacket.Packet.Data[PACKET_DATA_LEN-1]));
+
+	packetCRC = CRC_calc(gHIDOutPacket.Packet.Data, (&gHIDOutPacket.Packet.Data[PACKET_DATA_LEN - 1]));
+
 	if (packetCRC != gHIDOutPacket.Packet.CRC )
 	{
 		ret = false;
 	}
+
 	return ret;
 }
 
@@ -600,11 +520,17 @@ void USBAckPacket(uint8_t ack)
 	gHIDInPacket.Packet.FrameTail  = FRAME_TAIL;
 	gHIDInPacket.Packet.Data[0] = ack;
 
-	packetCRC = CRC_calc(gHIDInPacket.Packet.Data, (&gHIDInPacket.Packet.Data[PACKET_DATA_LEN-1]));
+	packetCRC = CRC_calc(gHIDInPacket.Packet.Data, (&gHIDInPacket.Packet.Data[PACKET_DATA_LEN - 1]));
 	gHIDInPacket.Packet.CRC = packetCRC;
+
+	//
+	USBD_Write(0, (void*) &gHIDInPacket, sizeof(struct _PACKET), 0);
 }
 
-void USBReadDeviceAckPacket(uint8_t ack)
+//============================================================
+//The data format must match with PC site decode format, or can not decoding.
+//All of PC site command process as below.
+void onGetDevInfo(uint8_t ack)
 {
 	uint16_t packetCRC;
 
@@ -615,19 +541,264 @@ void USBReadDeviceAckPacket(uint8_t ack)
 
 	gHIDInPacket.Packet.Data[0] = ack;
 
-	memcpy((&gHIDInPacket.Packet.Data[1]), DevChip.EFM32DeviceInfo, sizeof(DevChip.EFM32DeviceInfo));
+	memcpy((&gHIDInPacket.Packet.Data[1]), DevChip.EFM32DeviceInfo, sizeof(DevChip.EFM32DeviceInfo)); //size 16
 
-	// 20130620
-	gHIDInPacket.Packet.Data[sizeof(DevChip.EFM32DeviceInfo)+1] = FW_TYPE_APP;
-	gHIDInPacket.Packet.Data[sizeof(DevChip.EFM32DeviceInfo)+2] = APP_FW_VER_M;
-	gHIDInPacket.Packet.Data[sizeof(DevChip.EFM32DeviceInfo)+3] = APP_FW_VER_S;
+	gHIDInPacket.Packet.Data[sizeof(DevChip.EFM32DeviceInfo) + 1] = APP_FW_VER_M;
+	gHIDInPacket.Packet.Data[sizeof(DevChip.EFM32DeviceInfo) + 2] = APP_FW_VER_S; //MCU FW Version
 
-	if(BLE_ONLINE==true)
-		memcpy((&gHIDInPacket.Packet.Data[1+16+3+8]),BLE_DevChip.BLE_DeviceInfo,sizeof(BLE_DevChip.BLE_DeviceInfo));
-	else
-		memset((&gHIDInPacket.Packet.Data[1+16+3+8]),0xff,sizeof(BLE_DevChip.BLE_DeviceInfo));
+	memcpy((&gHIDInPacket.Packet.Data[1 + 16 + 2 + 8]), BLE_DevChip.BLE_DeviceInfo, sizeof(BLE_DevChip.BLE_DeviceInfo));
 
 
-	packetCRC = CRC_calc(gHIDInPacket.Packet.Data, (&gHIDInPacket.Packet.Data[PACKET_DATA_LEN-1]));
+	packetCRC = CRC_calc(gHIDInPacket.Packet.Data, (&gHIDInPacket.Packet.Data[PACKET_DATA_LEN - 1]));
+
 	gHIDInPacket.Packet.CRC = packetCRC;
+
+	//
+	USBD_Write(0, (void*) &gHIDInPacket, sizeof(struct _PACKET), 0);
+}
+
+// action 0x01: start upgrade, 0x02: stop/end upgrade
+void onStartUpgradeFirmware(uint8_t ack, uint8_t* data)
+{
+	uint16_t packetCRC;
+	uint8_t action = 0;
+	uint8_t updateStatus = 0;
+
+	memset(gHIDInPacket.Buffer, 0, sizeof(gHIDInPacket.Buffer));
+
+	gHIDInPacket.Packet.FrameHeader = FRAME_CMD_HEADER;
+	gHIDInPacket.Packet.FrameTail  = FRAME_TAIL;
+
+	gHIDInPacket.Packet.Data[0] = ack;
+
+	action = data[0];
+
+	if( action == 0x01)
+	{
+		//start upgrade
+		if (systemStatus.bBatteryLevel == OUT_OF_BATTERY) //The condition maybe can ignore in USB mode.
+		{
+			updateStatus = UPGRADE_STATUS_LOW_POWER; // out of battery
+		}
+		else
+		{
+			AFE44xx_Shutoff();
+
+			if((systemSetting.blHRSensorEnabled == true) && (systemStatus.blHRSensorTempEnabled == true))
+				blTurnedOffPpgByBleTask = true;
+
+//					systemSetting.blHRSensorEnabled = false;
+//					systemStatus.blHRSensorEnabled  = false;
+
+			// enable a timer to check overtime in upgrade process.
+//					blFwUpgradingFlag=true;
+			EnableLongTimer(LONG_TIMER_FLAG_UPLOAD_DATA, false,
+			                TIME_OUT_UPGRADE_FW, onBleTaskTimeOut,
+			                (void*)BLE_TASK_TYPE_FW_UPGRADING);
+
+			//
+			SetFlashBusyBit(FLASH_BUSY_BIT_BLE);
+			WakeFlashUp();
+			updateStatus = 2;
+
+			if(data[1] == 0x55)//As the API, the third byte 0x55 will have 2 bytes of upgrade data sector offset
+				EXT_FLASH_SECTOR_OFFSET = data[2] + (uint16_t)(data[3] << 8);
+			else
+				EXT_FLASH_SECTOR_OFFSET = 0;
+
+		}
+	}
+	else if(action == 0x02)
+	{
+		//stop/end upgrade
+		DisableLongTimer(LONG_TIMER_FLAG_UPLOAD_DATA);
+
+		if(blTurnedOffPpgByBleTask == true)
+		{
+			blTurnedOffPpgByBleTask = false;
+//					systemSetting.blHRSensorEnabled = true;
+			systemStatus.blHRSensorTempEnabled = true;
+		}
+
+		//
+		updateStatus = 1; //  if update_sta==1 ,update failed,  ==2 ,success
+		FlashRead(EXT_FLASH_SECTOR_OFFSET * 4096, FW_INFO.INFO_BUF, 16);
+
+		if(FW_INFO.INFO.Head_CRC == CRC_calc(&FW_INFO.INFO_BUF[0], &FW_INFO.INFO_BUF[13]))
+		{
+			CRC_TEMP = FlashCRC(EXT_FLASH_SECTOR_OFFSET * 4096 + 16, FW_INFO.INFO.fw_length);
+
+			if(FW_INFO.INFO.fw_crc == CRC_TEMP) //download is correct
+			{
+				//Download complete, clean screen and turn off screen.
+				blDuringDownload = false;
+				onceReadFirmwareHead = false;
+				clearScreen(false);
+				OLEDOff();
+
+				updateStatus = 2; //  if update_sta==1 ,update failed,  ==2 ,success
+				gHIDInPacket.Packet.Data[1] = action;
+				gHIDInPacket.Packet.Data[2] = updateStatus;
+				packetCRC = CRC_calc(gHIDInPacket.Packet.Data, (&gHIDInPacket.Packet.Data[PACKET_DATA_LEN - 1]));
+				gHIDInPacket.Packet.CRC = packetCRC;
+
+				//
+				USBD_Write(0, (void*) &gHIDInPacket, sizeof(struct _PACKET), 0);
+
+				vTaskDelay(100);
+				RESET_MCU();
+
+				while(1);
+			}
+		}
+	}
+
+	gHIDInPacket.Packet.Data[1] = action;
+	gHIDInPacket.Packet.Data[2] = updateStatus;
+	packetCRC = CRC_calc(gHIDInPacket.Packet.Data, (&gHIDInPacket.Packet.Data[PACKET_DATA_LEN - 1]));
+	gHIDInPacket.Packet.CRC = packetCRC;
+
+	//
+	USBD_Write(0, (void*) &gHIDInPacket, sizeof(struct _PACKET), 0);
+}
+
+void onGetSectorCRC(uint8_t ack, uint8_t* data)
+{
+	uint16_t packetCRC;
+	int startSectorNo, endStartNo, startSectorAddress;
+
+	memset(gHIDInPacket.Buffer, 0, sizeof(gHIDInPacket.Buffer));
+
+	gHIDInPacket.Packet.FrameHeader = FRAME_CMD_HEADER;
+	gHIDInPacket.Packet.FrameTail  = FRAME_TAIL;
+	gHIDInPacket.Packet.Data[0] = ack;
+
+	startSectorNo = data[0] + (uint16_t)(data[1] << 8);
+	endStartNo   = data[2] + (uint16_t)(data[3] << 8);
+	startSectorAddress = startSectorNo * systemStatus.flashInfo.sectorSize;
+
+	CRC_TEMP = FlashCRC(EXT_FLASH_SECTOR_OFFSET * 4096 + startSectorAddress, 4096);
+
+	memcpy(&gHIDInPacket.Packet.Data[1], &data[0], 4);
+	gHIDInPacket.Packet.Data[1 + 4] = (uint8_t)CRC_TEMP;
+	gHIDInPacket.Packet.Data[1 + 5] = (uint8_t)(CRC_TEMP >> 8);
+	packetCRC = CRC_calc(gHIDInPacket.Packet.Data, (&gHIDInPacket.Packet.Data[PACKET_DATA_LEN - 1]));
+	gHIDInPacket.Packet.CRC = packetCRC;
+
+	//
+	USBD_Write(0, (void*) &gHIDInPacket, sizeof(struct _PACKET), 0);
+}
+
+void onEraseFlashSector(uint8_t ack, uint8_t* data)
+{
+	uint16_t packetCRC;
+	int eraseSectorNo = 0;
+	memset(gHIDInPacket.Buffer, 0, sizeof(gHIDInPacket.Buffer));
+
+	gHIDInPacket.Packet.FrameHeader = FRAME_CMD_HEADER;
+	gHIDInPacket.Packet.FrameTail  = FRAME_TAIL;
+
+	gHIDInPacket.Packet.Data[0] = ack;
+
+	eraseSectorNo = data[0] + (uint16_t)(data[1] << 8);
+
+	if(eraseSectorNo < systemStatus.flashInfo.sectorSize)
+	{
+		FlashSectorErase(EXT_FLASH_SECTOR_OFFSET + eraseSectorNo);
+	}
+
+	gHIDInPacket.Packet.Data[1] = eraseSectorNo;
+	gHIDInPacket.Packet.Data[2] = (uint8_t) (eraseSectorNo >> 8);
+	packetCRC = CRC_calc(gHIDInPacket.Packet.Data, (&gHIDInPacket.Packet.Data[PACKET_DATA_LEN - 1]));
+	gHIDInPacket.Packet.CRC = packetCRC;
+
+	//
+	USBD_Write(0, (void*) &gHIDInPacket, sizeof(struct _PACKET), 0);
+}
+
+void onWriteFlashSector(uint8_t ack, uint8_t* data)
+{
+	uint16_t packetCRC;
+
+	memset(gHIDInPacket.Buffer, 0, sizeof(gHIDInPacket.Buffer));
+
+	gHIDInPacket.Packet.FrameHeader = FRAME_CMD_HEADER;
+	gHIDInPacket.Packet.FrameTail  = FRAME_TAIL;
+	gHIDInPacket.Packet.Data[0] = ack;
+
+	WR_SEC_STA = data[2];//get the write sector action: 0x01:start, 0x02:stop/end
+
+	if(WR_SEC_STA == 0x01)
+	{
+		WR_SEC_LOC = data[0] + (uint16_t)(data[1] << 8);
+
+		WR_SEC_LOC = WR_SEC_LOC * systemStatus.flashInfo.sectorSize; //The location of sector would written.
+		WR_SEC_OFFSET = 0;
+		FW_RX_BUFF_WP = 0;
+		Left_SEC_DATA = systemStatus.flashInfo.sectorSize;//The remain(left) data not be written.
+		WR_SEC_COUNT = 0;
+	}
+	else if(WR_SEC_STA == 0x02)
+	{
+		WR_SEC_OFFSET = 0;
+	}
+
+	gHIDInPacket.Packet.Data[1] = (uint8_t)WR_SEC_LOC;
+	gHIDInPacket.Packet.Data[2] = (uint8_t)(WR_SEC_LOC >> 8);
+	gHIDInPacket.Packet.Data[3] = WR_SEC_STA;
+	gHIDInPacket.Packet.Data[4] = (uint8_t) WR_SEC_COUNT;
+	gHIDInPacket.Packet.Data[5] = (uint8_t)(WR_SEC_COUNT >> 8);
+	packetCRC = CRC_calc(gHIDInPacket.Packet.Data, (&gHIDInPacket.Packet.Data[PACKET_DATA_LEN - 1]));
+	gHIDInPacket.Packet.CRC = packetCRC;
+
+	//
+	USBD_Write(0, (void*) &gHIDInPacket, sizeof(struct _PACKET), 0);
+
+}
+
+void onWritingFlashSector(uint8_t ack, uint8_t* data)
+{
+
+
+	ResetLongTimer(LONG_TIMER_FLAG_UPLOAD_DATA);
+
+	WR_SEC_COUNT++;
+
+	for(uint8_t i = 0; i < 19; i++)
+	{
+		FW_RX_BUFF[FW_RX_BUFF_WP++] = data[i];
+	}
+
+	if(Left_SEC_DATA >= FW_RX_BUFF_SIZE)
+	{
+		if(FW_RX_BUFF_WP >= FW_RX_BUFF_SIZE)
+		{
+			Left_SEC_DATA -= FW_RX_BUFF_SIZE;
+			FW_RX_BUFF_WP = 0;
+			FlashProgram(EXT_FLASH_SECTOR_OFFSET * 4096 + WR_SEC_LOC + WR_SEC_OFFSET, FW_RX_BUFF, FW_RX_BUFF_SIZE);
+			WR_SEC_OFFSET += FW_RX_BUFF_SIZE;
+
+
+
+			//Calculate the progress of download
+			if(onceReadFirmwareHead == false)
+			{
+				//firmware header is 16 bytes, it should be written into flash at the begin. Just read back to extract total length in the header.
+				FlashRead(EXT_FLASH_SECTOR_OFFSET * 4096, FW_INFO.INFO_BUF, 16);
+				allSector = FW_INFO.INFO.fw_length / 4096.0;
+				onceReadFirmwareHead = true;
+			}
+
+			LED_TOGGLE();
+		}
+	}
+	else
+	{
+		if(FW_RX_BUFF_WP >= Left_SEC_DATA)
+		{
+			FlashProgram(EXT_FLASH_SECTOR_OFFSET * 4096 + WR_SEC_LOC + WR_SEC_OFFSET, FW_RX_BUFF, Left_SEC_DATA);
+
+			Left_SEC_DATA = 0;
+		}
+	}
 }

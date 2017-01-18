@@ -10,6 +10,10 @@
     <encoding>UTF-8</encoding>
   </override>
   <override>
+    <path>D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU Firmware\I4S\projects\ihealthtrack\src\AFE44x0.c</path>
+    <encoding>GB2312</encoding>
+  </override>
+  <override>
     <path>D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU Firmware\I4S\projects\ihealthtrack\src\main.h</path>
     <encoding>System</encoding>
   </override>
