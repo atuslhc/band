@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<userOverrides>
+  <override>
+    <path>D:\uvutechnology-exam\i2watch\trunk\I4BOOT\emlib\inc\em_adc.h</path>
+    <encoding>System</encoding>
+  </override>
+  <override>
+    <path>D:\uvutechnology-exam\i2watch\trunk\I4BOOT\proj\usbhid\m25pxx.c</path>
+    <encoding>GB2312</encoding>
+  </override>
+  <override>
+    <path>D:\uvutechnology-exam\i2watch\trunk\I4BOOT\proj\usbhid\m25pxx.h</path>
+    <encoding>GB2312</encoding>
+  </override>
+  <override>
+    <path>D:\uvutechnology-exam\i2watch\trunk\I4BOOT\proj\usbhid\main.c</path>
+    <encoding>GB2312</encoding>
+  </override>
+</userOverrides>
+
+

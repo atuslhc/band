@@ -1,0 +1,162 @@
+[Stack]
+FillEnabled=0
+OverflowWarningsEnabled=1
+WarningThreshold=90
+SpWarningsEnabled=1
+WarnLogOnly=1
+UseTrigger=1
+TriggerName=main
+LimitSize=0
+ByteLimit=50
+[DebugChecksum]
+Checksum=1743630212
+[Exceptions]
+StopOnUncaught=_ 0
+StopOnThrow=_ 0
+[CallStack]
+ShowArgs=0
+[Disassembly]
+MixedMode=1
+[JLinkDriver]
+CStepIntDis=_ 0
+[SWOTraceHWSettings]
+OverrideDefaultClocks=0
+CpuClock=72000000
+ClockAutoDetect=0
+ClockWanted=2000000
+JtagSpeed=2000000
+Prescaler=36
+TimeStampPrescIndex=0
+TimeStampPrescData=0
+PcSampCYCTAP=1
+PcSampPOSTCNT=15
+PcSampIndex=0
+DataLogMode=0
+ITMportsEnable=0
+ITMportsTermIO=0
+ITMportsLogFile=0
+ITMlogFile=$PROJ_DIR$\ITM.log
+[CodeCoverage]
+Enabled=_ 0
+[struct_types]
+Fmt0=FLASH_INFO-blockSize	4	0
+Fmt1=FLASH_INFO-blocks	4	0
+Fmt2=FLASH_INFO-flashSize	4	0
+Fmt3=FLASH_INFO-sectorSize	4	0
+Fmt4=FLASH_INFO-sectors	4	0
+Fmt5=struct _BLE_DEVICE-unique0	4	0
+Fmt6=struct _BLE_DEVICE-unique1	4	0
+Fmt7=struct _FLASH_ID-manufacturerID	4	0
+Fmt8=struct _FLASH_ID-memoryType	4	0
+Fmt9=struct _INFO-Head_CRC	4	0
+Fmt10=struct _INFO-Rev1	4	0
+Fmt11=struct _INFO-fw_crc	4	0
+Fmt12=struct _INFO-fw_length	4	0
+Fmt13=struct _INFO-ver_num	4	0
+[array_types]
+Fmt0=BYTE[4]	4	0
+Fmt1=char[64]	4	0
+Fmt2=uint8_t[1024]	4	0
+Fmt3=unsigned char[10]	4	0
+Fmt4=unsigned char[128]	4	0
+Fmt5=unsigned char[16]	4	0
+[watch_formats]
+Fmt0={W}0:*data	4	0
+Fmt1={W}0:FlashCRC	4	0
+Fmt2={W}0:GucLeuartIF	4	0
+Fmt3={W}0:GulPacketNum	4	0
+Fmt4={W}0:crc	4	0
+Fmt5={W}0:family	3	0
+Fmt6={W}0:flash	4	0
+Fmt7={W}0:flashSize	3	0
+Fmt8={W}0:gUpgrade.Param.PacketCnt	4	0
+Fmt9={W}0:intflg	4	0
+Fmt10={W}0:readBuf[i]	4	0
+[Trace2]
+Enabled=0
+ShowSource=0
+[SWOTraceWindow]
+PcSampling=0
+InterruptLogs=0
+ForcedTimeStamps=0
+EventCPI=0
+EventEXC=0
+EventFOLD=0
+EventLSU=0
+EventSLEEP=0
+[PowerLog]
+LogEnabled=0
+GraphEnabled=0
+ShowTimeLog=1
+ShowTimeSum=0
+Title_0=I0
+Symbol_0=0 4 1
+LiveEnabled=0
+LiveFile=PowerLogLive.log
+[DataLog]
+LogEnabled=0
+SumEnabled=0
+GraphEnabled=0
+ShowTimeLog=1
+ShowTimeSum=1
+[EventLog]
+LogEnabled=0
+SumEnabled=0
+GraphEnabled=0
+ShowTimeLog=1
+ShowTimeSum=1
+SumSortOrder=0
+[InterruptLog]
+LogEnabled=0
+SumEnabled=0
+GraphEnabled=0
+ShowTimeLog=1
+ShowTimeSum=1
+SumSortOrder=0
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
+[CallStackLog]
+Enabled=0
+[PowerProbe]
+Frequency=10000
+Probe0=I0
+ProbeSetup0=2 1 1 2 0 0
+[DriverProfiling]
+Enabled=0
+Mode=3
+Graph=0
+Symbiont=0
+Exclusions=
+[Disassemble mode]
+mode=0
+[Breakpoints2]
+Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\BLE_LEUART_DMA.c}.316.8" 0 0 1 "" 0 "" 0
+Count=1
+[Aliases]
+A0=_ "C:\Users\T420\Desktop\BLE+EFM32的FWupdate（0424）\emlib\src\em_letimer.c" "C:\Users\T420\Desktop\BLE+EFM32的FWupdate（0425）\emlib\src\em_letimer.c"
+A1=_ "C:\Users\T420\Desktop\BLE+EFM32的FWupdate（0505）\proj\usbhid\MyMain.c" "E:\公司项目工程文件\bootloader(升级3种类型)\proj\usbhid\MyMain.c"
+A2=_ "C:\Users\T420\Desktop\BLE+EFM32的FWupdate（能够重复升级的-0408）\emlib\src\em_letimer.c" "C:\Users\T420\Desktop\BLE+EFM32的FWupdate（最终版）\emlib\src\em_letimer.c"
+A3=_ "C:\Users\T420\Desktop\BLE的FW搬移成功\emlib\src\em_cmu.c" ""
+A4=_ "C:\Users\T420\Desktop\BLE的FW搬移成功\emlib\src\em_letimer.c" "C:\Users\T420\Desktop\（latest）BLE+EFM32的FWupdate\emlib\src\em_letimer.c"
+A5=_ "C:\Users\T420\Desktop\bootloader(0621xxx)\emlib\src\em_cmu.c" "C:\Users\T420\Desktop\bootloader(0830)\emlib\src\em_cmu.c"
+A6=_ "C:\Users\T420\Desktop\bootloader(0830)\emlib\inc\em_bitband.h" "C:\Users\T420\Desktop\bootloader(0911)\emlib\inc\em_bitband.h"
+A7=_ "C:\Users\T420\Desktop\bootloader(升级3种类型-1)\emlib\inc\em_bitband.h" "E:\公司项目工程文件\bootloader(0621)\emlib\inc\em_bitband.h"
+A8=_ "C:\Users\T420\Desktop\（latest）BLE+EFM32的FWupdate\emlib\src\em_letimer.c" "E:\公司项目工程文件\BLE+EFM32的FWupdate（能够重复升级的-0408）\emlib\src\em_letimer.c"
+A9=_ "E:\I4-bootloader\Device\EnergyMicro\EFM32WG\Source\IAR\startup_efm32wg.s" ""
+A10=_ "E:\I4-bootloader\emlib\inc\em_bitband.h" "E:\I4-bootloader(通过片外flash存储fw)\emlib\inc\em_bitband.h"
+A11=_ "E:\I4-bootloader\emlib\src\em_cmu.c" "E:\I4-bootloader(通过片外flash存储fw)\emlib\src\em_cmu.c"
+A12=_ "E:\I4-bootloader\emlib\src\em_letimer.c" "E:\I4-bootloader(通过片外flash存储fw)\emlib\src\em_letimer.c"
+A13=_ "E:\I4-bootloader\emlib\src\em_timer.c" "E:\I4-bootloader(通过片外flash存储fw)\emlib\src\em_timer.c"
+A14=_ "E:\I4-bootloader\emlib\src\em_usart.c" ""
+A15=_ "E:\I4-bootloader\emlib\src\em_wdog.c" "E:\I4-bootloader(通过片外flash存储fw)\emlib\src\em_wdog.c"
+A16=_ "E:\I4-bootloader\usb\src\em_usbdep.c" ""
+A17=_ "F:\develop board\QS_PROJ\EFM32\firmware\usb-hid-bootloader-20130310\usb-hid-bootloader\CMSIS\Include\core_cm3.h" ""
+A18=_ "F:\develop board\QS_PROJ\EFM32\firmware\usb-hid-bootloader-20130310\usb-hid-bootloader\boards\EFM32GG990-STK\examples\usbhid\Boot\boot.c" ""
+A19=_ "F:\develop board\QS_PROJ\EFM32\firmware\usb-hid-bootloader-20130310\usb-hid-bootloader\boards\EFM32GG990-STK\examples\usbhid\Boot\crc.c" ""
+Count=20
+SuppressDialog=1
