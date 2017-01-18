@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=1428198238
+Checksum=2038121141
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -112,7 +112,9 @@ Exclusions=
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Count=0
+Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\loader.c}.62.5" 0 0 1 "" 0 "" 0
+Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\loader.c}.314.4" 0 0 1 "" 0 "" 0
+Count=2
 [Aliases]
 A0=_ "C:\Program Files\IAR Systems\Embedded Workbench 6.0 Evaluation\arm\inc\c\DLib_Product_string.h" ""
 A1=_ "C:\Users\T420\Desktop\BLE+EFM32µÄFWupdate£¨0424£©\emlib\src\em_cmu.c" "C:\Users\T420\Desktop\BLE+EFM32µÄFWupdate£¨0425£©\emlib\src\em_cmu.c"

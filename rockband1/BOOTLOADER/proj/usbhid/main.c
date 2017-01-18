@@ -93,6 +93,24 @@ bool JudgeFlashBusy();
 #define LED_TOGGLE()    GPIO_PinOutToggle(LED_GPIOPORT, LED_PIN)
 #endif
 
+#if (BOARD_TYPE==2)
+#define DAUIO_1_PIN         (4)  //PD4
+#define DAUIO_2_PIN         (4)  //PC4
+#define DAUIO_3_PIN         (5)  //PC5
+#define DAUIO_4_PIN         (6)  //PC6
+#define DAUIO_5_PIN         (4)  //PA4
+#define DAUIO_6_PIN         (6)  //PA6
+#define DAUIO_7_PIN         (11) //PB11
+#define DAUIO_8_PIN         (12) //PB12
+#define GetDAUIO_1()		GPIO_PinInGet(gpioPortD,DAUIO_1_PIN)
+#define GetDAUIO_2()		GPIO_PinInGet(gpioPortC,DAUIO_2_PIN)
+#define GetDAUIO_3()		GPIO_PinInGet(gpioPortC,DAUIO_3_PIN)
+#define GetDAUIO_4()		GPIO_PinInGet(gpioPortC,DAUIO_4_PIN)
+#define GetDAUIO_5()		GPIO_PinInGet(gpioPortA,DAUIO_5_PIN)
+#define GetDAUIO_6()		GPIO_PinInGet(gpioPortA,DAUIO_6_PIN)
+#define GetDAUIO_7()		GPIO_PinInGet(gpioPortB,DAUIO_7_PIN)
+#define GetDAUIO_8()		GPIO_PinInGet(gpioPortB,DAUIO_8_PIN)
+#endif
 
 //FW macro defined
 #define FW_STARTADDR           0    //FW put on the ext flash begin 0x0
@@ -442,13 +460,10 @@ void DealError(void)
 #if defined(SHOWLED)
     for (i=0 ; i< 20 ; i++)
     {
-#if (BOARD_TYPE==0 || BOARD_TYPE==1)
       LED_TOGGLE();
-#elif (BOARD_TYPE==2)
-      LEDB_TOGGLE();
-#endif
       SysCtlDelay(9000);
     }
+    LED_OFF();
 #endif
 
 #if (1)  //Atus: for dev board test, skip check reset
@@ -889,9 +904,10 @@ void BleFwUpdate(void)
 					else
 					{
 						resetCount++;
-						BLE_RST_L();
-						SysCtlDelay(8000 * SYSCLOCK);
-						BLE_RST_H();
+						//BLE_RST_L();
+						//SysCtlDelay(8000 * SYSCLOCK);
+						//BLE_RST_H();
+                        BLE_RESET();
 
 						SysCtlDelay(800000);
 						SysCtlDelay(800000);
@@ -1053,6 +1069,18 @@ int main(void)
     LEDG_OFF();
 #endif
 
+#endif
+
+#if (BOARD_TYPE==2)
+    /* The debug test use with DAUIO_x */
+    GPIO_PinModeSet(gpioPortD, DAUIO_1_PIN, gpioModePushPull, 0);  //Atus: set input pin, read in BLE_RESET() filter.
+    //GPIO_PinModeSet(gpioPortC, DAUIO_2_PIN, gpioModePushPull, 1);
+    //GPIO_PinModeSet(gpioPortC, DAUIO_3_PIN, gpioModePushPull, 1);
+    //GPIO_PinModeSet(gpioPortC, DAUIO_4_PIN, gpioModePushPull, 1);
+    //GPIO_PinModeSet(gpioPortA, DAUIO_5_PIN, gpioModePushPull, 1);
+    //GPIO_PinModeSet(gpioPortA, DAUIO_6_PIN, gpioModePushPull, 1);
+    //GPIO_PinModeSet(gpioPortB, DAUIO_7_PIN, gpioModePushPull, 1);
+    //GPIO_PinModeSet(gpioPortB, DAUIO_8_PIN, gpioModePushPull, 1);
 #endif
     
 	LETIMER_setup(); //config LETimer0, use in LED blink freq at difference case and watchdog feed freq.

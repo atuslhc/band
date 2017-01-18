@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=1743630212
+Checksum=-461155277
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -135,8 +135,9 @@ Exclusions=
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\BLE_LEUART_DMA.c}.316.8" 0 0 1 "" 0 "" 0
-Count=1
+Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\main.c}.485.3" 0 0 1 "" 0 "" 0
+Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\main.c}.472.3" 0 0 1 "" 0 "" 0
+Count=2
 [Aliases]
 A0=_ "C:\Users\T420\Desktop\BLE+EFM32的FWupdate（0424）\emlib\src\em_letimer.c" "C:\Users\T420\Desktop\BLE+EFM32的FWupdate（0425）\emlib\src\em_letimer.c"
 A1=_ "C:\Users\T420\Desktop\BLE+EFM32的FWupdate（0505）\proj\usbhid\MyMain.c" "E:\公司项目工程文件\bootloader(升级3种类型)\proj\usbhid\MyMain.c"

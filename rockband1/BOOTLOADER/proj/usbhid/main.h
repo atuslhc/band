@@ -5,7 +5,7 @@
 #include "em_cmu.h"
 
 
-//bootloader自身的版本号
+//bootloader version
 #if (BOARD_TYPE==0)
 #define BOOT_VER_M       1
 #define BOOT_VER_S       52
@@ -14,7 +14,7 @@
 #define BOOT_VER_S       32
 #elif (BOARD_TYPE==2)
 #define BOOT_VER_M       0
-#define BOOT_VER_S       10
+#define BOOT_VER_S       13
 #else
 #error "Please specify BOARD_TYPE in Options/CCPreprocessor!"
 #endif

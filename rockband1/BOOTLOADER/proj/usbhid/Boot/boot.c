@@ -100,19 +100,20 @@ void BOOT_boot(void)
   MSC->LOCK = 0; //lock the MSC reg.
 
   /* Reset GPIO settings. */
+#if (BOARD_TYPE==0 || BOARD_TYPE==1)
   GPIO->ROUTE = _GPIO_ROUTE_RESETVALUE;
   GPIO->P[4].MODEH = _GPIO_P_MODEH_RESETVALUE;
   GPIO->P[4].DOUT  = _GPIO_P_DOUT_RESETVALUE;
   GPIO->P[5].MODEL = _GPIO_P_MODEL_RESETVALUE;
   GPIO->P[5].DOUT  = _GPIO_P_DOUT_RESETVALUE;
   
-  GPIO->P[2].MODEH = _GPIO_P_MODEH_RESETVALUE;
+  GPIO->P[2].MODEH = _GPIO_P_MODEH_RESETVALUE; //disable LED low active
   GPIO->P[2].DOUT  = _GPIO_P_DOUT_RESETVALUE; //disable OLED_ON:PC10
-  
+
   FLASH_POWER_DOWN();//turn off ext flash power (PD5/3)
   GPIO->P[3].MODEL = _GPIO_P_MODEH_RESETVALUE; 
   GPIO->P[3].DOUT  = _GPIO_P_DOUT_RESETVALUE; //disable ext flash power:PD5/3
-
+#endif
   
   /* Reset DMA controller settings. */
   DMA->CONFIG     = _DMA_CONFIG_RESETVALUE;

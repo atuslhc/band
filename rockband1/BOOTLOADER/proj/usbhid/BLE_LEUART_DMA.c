@@ -11,6 +11,7 @@
 #include "crc.h"
 #include "em_leuart.h"
 #include "delayusingtimerint.h"
+#include "GlobalData.h"
 
 
 #define DMA_CH_RX    1 //DMAÍ¨µÀ0
@@ -437,6 +438,21 @@ void MyLEUARTSentByDma(uint8_t comm_type, uint8_t* p , uint8_t len)
 
 }
 
+void BLE_RESET(void)
+{
+#if (BOARD_TYPE==2)  //FIXLME: if not debug use, please remove it.
+    if (GetDAUIO_1()==0x1)
+    {
+      GPIO_PinModeSet(BLE_RST_PORT, BLE_RST_PIN, gpioModeDisabled, 1); /* BLE_RESET PF7 Z-impedance */
+      return;
+    }
+#endif
+	GPIO_PinModeSet(BLE_RST_PORT, BLE_RST_PIN, gpioModePushPull, 1); /* BLE_RESET PF7*/
+	BLE_RST_L();
+	SysCtlDelay(8000 * SYSCLOCK); //
+	BLE_RST_H();
+}
+
 void BLE_INIT(void)
 {
 	CMU_ClockEnable( cmuClock_GPIO, true );
@@ -448,11 +464,8 @@ void BLE_INIT(void)
 	CMU->ROUTE = CMU_ROUTE_CLKOUT1PEN | CMU_ROUTE_LOCATION_LOC0;
 
     /* reset BLE chip */
-	GPIO_PinModeSet(BLE_RST_PORT, BLE_RST_PIN, gpioModePushPull, 1); /* BLE_RESET PF7*/
-	BLE_RST_L();
-	SysCtlDelay(8000 * SYSCLOCK);
-	BLE_RST_H();
-
+    BLE_RESET();
+    
     /* config MCU-BLE interface Leuart and dma channel */
 	LeuartConfig();
 	SetupLeuartDma(); //setup DMA for LEUART

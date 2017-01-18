@@ -23,10 +23,14 @@
 #define CORE_FREQ_HIGH cmuHFRCOBand_14MHz
 #define CORE_FREQ_LOW  cmuHFRCOBand_1MHz
 #if (BOARD_TYPE==0 || BOARD_TYPE==1)
+#define BAT_ADC_CONFIG  1
 #define BAT_GO_LEVEL 3.5 //3.6
 #elif (BOARD_TYPE==2)
-#define BAT_GO_LEVEL 2.6
+#define BAT_ADC_CONFIG  2   //1:R9=10M ADCref=2.5V, 2:R9=5.6M, ADCref=1.25V
+//FIXME: need decide what voltage will go.
+#define BAT_GO_LEVEL 2.2 //2.6 //change we test under 2.5 still work.
 #endif
+
 
 
 //这个是绝对地址访问，需要在linker文件中在加上
@@ -52,6 +56,18 @@ void initGPIO(void)
     SysCtlDelay(5000);
     LED_OFF();
 //	GPIO_IntConfig(KEY_GPIOPORT, KEY_PIN, false, true, true);
+    
+#if (BOARD_TYPE==2)
+    /* The debug test use with DAUIO_x */
+    GPIO_PinModeSet(gpioPortD, DAUIO_1_PIN, gpioModePushPull, 0);  //Atus: set input pin, read in BLE_RESET() filter.
+    //GPIO_PinModeSet(gpioPortC, DAUIO_2_PIN, gpioModePushPull, 1);
+    //GPIO_PinModeSet(gpioPortC, DAUIO_3_PIN, gpioModePushPull, 1);
+    //GPIO_PinModeSet(gpioPortC, DAUIO_4_PIN, gpioModePushPull, 1);
+    //GPIO_PinModeSet(gpioPortA, DAUIO_5_PIN, gpioModePushPull, 1);
+    //GPIO_PinModeSet(gpioPortA, DAUIO_6_PIN, gpioModePushPull, 1);
+    //GPIO_PinModeSet(gpioPortB, DAUIO_7_PIN, gpioModePushPull, 1);
+    //GPIO_PinModeSet(gpioPortB, DAUIO_8_PIN, gpioModePushPull, 1);
+#endif
 
 	NVIC_ClearPendingIRQ(GPIO_EVEN_IRQn);
 	NVIC_EnableIRQ(GPIO_EVEN_IRQn);
@@ -86,7 +102,7 @@ void initGPIO(void)
 }
 
 #define BAT_VSIZE    4
-long bat_val[BAT_VSIZE] = {0, 0, 0, 0}, bat_avg = 0; //电池数据
+long bat_val[BAT_VSIZE] = {0, 0, 0, 0}, bat_avg = 0; //ADC_BAT data
 
 float BAT_VCC = 0;
 
@@ -112,27 +128,31 @@ void LETIMER0_IRQHandler(void)
 
 	bat_val[bat_index++] = (long)ADC_DataSingleGet(ADC0); //single get ADC value fill to array
 
-	if(bat_index >= 4) //interrupt count 4, we could make it as array size as done the battery check.
+	if(bat_index >= BAT_VSIZE) //interrupt count 4, we could make it as array size as done the battery check.
 	{
 		bat_index = 0;
 		bat_checked = 1; //set battery checked done.
 	}
 
-	ADC_Start(ADC0, adcStartSingle);//开始扫描或单次转发，@p1,ADC类型，@p2ADC开始的类型。
+	ADC_Start(ADC0, adcStartSingle); //start ADC scan or single shot
 
 }
 
 const	ADC_InitSingle_TypeDef BAT_ADC_INIT =
 {
-	adcPRSSELCh0, /*   PRS ch0 (if enabled). */ 		   \
-	adcAcqTime8,  /* 1 ADC_CLK cycle acquisition time. */	  \
-	adcRef2V5,	/* 2.5V internal reference. */ 		  \
-	adcRes12Bit, /* 12 bit resolution. */			   \
-	adcSingleInpCh7, /* CH0 input selected. */		   \
-	false, /* Single ended input. */			   \
-	false,		/* PRS disabled. */ 		\
-	false,	/* Right adjust. */ 								 \
-	false  /* Deactivate conversion after one scan sequence. */ \
+	adcPRSSELCh0, /*   PRS ch0 (if enabled). */ 
+	adcAcqTime8,  /* 1 ADC_CLK cycle acquisition time. */
+#if (BAT_ADC_CONFIG==1)
+	adcRef2V5,	/* 2.5V internal reference. */
+#elif (BAT_ADC_CONFIG==2)
+	adcRef1V25,	/* 1.25V internal reference. */
+#endif
+	adcRes12Bit, /* 12 bit resolution. */
+	adcSingleInpCh7, /* CH0 input selected. */
+	false, /* Single ended input. */
+	false,		/* PRS disabled. */
+	false,	/* Right adjust. */
+	false  /* Deactivate conversion after one scan sequence. */
 };
 
 void ADC_INIT(void)
@@ -285,7 +305,15 @@ int main(void)
 
 			bat_avg = bat_avg / BAT_VSIZE;
 
+            //FIXME: The BAT_VCC 
+#if (BAT_ADC_CONFIG==1)
+            /* ADC convert VCC, it depend BAT_ADC_INIT reference(2.5V) and circuit ration(10M+10M/10M) */
 			BAT_VCC = 2 * bat_avg * 2.5 / 4096;
+#elif (BAT_ADC_CONFIG==2)
+            /* ADC convert VCC, it depend BAT_ADC_INIT reference(1.25V) and circuit ration(10M+5.6M)/5.6M */
+			BAT_VCC = 2.785 * bat_avg * 1.25 / 4096;
+#endif
+            
 		}
 
 		if(BAT_VCC > BAT_GO_LEVEL) //check battery good, break

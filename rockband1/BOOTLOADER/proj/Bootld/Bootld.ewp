@@ -2512,7 +2512,7 @@
         <option>
           <name>OOCOutputFormat</name>
           <version>2</version>
-          <state>1</state>
+          <state>2</state>
         </option>
         <option>
           <name>OCOutputOverride</name>
@@ -2520,7 +2520,7 @@
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state>rockband1_LDR.hex</state>
+          <state>rockband1_LDR.bin</state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
