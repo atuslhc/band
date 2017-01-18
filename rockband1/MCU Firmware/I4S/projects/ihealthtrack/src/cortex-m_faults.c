@@ -32,7 +32,8 @@ typedef struct
 	uint32_t r3;
 	uint32_t r12;
 	uint32_t lr;
-//	uint32_t xxx;
+	uint32_t pc;    //add 
+    uint32_t psr;   //add
 
 	uint32_t tagTail;
 } registerDump;
@@ -244,21 +245,24 @@ void HardFault_HandlerC(uint32_t *stack_pointer)
 
 	dumpData->tagHead = 0x12345678;
 
-	dumpData->r0      = (uint32_t) * ((uint32_t*)(errlocated.pspTop) + 6);
+#if (1)
+    dumpData->r0      = ((uint32_t) stack_pointer[0]);
+	dumpData->r1      = ((uint32_t) stack_pointer[1]);
+	dumpData->r2      = ((uint32_t) stack_pointer[2]);
+	dumpData->r3      = ((uint32_t) stack_pointer[3]);
+	dumpData->r12     = ((uint32_t) stack_pointer[4]);
+	dumpData->lr      = ((uint32_t) stack_pointer[5]);
+	dumpData->pc      = ((uint32_t) stack_pointer[6]);
+	dumpData->psr     = ((uint32_t) stack_pointer[7]);
+#else
+    dumpData->r0      = (uint32_t) * ((uint32_t*)(errlocated.pspTop) + 6);
 	dumpData->r1      = (uint32_t)SCB->CFSR;
 	dumpData->r2      = (uint32_t)SCB->HFSR;
 	dumpData->r3      = (uint32_t)SCB->MMFAR;
 	dumpData->r12     = (uint32_t)SCB->BFAR;
 	dumpData->lr      = (uint32_t) * ((uint32_t*)(errlocated.pspTop) + 5);
-//extern bool xxxFlag;
-//	if(xxxFlag)
-//		dumpData->xxx     = 0xaaaaaaaa;
-
+#endif
 	dumpData->tagTail = 0x89abcdef;
-	//	dumpData->lr      = stacked_lr;
-//	dumpData->pc      = stacked_pc;
-//
-
 
 //	error1.data = (uint32_t)SCB->CFSR;
 //	error2.data = (uint32_t)SCB->HFSR;

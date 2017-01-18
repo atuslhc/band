@@ -14,6 +14,8 @@
 #include "common_vars.h"
 #include "main.h"
 
+#if (VIBRATION_SUPPORT==1)
+
 unsigned char DRV2605_TEST_VAL;
 //bool DRV2605_ONLINE = false;
 
@@ -178,4 +180,5 @@ void VibrateCallback(void)
 
 }
 
+#endif
 

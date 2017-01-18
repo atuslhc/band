@@ -32,6 +32,9 @@
 #if (CAP_SUPPORT==2)
 #include "AD7156.h"
 #endif
+#if (SOS_HIT_SUPPORT)
+#include "mems_tracking.h"
+#endif
 
 #define ALARM_DURATION	(30)
 
@@ -182,11 +185,13 @@ void triggerAlarm()
 					{
 						alart_Count++;
 
+#if (VIBRATION_SUPPORT==1)
 						if(alart_Count < 3)
 							VibrateCon(SoftFuzz_60, 2, 1);
 
 						else
 							VibrateCon(BuzzAlert1000ms, 2, 1);
+#endif
 
 					}
 				}
@@ -598,8 +603,10 @@ void onManualRestMCU(void* data)
 void onMenuAction(MENU_TYPE menuType)
 {
 
+#if (VIBRATION_SUPPORT==1)
 	//VibrateCon(BuzzAlert1000ms,1,5);
-
+#endif
+  
 	switch (menuType)
 	{
 #if BGXXX>0
@@ -670,7 +677,9 @@ void onMenuAction(MENU_TYPE menuType)
 			if(systemSetting.blTouchSensorEnabled == false)
 			{
 				//manual mode
+#if (VIBRATION_SUPPORT==1)
 				VibrateCon(StrongClick1_100, 1, 1);
+#endif
 #if PPG_WORK_MODE_SET
 				//The count will reset while manual pressing.
 				blPPGLongpress = true;
@@ -730,7 +739,9 @@ void onMenuAction(MENU_TYPE menuType)
                         systemSetting.res[0] = LED_INTENSITY;
                         SaveSystemSettings();
                         LED_Val_AMB_Cancellation(LED_INTENSITY, AMB_uA);
+#if (VIBRATION_SUPPORT==1)
                         VibrateCon(StrongClick1_100, 1, 1);
+#endif
                         break;
                 }
 #endif
@@ -746,7 +757,9 @@ void onMenuAction(MENU_TYPE menuType)
                         systemSetting.res[1] = AMB_uA;
                         SaveSystemSettings();
                         LED_Val_AMB_Cancellation(LED_INTENSITY, AMB_uA);
-                        VibrateCon(StrongClick1_100, 1, 1);
+#if (VIBRATION_SUPPORT==1)
+                       VibrateCon(StrongClick1_100, 1, 1);
+#endif
 #endif
 #ifdef DEBUG_MODE
 
@@ -801,7 +814,9 @@ void onMenuAction(MENU_TYPE menuType)
                         systemSetting.res[1] = AMB_uA;
                         SaveSystemSettings();
                         LED_Val_AMB_Cancellation(LED_INTENSITY, AMB_uA);
+#if (VIBRATION_SUPPORT==1)
                         VibrateCon(StrongClick1_100, 1, 1);
+#endif
 #endif
                         break;
                 }
@@ -813,8 +828,9 @@ void onMenuAction(MENU_TYPE menuType)
 
 			// 取消震动
 			RemoveNotification(NOTIFY_SERVICE_Intense_UV);
+#if (VIBRATION_SUPPORT==1)
 			stopVibrate();
-
+#endif
 			break;
 		}
 
@@ -824,7 +840,9 @@ void onMenuAction(MENU_TYPE menuType)
 		{
 			blLastLongPressedisBLE = false;
 
+#if (VIBRATION_SUPPORT==1)
 			VibrateCon(BuzzAlert1000ms, 1, 5);
+#endif
 			memset(systemStatus.incomingCallNumber, 0, NOTIFY_SENDER_BUFFER_SIZE);
 
 			RemoveNotification(NOTIFY_SERVICE_IncomingCall);
@@ -840,7 +858,9 @@ void onMenuAction(MENU_TYPE menuType)
 		{
 			blLastLongPressedisBLE = false;
 
+#if (VIBRATION_SUPPORT==1)
 			VibrateCon(BuzzAlert1000ms, 1, 5);
+#endif
 			memset(systemStatus.latestSmsNumber, 0, NOTIFY_SENDER_BUFFER_SIZE);
 
 			RemoveNotification(NOTIFY_SERVICE_Email);
@@ -852,8 +872,10 @@ void onMenuAction(MENU_TYPE menuType)
 
 		case MENU_TYPE_BleMAC:
 		{
+          
+#if (VIBRATION_SUPPORT==1)
 			VibrateCon(StrongClick1_100, 1, 1);
-
+#endif
 			lastLongPressedisBLE = 4;
 			blLastLongPressedisBLE = true;
 			EnableLongTimer(LONG_TIMER_MANUAL_RESET_MCU, false, 6, onManualRestMCU, NULL);//再次长按6秒后检测有没有在时间菜单下按，没有就不能复位mcu
@@ -1171,7 +1193,7 @@ void DeviceTask(void* argument)
 //
 //		msg.id = value;
 //		msgType = (uint16_t) msg.params.type;
-
+        //debug it,
 		xQueueReceive(hEvtQueueDevice, &msg, portMAX_DELAY);
 		msgType = (uint16_t) msg.params.type;
 
@@ -1193,6 +1215,7 @@ void DeviceTask(void* argument)
 		WDOG_Feed();
 //		}
 #endif
+        
 
 		switch (msgType)
 		{
@@ -1244,6 +1267,7 @@ void DeviceTask(void* argument)
 					{
 						//说明mac地址没有获得，发送命令重新获取一次。
 						getBleDeviceInfo();
+                        //FIXME: should be consider if always fail(BLE fail), reset BLE.
 					}
 
 					//once = false;  //[BG024] remark. keep re-read until get MAC.
@@ -1409,7 +1433,12 @@ void DeviceTask(void* argument)
 					if (systemStatus.bBatteryLevel == OUT_OF_BATTERY
 					        || (systemStatus.bBatteryLevel == LOW_BATTERY && bPreviousBatteryLevel == BATTERY_NORMAL))
 					{
+#if (VIBRATION_SUPPORT==1)
 						VibrateCon(StrongBuzz_100, 2, 2);
+#else
+                        LED_ON();
+#endif
+                        
 					}
 				}
 
@@ -1508,10 +1537,15 @@ void DeviceTask(void* argument)
 				break;
 				
 #if (BOARD_TYPE==2)
-			case KEY1_INT2_Message:	//push button1 event.		
+			case KEY1_INT2_Message:	//push button1 event
+#if 0   //for BLE driver debug.
 				LEDR_ON();
                 getBleDeviceInfo();	
                 LEDR_OFF();
+#endif
+#if (SOS_HIT_SUPPORT && BOARD_TYPE==2)
+                SOS_result++;
+#endif
 				break;
 				
 			case KEY2_INT5_Message: //push button2 event.
@@ -1563,7 +1597,9 @@ void DeviceTask(void* argument)
 						systemStatus.bDisableAutoLockFlags &= ~AUTOLOCK_FLAG_FIND_ME;
 
 						// 取消震动
+#if (VIBRATION_SUPPORT==1)
 						stopVibrate();
+#endif
 					}
 
 
@@ -1662,7 +1698,9 @@ void DeviceTask(void* argument)
 						{
 							if ((systemSetting.notificationMode & 0x01) == 0x01)
 							{
+#if (VIBRATION_SUPPORT==1)
 								VibrateCon(BuzzAlert750ms, 1, 10);
+#endif
 							}
 						}
 					}
@@ -1671,7 +1709,9 @@ void DeviceTask(void* argument)
 						systemStatus.bDisableAutoLockFlags &= ~AUTOLOCK_FLAG_NOTIFICATION;
 						RemoveNotification(NOTIFY_SERVICE_IncomingCall);
 
+#if (VIBRATION_SUPPORT==1)
 						stopVibrate();
+#endif
 					}
 				}
 				else if (ns == NOTIFY_SERVICE_MissedCall)
@@ -1685,7 +1725,9 @@ void DeviceTask(void* argument)
 						{
 							if ((systemSetting.notificationMode & 0x01) == 0x01)
 							{
+#if (VIBRATION_SUPPORT==1)
 								VibrateCon(BuzzAlert750ms, 1, 5);
+#endif
 							}
 						}
 					}
@@ -1695,7 +1737,9 @@ void DeviceTask(void* argument)
 //						systemStatus.bDisableAutoLockFlags &= ~AUTOLOCK_FLAG_NOTIFICATION;
 //						RemoveNotification(NOTIFY_SERVICE_MissedCall);
 //
+//#if (VIBRATION_SUPPORT==1)
 //						stopVibrate();
+//#endif
 //					}
 				}
 				else
@@ -1707,7 +1751,9 @@ void DeviceTask(void* argument)
 					{
 						if ((systemSetting.notificationMode & 0x01) == 0x01)
 						{
+#if (VIBRATION_SUPPORT==1)
 							VibrateCon(BuzzAlert750ms, 1, 3);
+#endif
 						}
 					}
 				}
@@ -1773,7 +1819,9 @@ void DeviceTask(void* argument)
 					systemStatus.bDisableAutoLockFlags &= ~AUTOLOCK_FLAG_FIND_ME;
 
 					// stop alert
+#if (VIBRATION_SUPPORT==1)
 					stopVibrate();
+#endif
 				}
 				else
 				{
@@ -1788,10 +1836,14 @@ void DeviceTask(void* argument)
 #endif
 
 					// start alert
+#if (VIBRATION_SUPPORT==1)
 					if(level == 1)
 						VibrateCon(SoftFuzz_60, 1, systemSetting.findMeDuration);
 					else if(level == 2)
 						VibrateCon(BuzzAlert750ms, 1,  systemSetting.findMeDuration);
+#else
+                    startFlashLed(true, 1, 4, 1, 1, 4, 1);
+#endif
 				}
 
 				break;

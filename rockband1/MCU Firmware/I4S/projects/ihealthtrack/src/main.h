@@ -49,7 +49,7 @@
   #elif (BOARD_TYPE==2)
     #define Dev_Name 2
     #define APP_FW_VER_M  0
-    #define APP_FW_VER_S  10
+    #define APP_FW_VER_S  13
   #endif
  #else
  #error "Please specify VENDOR_TYPE!"
@@ -207,10 +207,11 @@ extern uint8_t NoTOUCHPressCount;
 // ================================
 //BUTTON
 #define KEY_GPIOPORT  (gpioPortA)
-#define KEY1_PIN   (2)
-#define KEY2_PIN   (5) //DONOT Interrupt
+#define KEY1_PIN   (2)      //SW1, GPIO_EVEN_IRQHandler()
+#define KEY2_PIN   (5)      //SW2, DONOT Interrupt while reset power. GPIO_ODD_IRQHandler()
 
-#define GetKEY2		GPIO_PinInGet(KEY_GPIOPORT,KEY2_PIN)   
+#define GetKEY1()		GPIO_PinInGet(KEY_GPIOPORT,KEY1_PIN)
+#define GetKEY2()		GPIO_PinInGet(KEY_GPIOPORT,KEY2_PIN)
 #endif
 
 //=================================
@@ -289,6 +290,7 @@ extern uint8_t NoTOUCHPressCount;
 #endif
 
 //==================================================================
+#if (CHARGER_SUPPORT==1)
 #if (BOARD_TYPE==0) 
 #define CHARGER_STA_GPIOPORT  (gpioPortF)
 #define CHARGER_STA_PIN   (4)       //CHARGER_STA:PF4
@@ -297,6 +299,7 @@ extern uint8_t NoTOUCHPressCount;
 #define CHARGER_STA_PIN   (4)       //CHARGER_STA:PF4
 //#define CHARGER_STA_GPIOPORT  (gpioPortA)
 //#define CHARGER_STA_PIN   (3)       //PA3, also connect PF4
+#endif
 #endif
 // ==================================
 #define MEMS_SPI           (USART1)
@@ -329,7 +332,7 @@ extern uint8_t NoTOUCHPressCount;
 
 //==================================
 
-
+#if (AFE44x0_SUPPORT==1)
 #define AFE_INT_LOC        GPIO_ODD_IRQn
 
 #define AFE_SPI           (USART2)
@@ -363,9 +366,9 @@ extern uint8_t NoTOUCHPressCount;
 #define AFE_ADC_DRDY_PIN    (5)
 
 
-
 #define BOTTOM_POWER_ON()    GPIO_PinOutSet(AFE_POWER_CON_PORT,AFE_POWER_CON_PIN)
 #define BOTTOM_POWER_OFF()    GPIO_PinOutClear(AFE_POWER_CON_PORT,AFE_POWER_CON_PIN)
+#endif
 
 // ==================================
 
@@ -376,7 +379,7 @@ extern uint8_t NoTOUCHPressCount;
 #define TIMER_DEALY_IRQn       TIMER2_IRQn
 
 //=========OLED=====================
-
+#if (OLED_SUPPORT==1)
 #define OLED_I2C_cmuClock_I2C       cmuClock_I2C0
 #define OLED_I2C_gpioPort           gpioPortD
 #define OLED_I2C_SCL_PIN            15
@@ -399,14 +402,16 @@ extern uint8_t NoTOUCHPressCount;
 #define OLED_RST_L()    GPIO_PinOutClear(OLED_RST_PORT,OLED_RST_PIN)
 #define OLED_RST_H()   GPIO_PinOutSet(OLED_RST_PORT,OLED_RST_PIN)
 
-//==============================================
+#endif  //OLED_SUPPORT
 
+//==============================================
+#if (VIBRATION_SUPPORT==1)
 #define VIBRATE_CON_PORT   (gpioPortF)
 #define VIBRATE_CON_PIN    (5)
 
 #define DisableVIBRATE()  GPIO_PinOutClear(VIBRATE_CON_PORT,VIBRATE_CON_PIN)
 #define EnableVIBRATE()   GPIO_PinOutSet(VIBRATE_CON_PORT,VIBRATE_CON_PIN)
-
+#endif //VIBRATION_SUPPORT
 
 //===============================
 #define BLE_RX_PORT  (gpioPortA)  // 
@@ -483,7 +488,6 @@ extern uint8_t NoTOUCHPressCount;
 #define  FLASH_CS_H()     GPIO_PinOutSet(FLASH_SPI_CS_GPIOPORT,FLASH_SPI_CSPIN)
 
 #if (BOARD_TYPE==1)
-#define BUTTON_PORT_ONE   
 #define   BUTTON_PORT_ONE   gpioPortC    //set as touch button
 #define   BUTTON_PIN_ONE    9
 
@@ -501,6 +505,24 @@ extern uint8_t NoTOUCHPressCount;
 
 #endif
 
+#if (BOARD_TYPE==2)
+#define DAUIO_1_PIN         (4)  //PD4
+#define DAUIO_2_PIN         (4)  //PC4
+#define DAUIO_3_PIN         (5)  //PC5
+#define DAUIO_4_PIN         (6)  //PC6
+#define DAUIO_5_PIN         (4)  //PA4
+#define DAUIO_6_PIN         (6)  //PA6
+#define DAUIO_7_PIN         (11) //PB11
+#define DAUIO_8_PIN         (12) //PB12
+#define GetDAUIO_1()		GPIO_PinInGet(gpioPortD,DAUIO_1_PIN)
+#define GetDAUIO_2()		GPIO_PinInGet(gpioPortC,DAUIO_2_PIN)
+#define GetDAUIO_3()		GPIO_PinInGet(gpioPortC,DAUIO_3_PIN)
+#define GetDAUIO_4()		GPIO_PinInGet(gpioPortC,DAUIO_4_PIN)
+#define GetDAUIO_5()		GPIO_PinInGet(gpioPortA,DAUIO_5_PIN)
+#define GetDAUIO_6()		GPIO_PinInGet(gpioPortA,DAUIO_6_PIN)
+#define GetDAUIO_7()		GPIO_PinInGet(gpioPortB,DAUIO_7_PIN)
+#define GetDAUIO_8()		GPIO_PinInGet(gpioPortB,DAUIO_8_PIN)
+#endif
 
 //==========================
 void SysCtlDelay(unsigned long ulCount);

@@ -1,5 +1,5 @@
 [DebugChecksum]
-Checksum=1707055372
+Checksum=1294551374
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -54,6 +54,20 @@ MultiCoreRunAll=0
 EnableCache=1
 [InterruptStripe]
 Sort=1
+[Interrupts]
+Enabled=1
+[MemConfig]
+Base=1
+Manual=0
+Ddf=1
+TypeViol=0
+Stop=1
+[Trace1]
+Enabled=0
+ShowSource=1
+[Simulator]
+Freq=10000000
+MultiCoreRunAll=1
 [struct_types]
 Fmt0=FLASH_SECTOR_HEAD-endTimestamp	3	0
 Fmt1=FLASH_SECTOR_HEAD-tag	4	0
@@ -112,18 +126,24 @@ Fmt19={W}0:sector_Start_num	4	0
 Fmt20={W}0:systemSetting.iMenuEnableFlags	4	0
 Fmt21={W}0:systemSetting.notifiedServices	4	0
 Fmt22={W}0:~(1 << (BYTE) menu)	4	0
-Fmt23={W}1:Rec_Ble_Pak[0]	4	0
-Fmt24={W}1:pr[5]	3	0
-Fmt25={W}1:pr[6]	3	0
-Fmt26={W}1:systemSetting.SystemMode	4	0
-Fmt27={W}1:systemSetting.notifiedServices	4	0
-Fmt28={W}42:Check_Connect_Counter	3	0
-Fmt29={W}42:DelayTimerStatus	1	0
-Fmt30={W}42:LongTimerStatus	1	0
-Fmt31={W}42:led_flash_step	3	0
-Fmt32={W}42:systemSetting.SystemMode	4	0
-Fmt33={W}42:systemSetting.notifiedServices	1	0
-Fmt34={W}42:systemStatus.bBatteryRemaining	3	0
+Fmt23={W}1:BLE_STATE	4	0
+Fmt24={W}1:BLE_Should_Status	4	0
+Fmt25={W}1:Last_BLE_STATE	4	0
+Fmt26={W}1:Rec_Ble_Pak[0]	4	0
+Fmt27={W}1:Rec_Ble_Pak[1]	4	0
+Fmt28={W}1:flags	4	0
+Fmt29={W}1:pr[5]	3	0
+Fmt30={W}1:pr[6]	3	0
+Fmt31={W}1:stack_pointer[5]	4	0
+Fmt32={W}1:systemSetting.SystemMode	4	0
+Fmt33={W}1:systemSetting.notifiedServices	4	0
+Fmt34={W}42:Check_Connect_Counter	3	0
+Fmt35={W}42:DelayTimerStatus	1	0
+Fmt36={W}42:LongTimerStatus	1	0
+Fmt37={W}42:led_flash_step	3	0
+Fmt38={W}42:systemSetting.SystemMode	4	0
+Fmt39={W}42:systemSetting.notifiedServices	1	0
+Fmt40={W}42:systemStatus.bBatteryRemaining	3	0
 [Trace2]
 Enabled=0
 ShowSource=0
@@ -145,7 +165,20 @@ Title_0=I0
 Symbol_0=0 4 1
 LiveEnabled=0
 LiveFile=PowerLogLive.log
+[DataLog]
+LogEnabled=0
+SumEnabled=0
+GraphEnabled=0
+ShowTimeLog=1
+ShowTimeSum=1
 [EventLog]
+LogEnabled=0
+SumEnabled=0
+GraphEnabled=0
+ShowTimeLog=1
+ShowTimeSum=1
+SumSortOrder=0
+[InterruptLog]
 LogEnabled=0
 SumEnabled=0
 GraphEnabled=0
@@ -171,37 +204,23 @@ Mode=3
 Graph=0
 Symbiont=0
 Exclusions=
-[InterruptLog]
-LogEnabled=0
-SumEnabled=0
-GraphEnabled=0
-ShowTimeLog=1
-ShowTimeSum=1
-SumSortOrder=0
-[DataLog]
-LogEnabled=0
-SumEnabled=0
-GraphEnabled=0
-ShowTimeLog=1
-ShowTimeSum=1
-[Interrupts]
-Enabled=1
-[MemConfig]
-Base=1
-Manual=0
-Ddf=1
-TypeViol=0
-Stop=1
-[Trace1]
-Enabled=0
-ShowSource=1
-[Simulator]
-Freq=10000000
-MultiCoreRunAll=1
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Count=0
+Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\src\BLE-LEUART-DMA.c}.3245.2" 0 0 1 "" 0 "" 0
+Bp1=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\common\drivers\CapTouchDetect.c}.66.2" 0 0 1 "" 0 "" 0
+Bp2=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\common\drivers\CapTouchDetect.c}.189.8" 0 0 1 "" 0 "" 0
+Bp3=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\common\drivers\CapTouchDetect.c}.203.2" 0 0 1 "" 0 "" 0
+Bp4=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\common\drivers\CapTouchDetect.c}.279.2" 0 0 1 "" 0 "" 0
+Bp5=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\common\drivers\CapTouchDetect.c}.308.2" 0 0 1 "" 0 "" 0
+Bp6=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\common\drivers\caplesense.c}.276.3" 0 0 1 "" 0 "" 0
+Bp7=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\common\drivers\caplesense.c}.284.27" 0 0 1 "" 0 "" 0
+Bp8=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\common\drivers\caplesense.c}.450.2" 0 0 1 "" 0 "" 0
+Bp9=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\src\Device_task.c}.1220.3" 0 0 1 "" 0 "" 0
+Bp10=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\src\cortex-m_faults.c}.246.2" 0 0 1 "" 0 "" 0
+Bp11=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\src\interrupt.c}.173.10" 0 0 1 "" 0 "" 0
+Bp12=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\src\interrupt.c}.141.10" 0 0 1 "" 0 "" 0
+Count=13
 [Aliases]
 A0=_ "G:\my doc\QS_PROJ\EFM32\firmware\from OCT to\i4-proj-ver1\mcu\arm\CMSIS\Include\core_cm4.h" ""
 A1=_ "G:\my doc\QS_PROJ\EFM32\firmware\from OCT to\i4-proj-ver1\mcu\arm\EFM32\emlib\inc\em_chip.h" ""

@@ -25,7 +25,7 @@
 //osMailQDef(DispTaskQueue, 8, USER_EVENT);
 //osMailQId hDispEventQueue = NULL;
 
-/******2015Äê5ÔÂ4ÈÕ17:17:10***********************************************/
+/************************************************************************/
 
 #define DISPLAY_TASK_NAME				"Display"
 #define DISPLAY_TASK_STACK_DEPTH		(256 + 32)		//
@@ -124,9 +124,9 @@ void DisplayTask(void* argument)
 				OLEDON();
 #endif
 
-				//发送一个模拟时钟消息，用于立即更新显示
+				//send a simulate event to update the display
 				fireDisplayEvent(EVT_TYPE_RTC, 0);
-				JumpToMenu(MENU_TYPE_Time);//解锁了，该显示时间菜单
+				JumpToMenu(MENU_TYPE_Time); //unlock display Time menu.
 				break;
 			}
 
@@ -156,6 +156,8 @@ void DisplayTask(void* argument)
 #if (OLED_SUPPORT==1)
 				if (isOLEDOff())
 					break;
+#else
+                break; //ATUSDBG.
 #endif
 
 #ifdef DEBUG0

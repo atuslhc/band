@@ -500,7 +500,9 @@ void MyIdleWork(void)
 
 void BatteryDrainVibratorControlFunc(void* pData)
 {
+#if (VIBRATION_SUPPORT==1)
 	VibrateCon(BuzzAlert1000ms, 2, 1);
+#endif
 }
 
 void StartBatteryDrain()
@@ -529,13 +531,15 @@ void StopBatteryDrain()
 	systemStatus.blBatteryDraining = false;
 
 	//
+#if (AFE44x0_SUPPORT==1)
 	AFE44xx_Shutoff();
-
+#endif
 	//
 	systemStatus.bDisableAutoLockFlags &= ~AUTOLOCK_FLAG_BATTERY_DRAIN; //
 	LockScreen();
 
-	//
+//#if (VIBRATION_SUPPORT==1)
 //	stopVibrate();
+//#endif
 	DisableLongTimer(LONG_TIMER_FLAG_VIBRATE);
 }

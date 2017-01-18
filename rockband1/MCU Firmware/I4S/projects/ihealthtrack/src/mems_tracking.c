@@ -391,8 +391,8 @@ uint32_t MEMS_TRACKING(int16_t *x, int16_t *y, int16_t *z, uint8_t len)
       }
     }
 #if SOS_HIT_SUPPORT
-extern int8_t SOS_hit_count;
-extern uint8_t SOS_result;
+//extern int8_t SOS_hit_count;
+//extern uint8_t SOS_result;
 #if 0
     if (inside_iSteps<SOS_HIT_LOW_THRESHOLD || inside_iStep>SOS_HIT_HI_THRESHOLD)
     {
@@ -407,7 +407,7 @@ extern uint8_t SOS_result;
 //    if (SOS_hit_count < inside_iSteps)
 
       SOS_hit_count = inside_iSteps;
-    SOS_result = walk_state;
+    //SOS_result = walk_state;  //FIXME: implement SOS_HIT condition.
 #endif
     UpdatePedometerInfor();
   }

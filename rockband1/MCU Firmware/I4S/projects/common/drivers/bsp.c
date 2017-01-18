@@ -84,7 +84,7 @@ void CHARGER_STA_INIT(void)
 	osMessagePut(hMsgInterrupt, MESSAGE_BATTERY_CHARGING, 0);
 #else
 
-#if (BOARD_TYPE==0 || BOARD_TYPE==1)
+#if (CHARGER_SUPPORT==1)
 	/* Enable GPIO */
 	CMU_ClockEnable(cmuClock_GPIO, true);
 	GPIO_PinModeSet(CHARGER_STA_GPIOPORT, CHARGER_STA_PIN, gpioModeInputPull, 1);
@@ -179,31 +179,60 @@ void BspInit(void)
 
 #elif (BOARD_TYPE==2)
     GPIO_PinModeSet(LED_GPIOPORT, LEDC_PIN, gpioModePushPull, 1);  //Atus: should be input config. In power test can check if disable.
-#if (DEBUG)
+#if (1) //(DEBUG)
     unsigned int ledc=0;
     ledc=GetLEDC();
 #endif
     /* set the LED GPIO */
 	GPIO_PinModeSet(LED_GPIOPORT, LEDR_PIN, gpioModePushPull, 1);
-#if defined(DEBUG)
+#if (1) //defined(DEBUG)
     LEDR_ON();
     SysCtlDelay(900000);
 #endif
+//    while (1);
 	LEDR_OFF();
     
 	GPIO_PinModeSet(LED_GPIOPORT, LEDG_PIN, gpioModePushPull, 1);
-#if defined(DEBUG)
+#if (1) //defined(DEBUG)
     LEDG_ON();
     SysCtlDelay(900000);
 #endif
-	LEDG_OFF();
+//    while (1);
+//	LEDG_OFF(); //debug keep it on with green
     
 	GPIO_PinModeSet(LED_GPIOPORT, LEDB_PIN, gpioModePushPull, 1);
-#if defined(DEBUG)
+#if (1) //defined(DEBUG)
     LEDB_ON();
     SysCtlDelay(900000);
 #endif
+//    while (1);
 	LEDB_OFF();
+    
+	/* Configure GPIO port PA2(SW1),PA5(SW2) as Key input */
+	GPIO_PinModeSet(KEY_PORT, KEY2_PIN, gpioModeInput, 1);
+	GPIO_IntConfig(KEY_PORT, KEY2_PIN, false, true, true);
+	GPIO_IntClear(1 << KEY2_PIN); 	
+	NVIC_SetPriority(GPIO_ODD_IRQn,GPIO_ODD_INT_LEVEL);
+	NVIC_EnableIRQ(GPIO_ODD_IRQn);
+	
+	GPIO_PinModeSet(KEY_PORT, KEY1_PIN, gpioModeInput, 1);
+	GPIO_IntConfig(KEY_PORT, KEY1_PIN, false, true, true);	
+	GPIO_IntClear(1 << KEY1_PIN); 	
+	NVIC_SetPriority(GPIO_EVEN_IRQn,GPIO_EVEN_INT_LEVEL);  
+	NVIC_EnableIRQ(GPIO_EVEN_IRQn);
+    
+    /* The debug test use with DAUIO_x */
+    GPIO_PinModeSet(gpioPortD, DAUIO_1_PIN, gpioModePushPull, 0);  //Atus: set input pin, read in BLE_RESET() filter.
+    //GPIO_PinModeSet(gpioPortC, DAUIO_2_PIN, gpioModePushPull, 1);
+    //GPIO_PinModeSet(gpioPortC, DAUIO_3_PIN, gpioModePushPull, 1);
+    //GPIO_PinModeSet(gpioPortC, DAUIO_4_PIN, gpioModePushPull, 1);
+    //GPIO_PinModeSet(gpioPortA, DAUIO_5_PIN, gpioModePushPull, 1);
+    //GPIO_PinModeSet(gpioPortA, DAUIO_6_PIN, gpioModePushPull, 1);
+    //GPIO_PinModeSet(gpioPortB, DAUIO_7_PIN, gpioModePushPull, 1);
+    //GPIO_PinModeSet(gpioPortB, DAUIO_8_PIN, gpioModePushPull, 1);
+    
+    //value = GetDAUIO_1();
+    
 #endif
 
 	//

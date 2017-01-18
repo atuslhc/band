@@ -36,6 +36,11 @@ int16_t post_Fall_Detect(uint8_t len);
 uint8_t Fall_Detect(int32_t *axis_rms, uint8_t len); //[BG008] add
 #endif
 
+#if SOS_HIT_SUPPORT
+extern int8_t SOS_hit_count;
+extern uint8_t SOS_result;
+#endif
+
 void UpdatePedometerInfor(void);
 uint32_t MEMS_TRACKING(int16_t *x,int16_t *y,int16_t *z,uint8_t len);
 #endif

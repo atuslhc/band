@@ -3437,6 +3437,14 @@ void ANCS_Parsing(unsigned char* p)
 
 void BLE_RESET(void)
 {
+#if (BOARD_TYPE==2)  //FIXLME: if not debug use, please remove it.
+    if (GetDAUIO_1()==0x1)
+    {
+      GPIO_PinModeSet(BLE_RST_PORT, BLE_RST_PIN, gpioModeDisabled, 1); /* BLE_RESET set to Z-impedance */
+      return;
+    }
+#endif
+	GPIO_PinModeSet(BLE_RST_PORT, BLE_RST_PIN, gpioModePushPull, 1); /* BLE_RESET as output */
 	BLE_RST_L();
 	SysCtlDelay(8000 * SYSCLOCK); //
 	BLE_RST_H();
@@ -4386,6 +4394,9 @@ void CheckSOS(void)
 			sosNotification = 0x01;
 			sosDetectedTimeCount = false;
 			sosStartTime = time(NULL);
+#if (BOARD_TYPE==2)
+            LEDR_ON();
+#endif
 		}
 	}
 
@@ -4399,6 +4410,9 @@ void CheckSOS(void)
 		sosDetectedTimeCount = true;
 		isSOSDetected = false;
 		sosNotification = 0xFF;
+#if (BOARD_TYPE==2)
+        LEDR_OFF();
+#endif
 	}
 }
 #endif

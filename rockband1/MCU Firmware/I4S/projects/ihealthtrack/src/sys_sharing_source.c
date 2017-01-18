@@ -326,7 +326,11 @@ const	ADC_InitSingle_TypeDef BAT_ADC_INIT =
 #if (BOARD_TYPE==0 || BOARD_TYPE==1)
 	adcRefVDD,	/* VDD reference. */  //Atus: should be use 2.5V fix voltage(Vdd is varied), but need check caplesensor ch7 can work.
 #elif (BOARD_TYPE==2)
-	adcRef2V5,	/* 2.5V internal reference. */ //Atus: if R9 changed, try 1.25V cover full range test. 
+#if (BAT_ADC_CONFIG==2) //R9=5.6Mohm, reference 1.25V
+	adcRef1V25,	/* 1.25V internal reference. */ 
+#else
+	adcRef2V5,	/* 2.5V internal reference. */ //Atus: if R9 changed, try 1.25V cover full range test.
+#endif
 #endif
 	adcRes12Bit, /* 12 bit resolution. */
 	adcSingleInpCh7, /* CH0 input selected. */
@@ -402,7 +406,7 @@ void Battery_ADC_Read(void)
         //itest = val; 
         //ftest = BAT_VCC;
 #if (BATTERY_SUPPORT==1)
-	BAT_VCC = 2 * BAT_VCC * 3.3 / 4096;
+	BAT_VCC = 2 * BAT_VCC * 3.3 / 4096; //reference Vdd, why use 3.3V?
 	//================================
 	// percent = 1.26V-4.292 // 根据 厂家提供的电池曲线图获得的线性方程
 	float temp = 1.26 * BAT_VCC - 4.292;
@@ -418,11 +422,30 @@ void Battery_ADC_Read(void)
 		systemStatus.bBatteryRemaining = 100;
 	else
 		systemStatus.bBatteryRemaining = (uint8_t)temp;
-#elif (BATTERY_SUPPORT==2)
-	BAT_VCC = 2 * BAT_VCC * 2.5 / 4096;  //Atus: if the R9 change, this equation need change.
-	//FIXME================================remaining not implement yet
     
+#elif (BATTERY_SUPPORT==2)
+#if BAT_ADC_CONFIG==2
+	BAT_VCC = 2.785 * BAT_VCC * 1.25 / 4096;  //R9=5.6M ratio=(10+5.6)/5.6=2.785 and reference 1.25V.
+#else
+	BAT_VCC = 2 * BAT_VCC * 2.5 / 4096;  //R9=10M, ratio=(10+10)/10=2 reference 2.5V.
+#endif
+	//FIXME:================================remaining not implement yet
+	// percent = 2.2V-3.15 // Accroding the capacity graphic just simplify a linear equation for test API only.
+	float temp = 1.364 * BAT_VCC - 3.15;
+
+	if(temp < 0) temp = 0.01;
+
+	temp = temp * 100;
+
+	if(temp < 40)
+		temp = temp * 0.9;
+
+	if(temp > 100)
 		systemStatus.bBatteryRemaining = 100;
+	else
+		systemStatus.bBatteryRemaining = (uint8_t)temp;
+
+//    systemStatus.bBatteryRemaining = 100;
 
 #endif
 
@@ -728,7 +751,9 @@ void CHECK_PER_Xsecond(void)
 #endif
 		}
 
+#if (VIBRATION_SUPPORT==1)
 		CheckVibrateStatus();
+#endif
 		isMemsError();
 		CheckFlashStatus();
 
@@ -815,7 +840,9 @@ void Check_UV_Sensor(bool inoutdoor)
 				if (systemStatus.blUVAlarmDisabled == false)
 				{
 					// 震动通知用户，应使用特别的震动模式
+//#if (VIBRATION_SUPPORT==1)
 //					VibrateCon(StrongBuzz_100, 2, 5);
+//#endif
 //					// 显示 提示
 //					RaiseNotification(NOTIFY_SERVICE_Intense_UV);
 				}
@@ -829,7 +856,9 @@ void Check_UV_Sensor(bool inoutdoor)
 			{
 //				RemoveNotification(NOTIFY_SERVICE_Intense_UV);
 //				// 取消震动
+//#if (VIBRATION_SUPPORT==1)
 //				stopVibrate();
+//#endif
 			}
 		}
 	}
@@ -870,7 +899,9 @@ void CheckGoalsAccomplish(void)
 			if(stepShineCount % 3 == 0)
 			{
 				RaiseNotification(NOTIFY_SERVICE_Step_Accomplish);
+#if (VIBRATION_SUPPORT==1)
 				VibrateCon(StrongBuzz_100, 1, 1);
+#endif
 			}
 
 			if(stepShineCount > 9)
@@ -901,7 +932,9 @@ void CheckGoalsAccomplish(void)
 			if(caloriesShineCount % 3 == 0)
 			{
 				RaiseNotification(NOTIFY_SERVICE_Calorie_Accomplish);
+#if (VIBRATION_SUPPORT==1)
 				VibrateCon(StrongBuzz_100, 1, 1);
+#endif
 			}
 
 
@@ -933,8 +966,9 @@ void CheckGoalsAccomplish(void)
 			{
 				RaiseNotification(NOTIFY_SERVICE_Distance_Accomplish);
 
+#if (VIBRATION_SUPPORT==1)
 				VibrateCon(StrongBuzz_100, 1, 1);
-
+#endif
 			}
 
 
@@ -949,9 +983,6 @@ void CheckGoalsAccomplish(void)
 	}
 }
 
-#define BATTERY_REMAINING_OUT_OF_BATTERY	13
-#define BATTERY_REMAINING_LOW_BATTERY		23
-#define BATTERY_LEVEL_TOLERANCE 			3
 
 void CHECK_BATTERY(void)
 {
@@ -975,7 +1006,9 @@ void CHECK_BATTERY(void)
 			{
 				SKIN_TEMP_INIT();
 				//AdjustCapVal();
+#if (VIBRATION_SUPPORT==1)
 				VibrateCon(BuzzAlert1000ms, 1, 3);
+#endif
 			}
 
 			//========================
@@ -984,7 +1017,9 @@ void CHECK_BATTERY(void)
 			GPIO_PinModeSet(Diagnose_GPIOPORT, SKIN_PIN, gpioModePushPull, 0); //该IO默认设置为下拉输出0，作为模拟串口的发送
 
 			// 关闭ppg
+#if (AFE44x0_SUPPORT==1)
 			AFE44xx_Shutoff();
+#endif
 			SensorOffDelay = 0;
 			systemStatus.blSkinTouched = false;
 
@@ -1048,7 +1083,9 @@ void CHECK_BATTERY(void)
 		{
 			systemStatus.blBatteryCharging = false;
 			//=====================
+#if (CAP_SUPPORT==1)
 			CAPLESENSE_Init();
+#endif
 			UnLockScreen(true); // 解锁屏幕
 			//======================
 //			USER_EVENT* batteryEvent = (USER_EVENT*) osMailCAlloc(hDispEventQueue, 0);
@@ -1255,14 +1292,19 @@ void OutOfBatteryProcess(void)
 	//
 	hasEnteredOutofbatteryState = true;
 	MEMS_CLOSE();
-
+#if (TEMPERATURE_SUPPORT==1)
 	TEMPSENS_RegisterSet(TMP_I2C, SKIN_TEMP_ADDR, tempsensRegCONFIG, 0x0100);	//temperature close
+#endif
 	Si114xPauseAll();//UV close
 
-	BLE_Close(); //发送关闭连接的命令给主机。
+    //FIXME:  BAROMETER_SUPPORT, GYRO_SUPPORT, MAGNETIC_SUPPORT turn off.
 
-	Close_ALLCAPLESENSE(); //关闭触摸
-
+    
+	BLE_Close(); //send turn off advertising to BLE.
+#if (CAP_SUPPORT==1)
+	Close_ALLCAPLESENSE(); //turn off cap interrupt service.
+#endif
+    
 	//
 	GoStopMCU();
 }
@@ -1270,7 +1312,9 @@ void OutOfBatteryProcess(void)
 void BackToWork(void)
 {
 	MEMS_OPEN();
+//#if (CAP_SUPPORT==1)
 //	CAPLESENSE_Init();
+//#endif
 	BLE_Open();
 	systemStatus.blHRSensorTempEnabled = true;
 	systemSetting.blTouchSensorEnabled = true; //从低电压回来后，把ppgsensor设置成自动模式。
@@ -1282,10 +1326,10 @@ void GoStopMCU(void)
 {
 
 	if((systemStatus.bBatteryLevel != OUT_OF_BATTERY) || (systemStatus.blBatteryCharging == true) || (hasEnteredOutofbatteryState != true))
-		return;//后面这个参数防止刚从EM3醒来，又进入EM3.
+		return; //hasEnteredOutofbatteryState check protect wake up from EM3, re-enter EM3.
 
 
-//配置EM4下引脚唤醒
+    /* config EM4 mode, and setup a wakeup pin PC9 */
 	EMU_EM4Init_TypeDef em4Init = EMU_EM4INIT_DEFAULT;
 	em4Init.lockConfig    = true;              		/* Lock regulator, oscillator and BOD configuration.
                                                          * This needs to be set when using the

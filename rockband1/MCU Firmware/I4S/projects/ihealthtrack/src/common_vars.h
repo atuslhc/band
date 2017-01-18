@@ -27,38 +27,39 @@
 #define SOS_HIT_SUPPORT                 1
 #define BATTERY_LIFE_OPTIMIZATION       0       //just use in i4_H code, will skip write flash.
 #define GESTURE_DISP_SUPPORT            0
-#define PPG_WORK_MODE_SET		0
-#define ENABLE_PAUSE_STOPWATCH		0
-#define BATTERY_LIFE_OPTIMIZATION2	1	//turn off some notify.
+#define PPG_WORK_MODE_SET		        0
+#define ENABLE_PAUSE_STOPWATCH		    0
+#define BATTERY_LIFE_OPTIMIZATION2	    1	//turn off some notify.
 //#define ENABLE_DATA_GATHER_DOUBLE_BUFFER 0	//keep define in data_gather.c L16
 #if (BOARD_TYPE==0 || BOARD_TYPE==1)
-#define AFE44x0_SUPPORT         1
-#define OLED_SUPPORT            1
-#define TEMPERATURE_SUPPORT     1
-#define VIBRATION_SUPPORT       1
-#define CHARGER_SUPPORT         1
-#define ACCELEROMETER_SUPPORT   1
-#define UVSENSOR_SUPPORT        1
-#define BAROMETER_SUPPORT       0   //[BG037] add the pressure sensor-LPS22HB,LPS35HW driver.
-#define GYRO_SUPPORT            0 //add the gyro sensor-L3GD20H driver.
-#define MAGNETIC_SUPPORT        0 //add the magnetic sensor-BMM150 driver.
-#define CAP_SUPPORT             1   //add the AD7156 cap sensor.
-#define BLE_SUPPORT             1
-#define BATTERY_SUPPORT         1
+#define AFE44x0_SUPPORT                 1
+#define OLED_SUPPORT                    1
+#define TEMPERATURE_SUPPORT             1
+#define VIBRATION_SUPPORT               1
+#define CHARGER_SUPPORT                 1
+#define ACCELEROMETER_SUPPORT           1
+#define UVSENSOR_SUPPORT                1
+#define BAROMETER_SUPPORT               0   //[BG037] add the pressure sensor-LPS22HB,LPS35HW driver.
+#define GYRO_SUPPORT                    0 //add the gyro sensor-L3GD20H driver.
+#define MAGNETIC_SUPPORT                0 //add the magnetic sensor-BMM150 driver.
+#define CAP_SUPPORT                     1   //add the AD7156 cap sensor.
+#define BLE_SUPPORT                     1
+#define BATTERY_SUPPORT                 1
 #elif (BOARD_TYPE==2)
-#define AFE44x0_SUPPORT         0
-#define OLED_SUPPORT            0
-#define TEMPERATURE_SUPPORT     0
-#define VIBRATION_SUPPORT       0
-#define CHARGER_SUPPORT         0
-#define ACCELEROMETER_SUPPORT   1
-#define UVSENSOR_SUPPORT        1
-#define BAROMETER_SUPPORT       1   //[BG037] add the pressure sensor-LPS22HB,LPS35HW driver.
-#define GYRO_SUPPORT            1 //add the gyro sensor-L3GD20H driver.
-#define MAGNETIC_SUPPORT        1 //add the magnetic sensor-BMM150 driver.
-#define CAP_SUPPORT             2   //add the AD7156 cap sensor.
-#define BLE_SUPPORT             1
-#define BATTERY_SUPPORT         2
+#define AFE44x0_SUPPORT                 0
+#define OLED_SUPPORT                    0
+#define TEMPERATURE_SUPPORT             0
+#define VIBRATION_SUPPORT               0
+#define CHARGER_SUPPORT                 0
+#define ACCELEROMETER_SUPPORT           1
+#define UVSENSOR_SUPPORT                1
+#define BAROMETER_SUPPORT               1   //[BG037] add the pressure sensor-LPS22HB,LPS35HW driver.
+#define GYRO_SUPPORT                    1 //add the gyro sensor-L3GD20H driver.
+#define MAGNETIC_SUPPORT                1 //add the magnetic sensor-BMM150 driver.
+#define CAP_SUPPORT                     2   //add the AD7156 cap sensor.
+#define BLE_SUPPORT                     1
+#define BATTERY_SUPPORT                 2
+#define BAT_ADC_CONFIG                  2  //1 //1:R9=10M and reference internal 2.5V. 2:R9=5.6M and reference internal 1.25V.
 #endif
 
 #elif (MODEL_TYPE==2) //CONSUMER_TYPE
@@ -69,43 +70,58 @@
 #define SOS_HIT_SUPPORT                 0
 #define BATTERY_LIFE_OPTIMIZATION       0
 #define GESTURE_DISP_SUPPORT            1
-#define PPG_WORK_MODE_SET		1
-#define ENABLE_PAUSE_STOPWATCH		0
-#define BATTERY_LIFE_OPTIMIZATION2	0
+#define PPG_WORK_MODE_SET		        1
+#define ENABLE_PAUSE_STOPWATCH		    0
+#define BATTERY_LIFE_OPTIMIZATION2	    0
 //#define ENABLE_DATA_GATHER_DOUBLE_BUFFER 0
 #if (BOARD_TYPE==0 || BOARD_TYPE==1)
-#define AFE44x0_SUPPORT         1
-#define OLED_SUPPORT            1
-#define TEMPERATURE_SUPPORT     1
-#define VIBRATION_SUPPORT       1
-#define CHARGER_SUPPORT         1
-#define ACCELEROMETER_SUPPORT   1
-#define UVSENSOR_SUPPORT        1
-#define BAROMETER_SUPPORT       0   //[BG037] add the pressure sensor-LPS22HB,LPS35HW driver.
-#define GYRO_SUPPORT            0 //add the gyro sensor-L3GD20H driver.
-#define MAGNETIC_SUPPORT        0 //add the magnetic sensor-BMM150 driver.
-#define CAP_SUPPORT             1   //add the AD7156 cap sensor.
-#define BLE_SUPPORT             1
-#define BATTERY_SUPPORT         1
+#define AFE44x0_SUPPORT                 1
+#define OLED_SUPPORT                    1
+#define TEMPERATURE_SUPPORT             1
+#define VIBRATION_SUPPORT               1
+#define CHARGER_SUPPORT                 1
+#define ACCELEROMETER_SUPPORT           1
+#define UVSENSOR_SUPPORT                1
+#define BAROMETER_SUPPORT               0   //[BG037] add the pressure sensor-LPS22HB,LPS35HW driver.
+#define GYRO_SUPPORT                    0 //add the gyro sensor-L3GD20H driver.
+#define MAGNETIC_SUPPORT                0 //add the magnetic sensor-BMM150 driver.
+#define CAP_SUPPORT                     1   //add the AD7156 cap sensor.
+#define BLE_SUPPORT                     1
+#define BATTERY_SUPPORT                 1
 #elif (BOARD_TYPE==2)
-#define AFE44x0_SUPPORT         0
-#define OLED_SUPPORT            0
-#define TEMPERATURE_SUPPORT     0
-#define VIBRATION_SUPPORT       0
-#define CHARGER_SUPPORT         0
-#define ACCELEROMETER_SUPPORT   1
-#define UVSENSOR_SUPPORT        1
-#define BAROMETER_SUPPORT       1   //[BG037] add the pressure sensor-LPS22HB,LPS35HW driver.
-#define GYRO_SUPPORT            1 //add the gyro sensor-L3GD20H driver.
-#define MAGNETIC_SUPPORT        1 //add the magnetic sensor-BMM150 driver.
-#define CAP_SUPPORT             2   //add the AD7156 cap sensor.
-#define BLE_SUPPORT             1
-#define BATTERY_SUPPORT         2
+#define AFE44x0_SUPPORT                 0
+#define OLED_SUPPORT                    0
+#define TEMPERATURE_SUPPORT             0
+#define VIBRATION_SUPPORT               0
+#define CHARGER_SUPPORT                 0
+#define ACCELEROMETER_SUPPORT           1
+#define UVSENSOR_SUPPORT                1
+#define BAROMETER_SUPPORT               1   //[BG037] add the pressure sensor-LPS22HB,LPS35HW driver.
+#define GYRO_SUPPORT                    1 //add the gyro sensor-L3GD20H driver.
+#define MAGNETIC_SUPPORT                1 //add the magnetic sensor-BMM150 driver.
+#define CAP_SUPPORT                     2   //add the AD7156 cap sensor.
+#define BLE_SUPPORT                     1
+#define BATTERY_SUPPORT                 2
 #endif
 #else
 #error "Not specify product type MODEL_TYPE!!!"
 #endif
 #endif
+
+#if (BATTERY_SUPPROT==1)
+#define BATTERY_REMAINING_OUT_OF_BATTERY	13
+#define BATTERY_REMAINING_LOW_BATTERY		23
+#define BATTERY_LEVEL_TOLERANCE 			3
+#elif (BATTERY_SUPPORT==2)
+#define BATTERY_REMAINING_OUT_OF_BATTERY	5
+#define BATTERY_REMAINING_LOW_BATTERY		10
+#define BATTERY_LEVEL_TOLERANCE 			3
+#else
+#define BATTERY_REMAINING_OUT_OF_BATTERY	13
+#define BATTERY_REMAINING_LOW_BATTERY		23
+#define BATTERY_LEVEL_TOLERANCE 			3
+#endif
+
 
 //#include "cmsis_os.h"
 #define BG039   1       //turn on the WDOG setting with MODEL_TYPE 1

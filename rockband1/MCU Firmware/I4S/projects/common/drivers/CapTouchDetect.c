@@ -76,7 +76,9 @@ void SkinTouchDetect(void)
 #if BATTERY_LIFE_OPTIMIZATION
 			  	systemStatus.blHRSensorTempEnabled = false;
 #endif
+#if (AFE44x0_SUPPORT==1)
 				AFE44xx_PowerOn_Init();// used the osdelay ,need to run after freeRTOS
+#endif
 			}
 
 			systemStatus.blSkinTouched = true;
@@ -126,7 +128,9 @@ void SkinTouchDetect(void)
 //#ifndef  PPG2Dongle  // for phone
 						if(systemSetting.blTouchSensorEnabled == true)
 						{
+#if (AFE44x0_SUPPORT==1)
 							AFE44xx_Shutoff(); //仅仅当时自动模式时，到这里才关闭；如果是手动模式，长按HRmenu关闭
+#endif
 						}
 
 //#endif
@@ -274,7 +278,9 @@ void LockScreen(void)
 {
 	systemStatus.blKeyAutoLocked = true;
 
-	SensorOffDelay /= current_touchsensor_feq;
+    if (current_touchsensor_feq>0) //protect divide 0.
+      SensorOffDelay /= current_touchsensor_feq;
+      
 
 	capSenseSwitchModel(SKINSCANONLY); //
 

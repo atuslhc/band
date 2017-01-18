@@ -210,11 +210,12 @@ int main(void)
 {
 //SCB->VTOR = 0x9800; // for release mode to J-TRACE use.
 // =====================================================================
-	// mcu fault handle
+	// Get and store reset bitsmcu fault handle
 	errlocated.mspBottom = __get_MSP();
 	uResetCause.data = RMU_ResetCauseGet();
-	//RMU_ResetCauseClear(); //[BG011] remark, should not clear before used.
+	//RMU_ResetCauseClear(); //[BG011] remark, should not clear before used clockAppInit(), SLEEP_Init().
 
+	// mcu fault handle
 	//The register valid while error occurs, why?
 	SCB->CCR |= 0x10; // enable div-by-0 and unaligned fault
 //	SCB->SHCSR |= 0x00070000;   // enable Usage Fault, Bus Fault, and MMU Fault
@@ -312,7 +313,7 @@ int main(void)
 //	osThreadCreate(osThread(DisplayTask), NULL);
 //	osThreadCreate(osThread(FlashTask), NULL);
 	createDeviceTask();
-	createDisplayTask();
+//	createDisplayTask();
 	createFlashTask();
 #if (BOARD_TYPE==1 && USB_SUPPORT)
     createUSBTask();

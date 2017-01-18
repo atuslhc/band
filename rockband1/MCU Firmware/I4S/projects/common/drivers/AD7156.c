@@ -37,15 +37,15 @@ void AD7156_IIC_Init(void)
 		GPIO_PinModeSet(AD7156_I2C_gpioPort, AD7156_I2C_SCL_PIN, gpioModePushPull, 1);
 		GPIO_PinModeSet(AD7156_I2C_gpioPort, AD7156_I2C_SDA_PIN, gpioModePushPull, 1); //
 
-		/*产生几个脉冲使IIC总线稳定*/
+		/* send couple pulse make I2C bus stable */
 		for (i = 0; i < 9; i++)
 		{
 			GPIO_PinModeSet(AD7156_I2C_gpioPort, AD7156_I2C_SCL_PIN, gpioModeWiredAnd, 0);
 			GPIO_PinModeSet(AD7156_I2C_gpioPort, AD7156_I2C_SCL_PIN, gpioModeWiredAnd, 1);
 		}
 
-		/*确保IIC的两个引脚都输出高*/
-		GPIO_PinModeSet(AD7156_I2C_gpioPort, AD7156_I2C_SCL_PIN, gpioModeWiredAnd, 1);//配置成线与(也就是开漏) 数据是1
+		/* make sure I2C SCL and SDA pins at high while idle/free */
+		GPIO_PinModeSet(AD7156_I2C_gpioPort, AD7156_I2C_SCL_PIN, gpioModeWiredAnd, 1);
 		GPIO_PinModeSet(AD7156_I2C_gpioPort, AD7156_I2C_SDA_PIN, gpioModeWiredAnd, 1);
 
 		/* Enable pins at location 3*/

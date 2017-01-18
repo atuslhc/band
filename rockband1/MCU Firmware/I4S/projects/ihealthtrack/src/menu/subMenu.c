@@ -2055,7 +2055,9 @@ void CallBackSubMenuTesting(void)
 			{
 				insideCount = 0;
 				loopcount = 3;
+#if (AFE44x0_SUPPORT==1)
 				AFE44xx_Shutoff();
+#endif
 			}
 
 			if(systemStatus.blHRSensorOn == false)
@@ -2101,7 +2103,9 @@ void CallBackSubMenuTesting(void)
 		case 6:
 
 			clearScreen(false);
+#if (VIBRATION_SUPPORT==1)
 			VibrateCon(BuzzAlert1000ms, 1, 1);
+#endif
 			sprintf(buff, "Motor");
 			OledShowString(page, &FONT_ARIAL_8x16, 0, 0, 0, buff);
 			loopcount = 7;
@@ -2152,8 +2156,10 @@ char test_menu_loopcount = 0;
 //		case 1:
 //			OLEDOff();
 //			LockScreen();
+//#if (VIBRATION_SUPPORT==1)
 //			VibrateCon(BuzzAlert1000ms, 1, 1);
-//			test_menu_loopcount = 2;
+//#endif
+//test_menu_loopcount = 2;
 //
 //			break;
 //
@@ -2443,8 +2449,10 @@ extern int WR_SEC_COUNT;
 				systemStatus.bDisableAutoLockFlags |= AUTOLOCK_FLAG_TESTING_MENU;
 				test_menu_loopcount=test_menu_loopcount +1; //++;
 #else   //normal, not BGXXX
-                                clearScreen(true);
+                clearScreen(true);
+#if (VIBRATION_SUPPORT==1)
 				VibrateCon(BuzzAlert1000ms, 1, 2);
+#endif
 				test_menu_loopcount++;
 #endif
 			}
@@ -2540,7 +2548,9 @@ extern int WR_SEC_COUNT;
 //		case 1:
 //			OLEDOff();
 //			LockScreen();
+//#if (VIBRATION_SUPPORT==1)
 //			VibrateCon(BuzzAlert1000ms, 1, 1);
+//#endif
 //			test_menu_loopcount = 2;
 //
 //			break;

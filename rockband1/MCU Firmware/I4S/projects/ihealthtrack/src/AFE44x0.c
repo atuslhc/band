@@ -13,6 +13,12 @@
 #include "device_task.h"
 #include "em_int.h"
 
+#if (AFE44x0_SUPPORT==0)
+uint8_t AMB_uA = 0;     //refer AFE4400.pdf p64 0-10.
+
+#endif
+#if (AFE44x0_SUPPORT)
+
 extern int itest; //BG013_2
 extern uint32_t utest; //BG013_2
 
@@ -935,3 +941,4 @@ void AFE_INT_CALLBACK(void)
 	xQueueSendFromISR(hEvtQueueDevice, &msg, 0);
 }
 
+#endif
