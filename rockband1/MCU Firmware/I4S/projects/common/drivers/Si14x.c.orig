@@ -1,0 +1,753 @@
+#include "FreeRTOS.h"
+#include "Si14x.h"
+#include "I2c_driver.h"
+#include "em_gpio.h"
+#include "task.h"
+
+/********有关校验的一些宏定义***************************************/
+ //                                                         msb  lsb  align
+ //                                                         i2c  i2c  ment
+ //                                                         addr addr
+
+#define  ALSIR_ADCHI_IRSENSE                    (collect(buf,0x23, 0x22, 0))
+#define  ALSIR_ADCLO_IRSENSE                    (collect(buf,0x22, 0x25, 1))
+#define  ALSIR_ADCLO_WHSENSE                    (collect(buf,0x24, 0x26, 0))
+#define  ALSVIS_ADCHI_WHSENSE                   (collect(buf,0x26, 0x27, 1))
+#define  ALSVIS_ADCLO_WHSENSE                   (collect(buf,0x28, 0x29, 0))
+#define  PROX3_ADCHI_IRSENSE                    (collect(buf,0x29, 0x2a, 1))
+#define  LED_DRV65                              (collect(buf,0x2b, 0x2c, 0))
+#define  ALSIR_ADCHI_IRSENSE_REF                 4.021290
+#define  ALSIR_ADCLO_IRSENSE_REF                 57.528500
+#define  ALSIR_ADCLO_WHSENSE_REF                 2.690010
+#define  ALSVIS_ADCHI_WHSENSE_REF                0.042903
+#define  ALSVIS_ADCLO_WHSENSE_REF                0.633435
+#define  PROX3_ADCHI_IRSENSE_REF                 23.902900
+#define  LED_DRV65_REF                           56.88930
+
+
+
+extern volatile I2C_TransferReturn_TypeDef I2C0_Status;
+extern uint32_t I2C0_error_count,I2C1_error_count;
+
+
+
+void SI14x_IIC_Init(void)
+{
+  I2C_Init_TypeDef i2cInit = I2C_INIT_DEFAULT;
+  uint8_t i = 0;
+  
+ if(I2C0_used==false)
+	{
+	 I2C0_used=true;
+     CMU_ClockEnable(SI14x_I2C_cmuClock_I2C, true);
+
+     /*产生几个脉冲使IIC总线稳定*/
+     for (i = 0; i < 9; i++)//注意产生脉冲的方式。
+       {
+        GPIO_PinModeSet(SI14x_I2C_gpioPort, SI14x_I2C_SCL_PIN, gpioModeWiredAnd, 0);
+        GPIO_PinModeSet(SI14x_I2C_gpioPort, SI14x_I2C_SCL_PIN, gpioModeWiredAnd, 1);
+       }
+ 
+     /*确保IIC的两个引脚都输出高*/
+     GPIO_PinModeSet(SI14x_I2C_gpioPort, SI14x_I2C_SCL_PIN, gpioModeWiredAnd, 1);//配置成线与(也就是开漏) 数据是1
+     GPIO_PinModeSet(SI14x_I2C_gpioPort, SI14x_I2C_SDA_PIN, gpioModeWiredAnd, 1);
+  
+  
+      /* Enable pins at location 2 *///这里实际上是location3.
+     SI14x_I2C->ROUTE = I2C_ROUTE_SDAPEN | I2C_ROUTE_SCLPEN | SI14x_I2C_LOC;
+     I2C_Init(SI14x_I2C, &i2cInit);//后一个参数是指针，所以这里把变量取地址传入。
+  
+     /* Clear and enable interrupt from I2C module */
+     NVIC_ClearPendingIRQ(SI14x_I2C_IRQn);
+     NVIC_EnableIRQ(SI14x_I2C_IRQn);
+ 	}
+}
+
+void delay(long t)
+{
+  while(t>0)
+  {
+    t--;
+  }
+}
+
+static int WaitUntilSleep(void)
+{
+    unsigned char nonused;
+    int retval;
+    // This loops until the SI14x is known to be in its sleep state
+    // or if an i2c error occurs
+    while (1)
+    {
+        retval=SI14x_ReadReg(REG_CHIP_STAT, &nonused,1);//想获取读取的数据内容
+       // retval = SI14xReadFromRegister(nonused, REG_CHIP_STAT);
+        if (retval == 1) break;
+        if (retval <  0) return retval;
+    }
+    return 0;
+}
+
+/*该函数返回读取某个寄存器是否成功，成功返回0*/
+int SI14x_I2CReadNByte_GetState(I2C_TypeDef *i2c, uint8_t addr, uint8_t subaType, uint32_t suba, uint8_t *data, uint32_t len)
+{
+  I2C_TransferSeq_TypeDef seq;
+  uint8_t regid[4];
+
+  seq.addr = addr;
+  seq.flags = I2C_FLAG_WRITE_READ;
+  /* Select register to be read */
+  *((uint32_t *)regid) = suba;
+  seq.buf[0].data = regid;
+  seq.buf[0].len = subaType;
+
+  seq.buf[1].data = data;
+  seq.buf[1].len = len;
+
+  if (i2c == I2C0)
+  {
+    /* Do a polled transfer */
+    I2C0_Status = I2C_TransferInit(i2c, &seq);
+    while (I2C0_Status == i2cTransferInProgress)
+    {
+      /* Enter EM1 while waiting for I2C interrupt */
+      EMU_EnterEM1();
+      /* Could do a timeout function here. */
+	  I2C0_error_count++;
+    }
+    
+    if (I2C0_Status != i2cTransferDone)
+    {
+      return((int)I2C0_Status);
+    }
+  }
+  return i2cTransferDone;
+
+}
+
+/*该函数返回读到的寄存器中的内容*/
+int SI14x_I2CReadNByte_GetRegData(I2C_TypeDef *i2c, uint8_t addr, uint8_t subaType, uint32_t suba, uint8_t *data, uint32_t len)
+{
+  I2C_TransferSeq_TypeDef seq;
+  uint8_t regid[4];
+
+  seq.addr = addr;
+  seq.flags = I2C_FLAG_WRITE_READ;
+  /* Select register to be read */
+  *((uint32_t *)regid) = suba;
+  seq.buf[0].data = regid;
+  seq.buf[0].len = subaType;
+
+  seq.buf[1].data = data;
+  seq.buf[1].len = len;
+  if (i2c == I2C0)
+  {
+    /* Do a polled transfer */
+    I2C0_Status = I2C_TransferInit(i2c, &seq);
+    while (I2C0_Status == i2cTransferInProgress)
+    {
+      /* Enter EM1 while waiting for I2C interrupt */
+      EMU_EnterEM1();
+      /* Could do a timeout function here. */
+	  I2C0_error_count++;
+    }
+    
+    if (I2C0_Status == i2cTransferDone)
+    {
+      return *seq.buf[1].data;
+    } 
+  }
+}
+
+/*说明：下面涉及到读响应寄存器的读函数，都读取响应寄存器中的内容，而不管读取状态*/
+
+int SI14x_WriteReg(unsigned char WriteAddr, unsigned char Data)
+{
+	int ret;
+        
+ 
+	ret = I2CWriteNByte(SI14x_I2C, SIl4x_IIC_ADDR, I2C_SUBA_ONEBYTE, WriteAddr, &Data, 1);
+
+	if (ret == i2cTransferDone)
+	{
+		return 0;
+	}
+	else
+	{
+		return 0xff;
+	}
+      
+}
+
+int SI14x_ReadReg(unsigned char Reg, unsigned char* Data, unsigned char DatStatSel)
+{
+     if(DatStatSel == 1)
+     {
+     return (SI14x_I2CReadNByte_GetRegData(SI14x_I2C, SIl4x_IIC_ADDR, I2C_SUBA_ONEBYTE, Reg, Data, 1));
+     }
+     else
+     {
+     return (SI14x_I2CReadNByte_GetState(SI14x_I2C, SIl4x_IIC_ADDR, I2C_SUBA_ONEBYTE, Reg, Data, 1));
+     }
+}
+
+/*发送命令函数*/
+int  SI14x_SendCMD(unsigned char cmd)
+{
+  unsigned char  nonused;
+  int response;
+  int retval;
+  
+  /*获取响应寄存器中的内容*/
+  if((response = SI14x_ReadReg(REG_RESPONSE,&nonused,1))<0)
+    return response;
+  /*2次检查，判断响应寄存器的内容是否一致*/
+  while(1)
+  {
+    if((retval = WaitUntilSleep())!= 0)
+     return retval;
+    if(cmd == 0)
+      break;
+    retval = SI14x_ReadReg(REG_RESPONSE,&nonused,1);
+    if(retval == response)
+      break;
+    else if(retval < 0)
+      return retval;
+    else
+      response = retval;
+  }
+  /*发送命令:我的函数写成功后返回0.这里参考sil14的例子，不知道他写成功后返回的是否为0*/
+    if((retval = SI14x_WriteReg(REG_COMMAND , cmd)) != 0)
+      return retval;
+  /*查看响应寄存器的内容是否有变化*/
+  while(1)
+  {
+    if(cmd == 0)
+      break;
+    retval = SI14x_ReadReg(REG_RESPONSE,&nonused,1);
+    if(retval != response)
+      break;
+    else if(retval < 0)
+      return retval;
+  }
+  return 0; 
+}
+
+
+/*块写入，用于配置参数*/
+int SI14x_BlockWrite(unsigned char addr,unsigned char length,unsigned char const *value)
+{
+    unsigned char retval,counter;
+    for(counter = 0;counter < length;counter++)
+    {
+      retval = (int)SI14x_WriteReg(addr+counter, value[counter]);
+    }
+    return retval;
+}
+
+
+
+/*需要返回读到的数据时，设置一个全局数组，把他传入到values*/
+int Si114x_BlockRead(unsigned char address, unsigned char length, unsigned char *values)
+{
+    unsigned char counter,nonused;
+   for ( counter = 0; counter < length; counter++)
+   {
+      values[counter] = SI14x_ReadReg(address+counter, &nonused, 1);//读取寄存器中的内容
+   }
+   return 0;
+}
+
+/*设置参数*/
+int SI14x_ParaSet(unsigned char ParaAddr,unsigned char data)
+{
+  int retval;
+  unsigned char buffer[2];
+  unsigned char nonused;
+  
+  if((retval = WaitUntilSleep()) != 0)
+    return retval;
+  buffer[0] = data;
+  buffer[1] = 0xa0 + (ParaAddr & 0x1f);
+  
+  retval = SI14x_BlockWrite(REG_PARAM_WR,2,(unsigned char const *)buffer);
+  while(1)//这里主要是检查刚才有没有写进去数据。
+  {
+    retval = SI14x_ReadReg(REG_PARAM_RD, &nonused, 1);//
+    if(retval == data)
+      break;
+  }
+  return 0;
+}
+/*读取参数寄存器的内容,该函数只能读取一个寄存器的值*/
+int SI14x_ParaGet(unsigned char ParaAddr)
+{
+  unsigned char nonused,cmd;
+  int retval;
+  
+  cmd = 0x80+(ParaAddr & 0x1f);
+  if((retval =SI14x_SendCMD(cmd)) != 0)
+    return retval;
+  return (SI14x_ReadReg(REG_PARAM_RD, &nonused, 1));
+}
+
+
+
+
+
+
+int SI14xNOP(void)
+{  
+    return (SI14x_SendCMD(0x00));
+}
+
+int SI14x_PsAlsPause(void)
+{
+   return (SI14x_SendCMD(0x0B));//在手册上没有看到该命令
+}
+
+int SI14x_PauseAll(void)
+{
+  unsigned char nonused;
+  
+  while(1)
+  {
+    while(1)//一直发送NOP直到响应寄存器返回0。有时候会卡在这里，芯片一直没有响应。
+    {
+      if(SI14x_ReadReg(REG_RESPONSE, &nonused,1) == 0)
+        break;
+      else
+        SI14xNOP();    
+    }
+    SI14x_PsAlsPause();//暂停器件
+    //等待响应
+    while(1)
+    {
+      if((SI14x_ReadReg(REG_RESPONSE, &nonused,1) )!= 0)
+        break;
+    }
+    //当PsAlsPause响应时good时，此时的response响应寄存器应该是1
+    if((SI14x_ReadReg(REG_RESPONSE, &nonused,1) ) == 1)
+        break;
+  }
+  return 0;
+}
+
+/***
+芯片复位
+***/
+int SI14x_RST(void)
+{
+    int retval=0;
+    
+    retval += SI14x_WriteReg(REG_MEAS_RATE, 0x00);//算是测量速率这是低字节，该还有高字节。这16位数据乘以31.25us表示两次测量的时间间隔。要注意手册的提示
+    retval += SI14x_PauseAll();
+    
+    
+    retval += SI14x_WriteReg(REG_MEAS_RATE, 0x00);
+ //   retval += SI14x_WriteReg(REG_IRQ_ENABLE, 0x00);
+ //   retval += SI14x_WriteReg(REG_IRQ_MODE1, 0x00);
+ //   retval += SI14x_WriteReg(REG_IRQ_MODE2, 0x00);//手册上并没有这两个寄存器
+ //   retval += SI14x_WriteReg(REG_INT_CFG, 0x00);//INT引脚的配置，板子上吧该脚没有接到MCU
+  //  retval += SI14x_WriteReg(REG_IRQ_STATUS, 0xff);
+    
+    //执行复位
+    retval += SI14x_WriteReg(REG_COMMAND, 1);
+    //延时10ms,使芯片执行内部复位序列
+    delay(1000);
+    //写入硬件key
+    retval+=SI14x_WriteReg(REG_HW_KEY, HW_KEY_VAL0);
+    
+    return retval;    
+}
+/*下面这些是命令
+Ps:表示LED的选择，查看是否有3个LED
+Als:表示周围亮度传感器
+force：表示强制执行
+auto：表示自动执行
+*/
+int SI14xPsForce(void)
+{
+   return SI14x_SendCMD(0x05);
+}
+
+int SI14xAlsForce(void)
+{
+   return SI14x_SendCMD(0x06);
+}
+
+int SI14xPsAlsForce(void)
+{
+   return SI14x_SendCMD(0x07);
+}
+
+int SI14xPsAlsAuto(void)
+{
+   return SI14x_SendCMD(0x0F);
+}
+
+/*参数：
+:current表示LED电流，
+：tasklist表示初始化通道选择，即选择哪几个任务
+：measrate表示各种传感器工作的频率，另外当他是负数时表示不执行自治测试
+本函数把器件配置成自治测试
+*/
+int SI14x_StartWork(int current,int tasklist,int measrate)
+{
+  int retval = 0;
+  unsigned char i21,i3;
+  
+  retval += SI14x_RST();
+  /*
+  该函数完成以下4个工作：暂停所有的先前测试；
+  清除所有IIC寄存器；
+  清除所有中断状态；
+  延迟10ms
+  发送HW_KEY
+  */
+  if(current < 0)
+  {
+    i21 = 0xbb;//current = LED1_202;
+    i3 = 0x0b;
+  }
+  else
+  {
+    i21 = (current << 4) + current;
+    i3 = current;
+  }
+  /*这里LED1,2,3的电流到底该怎么设置*/
+  retval += SI14x_WriteReg(REG_PS_LED21, i21);
+  retval += SI14x_WriteReg(REG_PS_LED3, i3);
+  
+  /*初始化CHLIST，使能一些测量项目*/
+  if(tasklist < 0)
+  {
+    tasklist = ALS_IR_TASK + ALS_VIS_TASK + PS1_TASK; 
+  }
+  retval += SI14x_ParaSet(PARAM_CH_LIST,tasklist);
+  /*设置IRQ模式和INT CFG*/
+  retval += SI14x_WriteReg(REG_INT_CFG, ICG_INTOE);
+  retval += SI14x_WriteReg(REG_IRQ_ENABLE, IE_ALS_EVRYSAMPLE
+                                          + IE_PS1_EVRYSAMPLE 
+                                          + IE_PS2_EVRYSAMPLE 
+                                          + IE_PS3_EVRYSAMPLE 
+                                            );
+  
+  retval += SI14x_WriteReg(REG_IRQ_MODE1, IM1_ALS_EVRYSAMPLE
+                                         +IM1_PS1_EVRYSAMPLE
+                                         +IM1_PS2_EVRYSAMPLE  
+                                           );
+  retval += SI14x_WriteReg(REG_IRQ_MODE2,IM2_PS3_EVRYSAMPLE);
+  
+  /*
+  设置器件相关部分测试的频率
+  0x84每10ms一次
+  0xB9每100ms一次
+  0xff每2s一次
+  本函数中设置当传入measrate为正时把器件配置成自治测试模式
+  */
+  if(measrate >0)
+  {
+  retval += SI14x_WriteReg(REG_MEAS_RATE,measrate);
+  retval += SI14x_WriteReg(REG_PS_RATE,0x08);
+  /*当配置成0x08时ps1,ps2,ps3,vis,ir,aux都是器件被唤醒就执行*/
+  retval += SI14x_WriteReg(REG_ALS_RATE,0x08);
+  retval += SI14xPsAlsAuto();//启动自治测试模式。
+  /*打开自治模式，获取校验数据出错了，这里先关掉试一试。2014年3月3日15:24:50*/
+  }
+  return retval;  
+}
+
+
+
+
+
+/*有关校验的一些功能函数****************************开始*****/
+float decode(unsigned int input)
+{
+  unsigned int exponent,exponent_basis9,fraction;
+  
+  union
+  {
+  float  f;
+  unsigned int i;
+  }val;
+  
+  val.i = input;
+  if(input == 0)
+  return 0;
+  
+  exponent_basis9 = (val.i & 0x0f00)>>8;
+  exponent = exponent_basis9 - 9 + 0x76;
+  exponent <<= 23;
+  
+  fraction = val.i & 0x00ff;
+  fraction <<= 15;
+  
+  val.i =  exponent + fraction;
+  return val.f;  
+}
+
+float vispd_correction(unsigned char buf[])
+{
+  float val =  ALSVIS_ADCLO_WHSENSE_REF/ALSVIS_ADCLO_WHSENSE;
+  
+  if(val < 0.0 )
+    return 1.0;
+  else
+    return val;
+}
+
+float irpd_correction(unsigned char buf[])
+{
+  float val = ALSIR_ADCLO_IRSENSE_REF / ALSIR_ADCLO_IRSENSE;
+  
+  if(val < 0.0)
+  {
+    return 1.0;
+  }
+  else
+    return val;
+}
+
+float adcrange_ratio(unsigned char buf[])
+{
+  float valOne = ALSIR_ADCLO_IRSENSE;
+  float valTwo = ALSIR_ADCHI_IRSENSE;
+  
+  if((valOne < 0.0)||(valTwo < 0.00))
+    return PROX3_ADCHI_IRSENSE_REF / ALSIR_ADCHI_IRSENSE_REF;
+  else
+    return valOne/valTwo;
+}
+
+float irsize_ratio(unsigned char buf[])
+{
+  float valOne = PROX3_ADCHI_IRSENSE;
+  float valTwo = ALSIR_ADCHI_IRSENSE;
+  
+  if((valOne < 0.0) || (valTwo <0.00))
+    return PROX3_ADCHI_IRSENSE_REF / ALSIR_ADCHI_IRSENSE_REF;
+  else
+    return valOne/valTwo;
+}
+float ledi_ratio(unsigned char buf[])
+{
+  float valOne = LED_DRV65_REF;
+  float valTwo = LED_DRV65;
+  
+  if(valTwo < 0.0)
+    return 1.0;
+  else
+    return valOne/valTwo;
+}
+
+float collect(unsigned char buf[],unsigned char msb_addr,unsigned char lsb_addr,unsigned char alignment)
+{
+  unsigned int val;
+  unsigned char msb_ind = msb_addr-0x22;
+  unsigned char lsb_ind = lsb_addr-0x22;
+  
+  if(alignment == 0)
+  {
+    val = buf[msb_ind] << 4;
+    val +=buf[lsb_ind] >> 4;
+  }
+  else
+  {
+    val = buf[msb_ind] << 8;
+    val += buf[lsb_ind];
+    val &= 0x0fff;
+  }
+  if((val == 0x0fff) || (val == 0x0000))
+    return -1.0;
+  else
+    return decode(val);
+}
+
+/*获取校验数据*/
+int SI14x_GetCAL(SI114X_CAL_S* si14x_cal,char secrity)
+{
+  unsigned char buf[12];
+  int retval,response,i;
+  unsigned char nonused;
+  
+  /*当secrity为1时，对其接口寄存器进行判断，如果接口寄存器为0表明没有开启自治测试模式*/
+  if(secrity == 1)
+  {
+      retval = Si114x_BlockRead(REG_ALS_VIS_DATA0, 12, buf);
+      if(retval != 0)//测试结果retval=0，buf[0:3]是0x10,0x01,0x41,0x01,后面的是0
+        return -2;
+      for(i = 0; i < 12; i++)
+      {
+        if(buf[i] != 0)
+        {
+          retval = -1;
+          goto error_exit;
+        }
+      }
+  }
+  
+  /*检测器件是否可以接受数据*/
+  do
+  {
+    retval = SI14xNOP();
+    response = SI14x_ReadReg(REG_RESPONSE, &nonused, 1);//获取响应寄存器的内容
+  }while(response != 0);//测试该返回值是0
+  
+  /*获取校验码,这句这是发生要校验数据的命令*/
+  retval = SI14x_WriteReg(REG_COMMAND, 0x12);//测试，这里retval是0
+  if(retval != 0)
+  {
+    retval = -2;
+    goto error_exit;
+  }
+  /*等待响应寄存器增加.响应寄存器的内容
+  0x80:非法命令
+  0x8c:测试VIS时ADC溢出
+  0x8d:测试IR时ADC溢出
+  0x8e:测试AUX时ADC溢出
+  */
+  do
+  {
+    response = SI14x_ReadReg(REG_RESPONSE, &nonused, 1);//这里response变成了1
+    if(response == 0x80)
+    {
+     SI14xNOP();
+     goto error_exit;
+    }
+    else if(response & 0xfff0)
+    {
+      retval = -3;
+      goto error_exit;
+    }
+  }while(response != 1);
+  
+  /*从接口寄存器中获取12字节*/
+  retval = Si114x_BlockRead(REG_ALS_VIS_DATA0, 12, buf);
+  if(retval != 0)
+  {
+    retval = -2;
+    goto error_exit;
+  }
+  si14x_cal->vispd_correction = vispd_correction(buf);
+  si14x_cal->irpd_correction  = irpd_correction(buf);
+  si14x_cal->adcrange_ratio   = adcrange_ratio(buf);
+  si14x_cal->irsize_ratio     = irsize_ratio(buf);
+  si14x_cal->ledi_ratio       = ledi_ratio(buf);
+  return 0;
+error_exit:
+  si14x_cal->vispd_correction = 1.0;
+  si14x_cal->irpd_correction  = 1.0;
+  si14x_cal->adcrange_ratio   = 1.0 * ALSIR_ADCLO_IRSENSE_REF/ALSIR_ADCHI_IRSENSE_REF;
+  si14x_cal->irsize_ratio     = 1.0 * PROX3_ADCHI_IRSENSE_REF/ALSIR_ADCHI_IRSENSE_REF;
+  si14x_cal->ledi_ratio       = 1.0;
+  return retval;
+  
+}
+
+/*设置校验数据*/
+int SI14x_SetUCOEF(unsigned char ref_ucoef[],SI114X_CAL_S* si14x_cal)
+{
+    int response ;
+    int temp;
+    unsigned char nonused;
+    unsigned char ucoef[4] = {0x29,0x89,0x2,0x00};
+    float vc = 1.0,ic = 1.0;
+    
+    if(ref_ucoef != 0 )
+    {
+        for(temp = 0; temp<4;temp++)
+        {
+                ucoef[temp] = ref_ucoef[temp];//通过传进来的数据来改写默认值
+        }
+    }//我传递进来的是4个字节的0
+    response =  SI14x_ReadReg(REG_PART_ID, &nonused, 1);
+    switch(response)
+    {
+    case 0x32:
+    case 0x45:
+    case 0x46:
+    case 0x47: temp = 1;break;
+    default:temp = 0;
+    }
+    if(!temp)
+    {
+    return -1;
+    }
+    
+    if(si14x_cal != 0)//程序没有进来  2014年3月4日10:49:56,该值始终是0
+    {
+      if(si14x_cal->vispd_correction > 0.0)
+        vc = si14x_cal->vispd_correction;
+      if(si14x_cal->irpd_correction > 0.0)
+        ic=si14x_cal->irpd_correction;
+    }
+    temp = (unsigned int)(((float)((unsigned long )ucoef[0]+((unsigned long)ucoef[1]<<8))*vc));
+    ucoef[0] = (temp & 0x00ff);
+    ucoef[1] = (temp & 0xff00) >> 8;
+    
+    temp = (unsigned int)(((float)((unsigned long )ucoef[2]+((unsigned long)ucoef[3]<<8))*ic));
+    ucoef[2] = (temp & 0x00ff);
+    ucoef[3] = (temp & 0xff00) >> 8;
+//测试发现这里ucoef[]都是0，错误了。
+    response = SI14x_BlockWrite(REG_UCOEF0,4,ucoef);
+    
+    return response;
+}
+
+/********有关校验数据的一些功能函数********************************结束*****/
+
+
+
+
+int val = 0;
+float uvIndex = 0.0;//紫外线数据
+int alsIndex = 0;
+SI114X_CAL_S* cal = NULL;//定义一个矫正结构体
+
+unsigned char ref_ucoef[4]={0x29,0x89,0x02,0x00};//定义校验参数数组(默认的)。
+
+
+
+void SI14x_Init(void)
+{
+    unsigned char nonused;
+    int uvIndexH = 0;
+    int uvIndexL = 0;
+    
+    delay(30000);//上电后延时至少25ms
+    
+    CMU_ClockEnable(cmuClock_GPIO, true);//打开所有引脚的时钟
+    GPIO_PinModeSet(SI14x_I2C_gpioPort, SI14x_I2C_SCL_PIN, gpioModePushPull, 1);
+    GPIO_PinModeSet(SI14x_I2C_gpioPort, SI14x_I2C_SDA_PIN, gpioModePushPull, 1);//刚开始把引脚拉高
+        
+    SI14x_IIC_Init();
+    SI14x_RST();//软件复位
+    val = SI14x_ReadReg(REG_PART_ID, &nonused,1);//该芯片的PART_ID是0x32
+    if(0x32 == val)
+    {
+//测量UV 
+    val = SI14x_GetCAL(cal,1); //进行校验时，要确保没有自动的相关处理，所以这里采样软件复位。通过校验获取芯片的的校验数据
+    SI14x_SetUCOEF(ref_ucoef,cal);//通过该函数完成校验，下面可以进行相关项目的测量。
+  //  SI14x_BlockWrite(REG_UCOEF0,4,(unsigned char const *)&ref_ucoef[0]);  //这是原始的校验数据   
+    SI14x_ParaSet(PARAM_CH_LIST,UV_TASK);//使能CHLIST中的UV_TASK bit。用来读UV的数据
+
+//测量ALS
+    SI14xAlsForce(); //使能强制测试功能模式。强制测试ALS 
+    SI14x_ParaSet(PARAM_CH_LIST,ALS_VIS_TASK);//使能ALS    
+
+    delay(300);//手册上说配置完成后285us后，UV数据可读
+    }   
+    
+   uvIndexL = SI14x_ReadReg(REG_AUX_DATA0, &nonused,1); /*读UV指数*/
+   uvIndexH = SI14x_ReadReg(REG_AUX_DATA1, &nonused,1);
+   
+   uvIndex = 1.0*((uvIndexH << 8) + uvIndexL)/100.0; 
+    
+   alsIndex = ((SI14x_ReadReg(REG_ALS_VIS_DATA1, &nonused,1))<<8) + SI14x_ReadReg(REG_ALS_VIS_DATA0, &nonused,1);
+ 
+   
+}
+
+
+

@@ -1,0 +1,2111 @@
+###############################################################################
+#
+# IAR ELF Linker V7.30.4.8167/W32 for ARM                 28/Dec/2016  12:01:36
+# Copyright 2007-2014 IAR Systems AB.
+#
+#    Output file  =  
+#        D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Exe\rockband0_MCU_H.out
+#    Map file     =  
+#        D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\List\rockband0_MCU_H.map
+#    Command line =  
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\AD7156.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\adc.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\AFE44x0.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\BLE-LEUART-DMA.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\BMM150.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\bsp.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\caplesense.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\CapTouchDetect.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\clock.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\clockApp.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\common_vars.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\cortex-m_faults.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\crc.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\data_gather.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\DelayUsingTimerInt.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\Device_task.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\display_task.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\dmactrl.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\drv2605.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_acmp.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_adc.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_burtc.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_cmu.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_dma.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_emu.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_gpio.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_i2c.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_int.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_lcd.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_lesense.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_letimer.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_leuart.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_msc.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_prs.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_rmu.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_rtc.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_system.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_timer.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_usart.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_vcmp.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\em_wdog.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\flash_task.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\GlobalData.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\heap_1.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\i2c_driver.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\src\iar_cortexM4lf_math.a"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\interrupt.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\L3GD20H.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\led_font.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\list.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\low_power_tick_management.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\LPS22HB.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\M00930.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\m25pxx.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\main.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\mcp9804.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\mems.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\mems_tracking.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\Menu.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\notification.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\port.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\portasm.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\queue.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\Si14x.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\signal_proc.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\sleep.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\startup_efm32wg.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\subMenu.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\sys_sharing_source.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\system_efm32wg.o"
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj\tasks.o" -o
+#        "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Exe\rockband0_MCU_H.out"
+#        --strip --map "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\List\rockband0_MCU_H.map"
+#        --config "D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU
+#        Firmware\I4S\projects\ihealthtrack\iar\support-boot.icf" --entry
+#        __iar_program_start --inline --no_exceptions --vfe
+#
+###############################################################################
+
+*******************************************************************************
+*** RUNTIME MODEL ATTRIBUTES
+***
+
+CppFlavor       = *
+__Heap_Handler  = DLMalloc
+__SystemLibrary = DLib
+
+
+*******************************************************************************
+*** PLACEMENT SUMMARY
+***
+
+"A1":  place at 0x00009800 { ro section .intvec };
+"P1":  place in [from 0x00009800 to 0x0003ffff] { ro };
+"P2":  place in [from 0x20000000 to 0x20007fff] { rw, block CSTACK, block HEAP };
+
+  Section             Kind        Address     Size  Object
+  -------             ----        -------     ----  ------
+"A1":                                         0xe0
+  .intvec             ro code  0x00009800     0xe0  startup_efm32wg.o [1]
+                             - 0x000098e0     0xe0
+
+"P1":                                      0x2b3c1
+  .rodata             const    0x000098e0  0x13458  arm_common_tables.o [4]
+  .text               ro code  0x0001cd38   0x2c38  BLE-LEUART-DMA.o [1]
+  .text               ro code  0x0001f970    0x204  DelayUsingTimerInt.o [1]
+  .text               ro code  0x0001fb74      0x6  ABImemclr.o [6]
+  .text               ro code  0x0001fb7a     0x22  zero_init3.o [6]
+  .text               ro code  0x0001fb9c     0x76  ABImemcpy_unaligned.o [6]
+  .text               ro code  0x0001fc12      0xa  xsprout.o [3]
+  .text               ro code  0x0001fc1c    0xa5c  em_cmu.o [1]
+  .text               ro code  0x00020678     0xc2  em_leuart.o [1]
+  .text               ro code  0x0002073c     0xd6  em_gpio.o [1]
+  .text               ro code  0x00020814    0x224  em_dma.o [1]
+  .text               ro code  0x00020a38    0x3f4  queue.o [1]
+  .text               ro code  0x00020e2c      0x6  ABImemclr4.o [6]
+  .text               ro code  0x00020e34    0xaf0  flash_task.o [1]
+  .text               ro code  0x00021924    0xc58  sys_sharing_source.o [1]
+  .text               ro code  0x0002257c     0x66  ABImemset.o [6]
+  .text               ro code  0x000225e4    0x824  tasks.o [1]
+  .text               ro code  0x00022e08    0x20c  main.o [1]
+  .text               ro code  0x00023014    0x85c  m25pxx.o [1]
+  .text               ro code  0x00023870   0x1518  dlmalloc.o [3]
+  .text               ro code  0x00024d88    0x668  AFE44x0.o [1]
+  .text               ro code  0x000253f0     0x9e  crc.o [1]
+  .text               ro code  0x00025490   0x1e1e  subMenu.o [1]
+  .text               ro code  0x000272b0    0x2b0  M00930.o [1]
+  .text               ro code  0x00027560     0x30  I32ToDbl.o [5]
+  .text               ro code  0x00027590    0x1a2  DblMul.o [5]
+  .text               ro code  0x00027734     0x90  DblToFlt.o [5]
+  Veneer              ro code  0x000277c4      0x8  - Linker created -
+  Veneer              ro code  0x000277cc      0x8  - Linker created -
+  .text               ro code  0x000277d4    0x498  GlobalData.o [1]
+  .text               ro code  0x00027c6c    0x240  clockApp.o [1]
+  .text               ro code  0x00027eac     0x7c  clock.o [1]
+  .text               ro code  0x00027f28    0x2c4  CapTouchDetect.o [1]
+  .text               ro code  0x000281ec    0x8e0  Menu.o [1]
+  .text               ro code  0x00028acc     0x7c  notification.o [1]
+  .text               ro code  0x00028b48     0x6e  ceil.o [5]
+  .text               ro code  0x00028bb8     0x58  DblToI32.o [5]
+  .text               ro code  0x00028c10     0x9a  em_timer.o [1]
+  .text               ro code  0x00028cac    0x18c  system_efm32wg.o [1]
+  .text               ro code  0x00028e38    0x1b4  em_emu.o [1]
+  .text               ro code  0x00028fec     0x58  heap_1.o [1]
+  .text               ro code  0x00029044    0x130  port.o [1]
+  .text               ro code  0x00029174     0x90  list.o [1]
+  CODE                ro code  0x00029204     0xb4  portasm.o [1]
+  .text               ro code  0x000292b8     0x3a  ABImemset48.o [6]
+  .text               ro code  0x000292f4    0x450  data_gather.o [1]
+  .text               ro code  0x00029744    0x184  em_adc.o [1]
+  .text               ro code  0x000298c8     0x4e  FltToDbl.o [5]
+  .text               ro code  0x00029918     0xe8  DblAdd.o [5]
+  .text               ro code  0x00029a00    0x1f4  drv2605.o [1]
+  .text               ro code  0x00029bf4    0x93c  mems.o [1]
+  .text               ro code  0x0002a530    0x3c8  mcp9804.o [1]
+  .text               ro code  0x0002a8f8    0x664  Si14x.o [1]
+  .text               ro code  0x0002af5c    0x250  caplesense.o [1]
+  .text               ro code  0x0002b1ac     0xe0  em_rmu.o [1]
+  .text               ro code  0x0002b28c     0x8a  em_letimer.o [1]
+  .text               ro code  0x0002b318     0x4a  em_rtc.o [1]
+  .text               ro code  0x0002b364     0x94  em_wdog.o [1]
+  .text               ro code  0x0002b3f8    0x1e0  low_power_tick_management.o [1]
+  .text               ro code  0x0002b5d8    0xb6c  Device_task.o [1]
+  .text               ro code  0x0002c144    0x2d4  display_task.o [1]
+  .text               ro code  0x0002c418     0xc4  sleep.o [1]
+  .text               ro code  0x0002c4dc     0x20  em_system.o [1]
+  .text               ro code  0x0002c4fc    0x15c  bsp.o [1]
+  .text               ro code  0x0002c658     0xdc  em_usart.o [1]
+  .text               ro code  0x0002c734      0x6  abort.o [3]
+  .text               ro code  0x0002c73c     0x2c  xgetmemchunk.o [3]
+  .text               ro code  0x0002c768    0x65c  signal_proc.o [1]
+  .text               ro code  0x0002cdc4    0x9c4  mems_tracking.o [1]
+  .text               ro code  0x0002d788     0x34  sprintf.o [3]
+  .text               ro code  0x0002d7bc     0x36  strlen.o [6]
+  .text               ro code  0x0002d7f4    0x246  DblDiv.o [5]
+  .text               ro code  0x0002da3c    0x2da  em_i2c.o [1]
+  .text               ro code  0x0002dd18     0xb8  i2c_driver.o [1]
+  .text               ro code  0x0002ddd0    0x180  DblSub.o [5]
+  .text               ro code  0x0002df50     0x7c  em_msc.o [1]
+  .text               ro code  0x0002dfcc     0xe0  em_burtc.o [1]
+  .text               ro code  0x0002e0ac     0xb6  localtim.o [3]
+  .text               ro code  0x0002e164     0xd0  mktime.o [3]
+  .text               ro code  0x0002e234    0x2e4  em_lesense.o [1]
+  .text               ro code  0x0002e518     0x5c  em_acmp.o [1]
+  .text               ro code  0x0002e574      0xc  XXexit.o [6]
+  .text               ro code  0x0002e580    0x144  arm_rfft_fast_init_f32.o [4]
+  .text               ro code  0x0002e6c4    0x194  arm_rfft_fast_f32.o [4]
+  .text               ro code  0x0002e858    0x10a  arm_cmplx_mag_f32.o [4]
+  .text               ro code  0x0002e964    0x100  sqrt.o [5]
+  .text               ro code  0x0002ea64    0xc02  xprintflarge_nomb.o [3]
+  .text               ro code  0x0002f668     0x29  setlocale.o [3]
+  .text               ro code  0x0002f694      0xa  getzone.o [3]
+  .text               ro code  0x0002f69e     0x42  xgettime.o [3]
+  .text               ro code  0x0002f6e0     0x86  xstol.o [3]
+  .text               ro code  0x0002f768    0x188  xttotm.o [3]
+  .text               ro code  0x0002f8f0    0x748  arm_cfft_f32.o [4]
+  .text               ro code  0x00030038     0x1c  sqrtf.o [5]
+  .text               ro code  0x00030054      0xc  iarEdom.o [6]
+  .text               ro code  0x00030060     0x16  strchr.o [6]
+  .text               ro code  0x00030078     0x58  memchr.o [6]
+  .text               ro code  0x000300d0     0xee  I64DivMod.o [6]
+  .text               ro code  0x000301be     0x42  xdnorm.o [5]
+  .text               ro code  0x00030200     0x2e  DblCmpLe.o [5]
+  .text               ro code  0x0003022e      0xe  div.o [3]
+  .text               ro code  0x0003023c    0x198  xstoul.o [3]
+  .text               ro code  0x000303d4      0xc  errno.o [3]
+  .text               ro code  0x000303e0    0x134  xisdst.o [3]
+  .text               ro code  0x00030514    0x560  arm_cfft_radix8_f32.o [4]
+  .text               ro code  0x00030a74     0x6a  arm_bitreversal2.o [4]
+  .text               ro code  0x00030ae0      0x2  I64DivZer.o [6]
+  .text               ro code  0x00030ae2      0x2  xtls.o [3]
+  .text               ro code  0x00030ae4    0x164  xgetdst.o [3]
+  .rodata             const    0x00030c48    0xd5c  led_font.o [1]
+  .rodata             const    0x000319a4    0xa00  led_font.o [1]
+  .rodata             const    0x000323a4    0x5f0  led_font.o [1]
+  .rodata             const    0x00032994    0x370  led_font.o [1]
+  .rodata             const    0x00032d04    0x2d0  led_font.o [1]
+  .rodata             const    0x00032fd4    0x2a0  led_font.o [1]
+  .rodata             const    0x00033274    0x200  caplesense.o [1]
+  .rodata             const    0x00033474    0x200  caplesense.o [1]
+  .text               ro code  0x00033674    0x1c2  lz77_init.o [6]
+  .rodata             const    0x00033838    0x1a4  led_font.o [1]
+  .rodata             const    0x000339dc    0x180  led_font.o [1]
+  .rodata             const    0x00033b5c    0x160  led_font.o [1]
+  .rodata             const    0x00033cbc    0x100  led_font.o [1]
+  .rodata             const    0x00033dbc    0x100  led_font.o [1]
+  .rodata             const    0x00033ebc    0x100  led_font.o [1]
+  .rodata             const    0x00033fbc     0xfc  led_font.o [1]
+  .rodata             const    0x000340b8     0xf0  led_font.o [1]
+  .text               ro code  0x000341a8     0xc4  cortex-m_faults.o [1]
+  .rodata             const    0x0003426c     0xc0  led_font.o [1]
+  .text               ro code  0x0003432c     0x74  interrupt.o [1]
+  .rodata             const    0x000343a0     0x58  led_font.o [1]
+  .rodata             const    0x000343f8     0x50  led_font.o [1]
+  .rodata             const    0x00034448     0x40  caplesense.o [1]
+  .rodata             const    0x00034488     0x40  led_font.o [1]
+  .rodata             const    0x000344c8     0x40  led_font.o [1]
+  .rodata             const    0x00034508     0x40  led_font.o [1]
+  .rodata             const    0x00034548     0x3c  led_font.o [1]
+  .rodata             const    0x00034584     0x3c  led_font.o [1]
+  .rodata             const    0x000345c0     0x30  led_font.o [1]
+  .rodata             const    0x000345f0     0x30  led_font.o [1]
+  .rodata             const    0x00034620     0x30  signal_proc.o [1]
+  .text               ro code  0x00034650     0x28  data_init.o [6]
+  .text               ro code  0x00034678     0x22  fpinit_M.o [5]
+  .iar.init_table     const    0x0003469c     0x2c  - Linker created -
+  .rodata             const    0x000346c8     0x20  led_font.o [1]
+  .rodata             const    0x000346e8     0x20  led_font.o [1]
+  .rodata             const    0x00034708     0x1c  led_font.o [1]
+  .rodata             const    0x00034724     0x1c  led_font.o [1]
+  .text               ro code  0x00034740     0x1a  cmain.o [6]
+  .text               ro code  0x0003475a      0x4  exit.o [3]
+  .text               ro code  0x00034760      0xa  cexit.o [6]
+  .rodata             const    0x0003476c     0x18  AFE44x0.o [1]
+  .rodata             const    0x00034784     0x18  BLE-LEUART-DMA.o [1]
+  .rodata             const    0x0003479c     0x18  m25pxx.o [1]
+  .rodata             const    0x000347b4     0x18  mems.o [1]
+  .rodata             const    0x000347cc     0x14  caplesense.o [1]
+  .rodata             const    0x000347e0     0x14  clockApp.o [1]
+  .rodata             const    0x000347f4     0x14  led_font.o [1]
+  .rodata             const    0x00034808     0x10  BLE-LEUART-DMA.o [1]
+  .rodata             const    0x00034818     0x10  DelayUsingTimerInt.o [1]
+  .rodata             const    0x00034828     0x10  display_task.o [1]
+  .rodata             const    0x00034838     0x10  M00930.o [1]
+  .rodata             const    0x00034848     0x10  mcp9804.o [1]
+  .rodata             const    0x00034858     0x10  Si14x.o [1]
+  .text               ro code  0x00034868     0x10  startup_efm32wg.o [1]
+  .rodata             const    0x00034878      0xc  BLE-LEUART-DMA.o [1]
+  .rodata             const    0x00034884      0xc  BLE-LEUART-DMA.o [1]
+  .rodata             const    0x00034890      0xc  bsp.o [1]
+  .rodata             const    0x0003489c      0xc  clockApp.o [1]
+  .rodata             const    0x000348a8      0xc  Device_task.o [1]
+  .rodata             const    0x000348b4      0xc  Device_task.o [1]
+  .rodata             const    0x000348c0      0xc  flash_task.o [1]
+  .rodata             const    0x000348cc      0xc  m25pxx.o [1]
+  .rodata             const    0x000348d8      0xc  subMenu.o [1]
+  .rodata             const    0x000348e4      0xc  sys_sharing_source.o [1]
+  .text               ro code  0x000348f0      0xc  cstartup_M.o [6]
+  .rodata             const    0x000348fc      0x8  BLE-LEUART-DMA.o [1]
+  .rodata             const    0x00034904      0x8  BLE-LEUART-DMA.o [1]
+  .rodata             const    0x0003490c      0x8  Device_task.o [1]
+  .rodata             const    0x00034914      0x8  display_task.o [1]
+  .rodata             const    0x0003491c      0x8  flash_task.o [1]
+  .rodata             const    0x00034924      0x8  flash_task.o [1]
+  .rodata             const    0x0003492c      0x8  led_font.o [1]
+  .rodata             const    0x00034934      0x8  subMenu.o [1]
+  .rodata             const    0x0003493c      0x8  subMenu.o [1]
+  .rodata             const    0x00034944      0x8  subMenu.o [1]
+  .rodata             const    0x0003494c      0x8  subMenu.o [1]
+  .rodata             const    0x00034954      0x8  sys_sharing_source.o [1]
+  .rodata             const    0x0003495c      0x8  tasks.o [1]
+  .rodata             const    0x00034964      0x4  clockApp.o [1]
+  .rodata             const    0x00034968      0x4  em_i2c.o [1]
+  .rodata             const    0x0003496c      0x4  Menu.o [1]
+  .rodata             const    0x00034970      0x4  Menu.o [1]
+  .rodata             const    0x00034974      0x4  Si14x.o [1]
+  .rodata             const    0x00034978      0x4  sys_sharing_source.o [1]
+  .text               ro code  0x0003497c      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x00034980      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x00034984      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x00034988      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x0003498c      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x00034990      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x00034994      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x00034998      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x0003499c      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349a0      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349a4      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349a8      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349ac      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349b0      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349b4      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349b8      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349bc      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349c0      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349c4      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349c8      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349cc      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349d0      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349d4      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349d8      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349dc      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349e0      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349e4      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349e8      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349ec      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349f0      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349f4      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349f8      0x4  startup_efm32wg.o [1]
+  .text               ro code  0x000349fc      0x4  startup_efm32wg.o [1]
+  .rodata             const    0x00034a00      0x0  zero_init3.o [6]
+  .rodata             const    0x00034a00      0x0  lz77_init.o [6]
+  Initializer bytes   const    0x00034a00    0x2a1  <for P2 s0>
+                             - 0x00034ca1  0x2b3c1
+
+"P2":                                       0x7aa8
+  P2 s0                        0x20000000    0x489  <Init block>
+    .textrw           inited   0x20000000    0x120  em_msc.o [1]
+    .data             inited   0x20000120     0xc4  AFE44x0.o [1]
+    .data             inited   0x200001e4     0xb4  Menu.o [1]
+    __DLIB_PERTHREAD  inited   0x20000298     0x2c  xttotm.o [3]
+    .data             inited   0x200002c4     0x20  data_gather.o [1]
+    .data             inited   0x200002e4     0x20  flash_task.o [1]
+    .data             inited   0x20000304     0x10  data_gather.o [1]
+    .data             inited   0x20000314     0x10  data_gather.o [1]
+    .data             inited   0x20000324     0x10  data_gather.o [1]
+    .data             inited   0x20000334     0x10  data_gather.o [1]
+    .data             inited   0x20000344     0x10  data_gather.o [1]
+    .data             inited   0x20000354     0x10  data_gather.o [1]
+    .data             inited   0x20000364     0x10  data_gather.o [1]
+    .data             inited   0x20000374     0x10  data_gather.o [1]
+    .data             inited   0x20000384     0x10  flash_task.o [1]
+    .data             inited   0x20000394     0x10  flash_task.o [1]
+    .data             inited   0x200003a4     0x10  flash_task.o [1]
+    .data             inited   0x200003b4     0x10  flash_task.o [1]
+    .data             inited   0x200003c4     0x10  flash_task.o [1]
+    .data             inited   0x200003d4     0x10  flash_task.o [1]
+    .data             inited   0x200003e4     0x10  flash_task.o [1]
+    .data             inited   0x200003f4     0x10  flash_task.o [1]
+    .data             inited   0x20000404      0xc  Device_task.o [1]
+    .data             inited   0x20000410      0x8  BLE-LEUART-DMA.o [1]
+    __DLIB_PERTHREAD  inited   0x20000418      0x8  localtim.o [3]
+    __DLIB_PERTHREAD  inited   0x20000420      0x8  setlocale.o [3]
+    .data             inited   0x20000428      0x4  BLE-LEUART-DMA.o [1]
+    .data             inited   0x2000042c      0x4  common_vars.o [1]
+    .data             inited   0x20000430      0x4  common_vars.o [1]
+    .data             inited   0x20000434      0x4  common_vars.o [1]
+    .data             inited   0x20000438      0x4  common_vars.o [1]
+    .data             inited   0x2000043c      0x4  common_vars.o [1]
+    .data             inited   0x20000440      0x4  common_vars.o [1]
+    .data             inited   0x20000444      0x4  cortex-m_faults.o [1]
+    .data             inited   0x20000448      0x4  Device_task.o [1]
+    .data             inited   0x2000044c      0x4  mems.o [1]
+    .data             inited   0x20000450      0x4  mems_tracking.o [1]
+    .data             inited   0x20000454      0x4  mems_tracking.o [1]
+    .data             inited   0x20000458      0x4  port.o [1]
+    .data             inited   0x2000045c      0x4  system_efm32wg.o [1]
+    .data             inited   0x20000460      0x4  system_efm32wg.o [1]
+    .data             inited   0x20000464      0x4  tasks.o [1]
+    __DLIB_PERTHREAD  inited   0x20000468      0x4  xisdst.o [3]
+    __DLIB_PERTHREAD  inited   0x2000046c      0x4  errno.o [3]
+    __DLIB_PERTHREAD  inited   0x20000470      0x4  xisdstData.o [3]
+    .data             inited   0x20000474      0x1  AFE44x0.o [1]
+    .data             inited   0x20000475      0x1  BLE-LEUART-DMA.o [1]
+    .data             inited   0x20000476      0x1  BLE-LEUART-DMA.o [1]
+    .data             inited   0x20000477      0x1  BLE-LEUART-DMA.o [1]
+    .data             inited   0x20000478      0x1  BLE-LEUART-DMA.o [1]
+    .data             inited   0x20000479      0x1  BLE-LEUART-DMA.o [1]
+    .data             inited   0x2000047a      0x1  BLE-LEUART-DMA.o [1]
+    .data             inited   0x2000047b      0x1  BLE-LEUART-DMA.o [1]
+    .data             inited   0x2000047c      0x1  BLE-LEUART-DMA.o [1]
+    .data             inited   0x2000047d      0x1  BLE-LEUART-DMA.o [1]
+    .data             inited   0x2000047e      0x1  CapTouchDetect.o [1]
+    .data             inited   0x2000047f      0x1  CapTouchDetect.o [1]
+    .data             inited   0x20000480      0x1  CapTouchDetect.o [1]
+    .data             inited   0x20000481      0x1  common_vars.o [1]
+    .data             inited   0x20000482      0x1  common_vars.o [1]
+    .data             inited   0x20000483      0x1  data_gather.o [1]
+    .data             inited   0x20000484      0x1  Device_task.o [1]
+    .data             inited   0x20000485      0x1  GlobalData.o [1]
+    .data             inited   0x20000486      0x1  mems_tracking.o [1]
+    .data             inited   0x20000487      0x1  sys_sharing_source.o [1]
+    .data             inited   0x20000488      0x1  sys_sharing_source.o [1]
+  .bss                zero     0x2000048c   0x1800  heap_1.o [1]
+  .bss                zero     0x20001c8c    0x400  signal_proc.o [1]
+  .bss                zero     0x2000208c    0x400  signal_proc.o [1]
+  .bss                zero     0x2000248c    0x400  signal_proc.o [1]
+  .bss                zero     0x2000288c    0x400  signal_proc.o [1]
+  .bss                zero     0x20002c8c    0x300  mems_tracking.o [1]
+  .bss                zero     0x20002f8c    0x300  Menu.o [1]
+  .bss                zero     0x2000328c    0x200  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x2000348c    0x200  mems_tracking.o [1]
+  .bss                zero     0x2000368c    0x1fc  data_gather.o [1]
+  .bss                zero     0x20003888    0x1d8  dlmalloc.o [3]
+  .bss                zero     0x20003a60    0x180  mems_tracking.o [1]
+  .bss                zero     0x20003be0    0x100  signal_proc.o [1]
+  .bss                zero     0x20003ce0    0x100  signal_proc.o [1]
+  .bss                zero     0x20003de0     0xf8  common_vars.o [1]
+  .bss                zero     0x20003ed8     0xc0  mems.o [1]
+  .bss                zero     0x20003f98     0x98  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004030     0x80  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004200     0x80  dmactrl.o [1]
+  .bss                zero     0x20004280     0x74  common_vars.o [1]
+  .bss                zero     0x200042f4     0x60  DelayUsingTimerInt.o [1]
+  .bss                zero     0x20004354     0x58  data_gather.o [1]
+  .bss                zero     0x200043ac     0x50  queue.o [1]
+  .bss                zero     0x200043fc     0x4c  mems_tracking.o [1]
+  .bss                zero     0x20004448     0x40  main.o [1]
+  .bss                zero     0x20004488     0x3c  tasks.o [1]
+  .bss                zero     0x200044c4     0x30  signal_proc.o [1]
+  .bss                zero     0x200044f4     0x20  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004514     0x20  flash_task.o [1]
+  .bss                zero     0x20004534     0x18  em_i2c.o [1]
+  .bss                zero     0x2000454c     0x18  signal_proc.o [1]
+  .bss                zero     0x20004564     0x18  dlmalloc.o [3]
+  .bss                zero     0x2000457c     0x14  common_vars.o [1]
+  .bss                zero     0x20004590     0x14  tasks.o [1]
+  .bss                zero     0x200045a4     0x14  tasks.o [1]
+  .bss                zero     0x200045b8     0x14  tasks.o [1]
+  .bss                zero     0x200045cc     0x14  tasks.o [1]
+  .bss                zero     0x200045e0     0x10  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x200045f0     0x10  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004600     0x10  GlobalData.o [1]
+  .bss                zero     0x20004610     0x10  Menu.o [1]
+  .bss                zero     0x20004620     0x10  signal_proc.o [1]
+  .bss                zero     0x20004630     0x10  sys_sharing_source.o [1]
+  .bss                zero     0x20004640     0x10  sys_sharing_source.o [1]
+  .bss                zero     0x20004650      0xc  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x2000465c      0xc  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004668      0xc  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004674      0xc  flash_task.o [1]
+  .bss                zero     0x20004680      0xc  mems.o [1]
+  .bss                zero     0x2000468c      0xc  mems.o [1]
+  .bss                zero     0x20004698      0xc  mems_tracking.o [1]
+  .bss                zero     0x200046a4      0x8  AFE44x0.o [1]
+  .bss                zero     0x200046ac      0x8  AFE44x0.o [1]
+  .bss                zero     0x200046b4      0x8  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x200046bc      0x8  display_task.o [1]
+  .bss                zero     0x200046c4      0x8  signal_proc.o [1]
+  .bss                zero     0x200046cc      0x8  signal_proc.o [1]
+  .bss                zero     0x200046d4      0x8  sys_sharing_source.o [1]
+  .bss                zero     0x200046dc      0x4  AFE44x0.o [1]
+  .bss                zero     0x200046e0      0x4  AFE44x0.o [1]
+  .bss                zero     0x200046e4      0x4  AFE44x0.o [1]
+  .bss                zero     0x200046e8      0x4  AFE44x0.o [1]
+  .bss                zero     0x200046ec      0x4  AFE44x0.o [1]
+  .bss                zero     0x200046f0      0x4  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x200046f4      0x4  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x200046f8      0x4  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x200046fc      0x4  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004700      0x4  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004704      0x4  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004708      0x4  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x2000470c      0x4  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004710      0x4  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004714      0x4  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004718      0x4  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x2000471c      0x4  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004720      0x4  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004724      0x4  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004728      0x4  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x2000472c      0x4  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004730      0x4  caplesense.o [1]
+  .bss                zero     0x20004734      0x4  caplesense.o [1]
+  .bss                zero     0x20004738      0x4  CapTouchDetect.o [1]
+  .bss                zero     0x2000473c      0x4  CapTouchDetect.o [1]
+  .bss                zero     0x20004740      0x4  CapTouchDetect.o [1]
+  .bss                zero     0x20004744      0x4  clock.o [1]
+  .bss                zero     0x20004748      0x4  clock.o [1]
+  .bss                zero     0x2000474c      0x4  clock.o [1]
+  .bss                zero     0x20004750      0x4  clock.o [1]
+  .bss                zero     0x20004754      0x4  clockApp.o [1]
+  .bss                zero     0x20004758      0x4  clockApp.o [1]
+  .bss                zero     0x2000475c      0x4  clockApp.o [1]
+  .bss                zero     0x20004760      0x4  clockApp.o [1]
+  .bss                zero     0x20004764      0x4  clockApp.o [1]
+  .bss                zero     0x20004768      0x4  clockApp.o [1]
+  .bss                zero     0x2000476c      0x4  clockApp.o [1]
+  .bss                zero     0x20004770      0x4  common_vars.o [1]
+  .bss                zero     0x20004774      0x4  common_vars.o [1]
+  .bss                zero     0x20004778      0x4  common_vars.o [1]
+  .bss                zero     0x2000477c      0x4  common_vars.o [1]
+  .bss                zero     0x20004780      0x4  common_vars.o [1]
+  .bss                zero     0x20004784      0x4  common_vars.o [1]
+  .bss                zero     0x20004788      0x4  common_vars.o [1]
+  .bss                zero     0x2000478c      0x4  common_vars.o [1]
+  .bss                zero     0x20004790      0x4  common_vars.o [1]
+  .bss                zero     0x20004794      0x4  common_vars.o [1]
+  .bss                zero     0x20004798      0x4  common_vars.o [1]
+  .bss                zero     0x2000479c      0x4  common_vars.o [1]
+  .bss                zero     0x200047a0      0x4  common_vars.o [1]
+  .bss                zero     0x200047a4      0x4  common_vars.o [1]
+  .bss                zero     0x200047a8      0x4  common_vars.o [1]
+  .bss                zero     0x200047ac      0x4  common_vars.o [1]
+  .bss                zero     0x200047b0      0x4  common_vars.o [1]
+  .bss                zero     0x200047b4      0x4  common_vars.o [1]
+  .bss                zero     0x200047b8      0x4  common_vars.o [1]
+  .bss                zero     0x200047bc      0x4  common_vars.o [1]
+  .bss                zero     0x200047c0      0x4  common_vars.o [1]
+  .bss                zero     0x200047c4      0x4  cortex-m_faults.o [1]
+  .bss                zero     0x200047c8      0x4  Device_task.o [1]
+  .bss                zero     0x200047cc      0x4  Device_task.o [1]
+  .bss                zero     0x200047d0      0x4  Device_task.o [1]
+  .bss                zero     0x200047d4      0x4  Device_task.o [1]
+  .bss                zero     0x200047d8      0x4  Device_task.o [1]
+  .bss                zero     0x200047dc      0x4  display_task.o [1]
+  .bss                zero     0x200047e0      0x4  em_int.o [1]
+  .bss                zero     0x200047e4      0x4  flash_task.o [1]
+  .bss                zero     0x200047e8      0x4  GlobalData.o [1]
+  .bss                zero     0x200047ec      0x4  GlobalData.o [1]
+  .bss                zero     0x200047f0      0x4  heap_1.o [1]
+  .bss                zero     0x200047f4      0x4  heap_1.o [1]
+  .bss                zero     0x200047f8      0x4  i2c_driver.o [1]
+  .bss                zero     0x200047fc      0x4  i2c_driver.o [1]
+  .bss                zero     0x20004800      0x4  low_power_tick_management.o [1]
+  .bss                zero     0x20004804      0x4  low_power_tick_management.o [1]
+  .bss                zero     0x20004808      0x4  low_power_tick_management.o [1]
+  .bss                zero     0x2000480c      0x4  m25pxx.o [1]
+  .bss                zero     0x20004810      0x4  main.o [1]
+  .bss                zero     0x20004814      0x4  mems.o [1]
+  .bss                zero     0x20004818      0x4  mems.o [1]
+  .bss                zero     0x2000481c      0x4  mems.o [1]
+  .bss                zero     0x20004820      0x4  mems.o [1]
+  .bss                zero     0x20004824      0x4  mems.o [1]
+  .bss                zero     0x20004828      0x4  mems_tracking.o [1]
+  .bss                zero     0x2000482c      0x4  mems_tracking.o [1]
+  .bss                zero     0x20004830      0x4  mems_tracking.o [1]
+  .bss                zero     0x20004834      0x4  mems_tracking.o [1]
+  .bss                zero     0x20004838      0x4  mems_tracking.o [1]
+  .bss                zero     0x2000483c      0x4  Menu.o [1]
+  .bss                zero     0x20004840      0x4  port.o [1]
+  .bss                zero     0x20004844      0x4  signal_proc.o [1]
+  .bss                zero     0x20004848      0x4  signal_proc.o [1]
+  .bss                zero     0x2000484c      0x4  signal_proc.o [1]
+  .bss                zero     0x20004850      0x4  signal_proc.o [1]
+  .bss                zero     0x20004854      0x4  signal_proc.o [1]
+  .bss                zero     0x20004858      0x4  signal_proc.o [1]
+  .bss                zero     0x2000485c      0x4  signal_proc.o [1]
+  .bss                zero     0x20004860      0x4  signal_proc.o [1]
+  .bss                zero     0x20004864      0x4  signal_proc.o [1]
+  .bss                zero     0x20004868      0x4  signal_proc.o [1]
+  .bss                zero     0x2000486c      0x4  signal_proc.o [1]
+  .bss                zero     0x20004870      0x4  signal_proc.o [1]
+  .bss                zero     0x20004874      0x4  signal_proc.o [1]
+  .bss                zero     0x20004878      0x4  signal_proc.o [1]
+  .bss                zero     0x2000487c      0x4  sleep.o [1]
+  .bss                zero     0x20004880      0x4  sleep.o [1]
+  .bss                zero     0x20004884      0x4  sleep.o [1]
+  .bss                zero     0x20004888      0x4  system_efm32wg.o [1]
+  .bss                zero     0x2000488c      0x4  tasks.o [1]
+  .bss                zero     0x20004890      0x4  tasks.o [1]
+  .bss                zero     0x20004894      0x4  tasks.o [1]
+  .bss                zero     0x20004898      0x4  tasks.o [1]
+  .bss                zero     0x2000489c      0x4  tasks.o [1]
+  .bss                zero     0x200048a0      0x4  tasks.o [1]
+  .bss                zero     0x200048a4      0x4  tasks.o [1]
+  .bss                zero     0x200048a8      0x4  tasks.o [1]
+  .bss                zero     0x200048ac      0x4  tasks.o [1]
+  .bss                zero     0x200048b0      0x4  tasks.o [1]
+  .bss                zero     0x200048b4      0x4  tasks.o [1]
+  .bss                zero     0x200048b8      0x4  tasks.o [1]
+  .bss                zero     0x200048bc      0x4  xgetmemchunk.o [3]
+  .bss                zero     0x200048c0      0x2  AFE44x0.o [1]
+  .bss                zero     0x200048c2      0x2  AFE44x0.o [1]
+  .bss                zero     0x200048c4      0x2  AFE44x0.o [1]
+  .bss                zero     0x200048c6      0x2  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x200048c8      0x2  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x200048ca      0x2  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x200048cc      0x2  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x200048ce      0x2  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x200048d0      0x2  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x200048d2      0x2  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x200048d4      0x2  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x200048d6      0x2  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x200048d8      0x2  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x200048da      0x2  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x200048dc      0x2  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x200048de      0x2  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x200048e0      0x2  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x200048e2      0x2  caplesense.o [1]
+  .bss                zero     0x200048e4      0x2  caplesense.o [1]
+  .bss                zero     0x200048e6      0x2  CapTouchDetect.o [1]
+  .bss                zero     0x200048e8      0x2  common_vars.o [1]
+  .bss                zero     0x200048ea      0x2  DelayUsingTimerInt.o [1]
+  .bss                zero     0x200048ec      0x2  em_emu.o [1]
+  .bss                zero     0x200048ee      0x2  flash_task.o [1]
+  .bss                zero     0x200048f0      0x2  main.o [1]
+  .bss                zero     0x200048f2      0x2  mcp9804.o [1]
+  .bss                zero     0x200048f4      0x2  mcp9804.o [1]
+  .bss                zero     0x200048f6      0x2  mcp9804.o [1]
+  .bss                zero     0x200048f8      0x2  mems.o [1]
+  .bss                zero     0x200048fa      0x2  mems.o [1]
+  .bss                zero     0x200048fc      0x2  mems.o [1]
+  .bss                zero     0x200048fe      0x2  mems_tracking.o [1]
+  .bss                zero     0x20004900      0x2  mems_tracking.o [1]
+  .bss                zero     0x20004902      0x2  mems_tracking.o [1]
+  .bss                zero     0x20004904      0x2  mems_tracking.o [1]
+  .bss                zero     0x20004906      0x2  mems_tracking.o [1]
+  .bss                zero     0x20004908      0x2  mems_tracking.o [1]
+  .bss                zero     0x2000490a      0x2  mems_tracking.o [1]
+  .bss                zero     0x2000490c      0x2  mems_tracking.o [1]
+  .bss                zero     0x2000490e      0x2  mems_tracking.o [1]
+  .bss                zero     0x20004910      0x2  mems_tracking.o [1]
+  .bss                zero     0x20004912      0x2  signal_proc.o [1]
+  .bss                zero     0x20004914      0x2  signal_proc.o [1]
+  .bss                zero     0x20004916      0x2  signal_proc.o [1]
+  .bss                zero     0x20004918      0x2  signal_proc.o [1]
+  .bss                zero     0x2000491a      0x2  signal_proc.o [1]
+  .bss                zero     0x2000491c      0x2  signal_proc.o [1]
+  .bss                zero     0x2000491e      0x2  signal_proc.o [1]
+  .bss                zero     0x20004920      0x2  signal_proc.o [1]
+  .bss                zero     0x20004922      0x2  signal_proc.o [1]
+  .bss                zero     0x20004924      0x2  sys_sharing_source.o [1]
+  .bss                zero     0x20004926      0x2  sys_sharing_source.o [1]
+  .bss                zero     0x20004928      0x2  sys_sharing_source.o [1]
+  .bss                zero     0x2000492a      0x1  AFE44x0.o [1]
+  .bss                zero     0x2000492b      0x1  AFE44x0.o [1]
+  .bss                zero     0x2000492c      0x1  AFE44x0.o [1]
+  .bss                zero     0x2000492d      0x1  AFE44x0.o [1]
+  .bss                zero     0x2000492e      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x2000492f      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004930      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004931      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004932      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004933      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004934      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004935      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004936      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004937      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004938      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004939      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x2000493a      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x2000493b      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x2000493c      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x2000493d      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x2000493e      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x2000493f      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004940      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004941      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004942      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004943      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004944      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004945      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004946      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004947      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004948      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x20004949      0x1  BLE-LEUART-DMA.o [1]
+  .bss                zero     0x2000494a      0x1  bsp.o [1]
+  .bss                zero     0x2000494b      0x1  caplesense.o [1]
+  .bss                zero     0x2000494c      0x1  caplesense.o [1]
+  .bss                zero     0x2000494d      0x1  caplesense.o [1]
+  .bss                zero     0x2000494e      0x1  CapTouchDetect.o [1]
+  .bss                zero     0x2000494f      0x1  CapTouchDetect.o [1]
+  .bss                zero     0x20004950      0x1  CapTouchDetect.o [1]
+  .bss                zero     0x20004951      0x1  common_vars.o [1]
+  .bss                zero     0x20004952      0x1  common_vars.o [1]
+  .bss                zero     0x20004953      0x1  common_vars.o [1]
+  .bss                zero     0x20004954      0x1  common_vars.o [1]
+  .bss                zero     0x20004955      0x1  common_vars.o [1]
+  .bss                zero     0x20004956      0x1  common_vars.o [1]
+  .bss                zero     0x20004957      0x1  common_vars.o [1]
+  .bss                zero     0x20004958      0x1  common_vars.o [1]
+  .bss                zero     0x20004959      0x1  common_vars.o [1]
+  .bss                zero     0x2000495a      0x1  common_vars.o [1]
+  .bss                zero     0x2000495b      0x1  common_vars.o [1]
+  .bss                zero     0x2000495c      0x1  common_vars.o [1]
+  .bss                zero     0x2000495d      0x1  common_vars.o [1]
+  .bss                zero     0x2000495e      0x1  common_vars.o [1]
+  .bss                zero     0x2000495f      0x1  common_vars.o [1]
+  .bss                zero     0x20004960      0x1  common_vars.o [1]
+  .bss                zero     0x20004961      0x1  common_vars.o [1]
+  .bss                zero     0x20004962      0x1  common_vars.o [1]
+  .bss                zero     0x20004963      0x1  Device_task.o [1]
+  .bss                zero     0x20004964      0x1  Device_task.o [1]
+  .bss                zero     0x20004965      0x1  Device_task.o [1]
+  .bss                zero     0x20004966      0x1  Device_task.o [1]
+  .bss                zero     0x20004967      0x1  Device_task.o [1]
+  .bss                zero     0x20004968      0x1  drv2605.o [1]
+  .bss                zero     0x20004969      0x1  drv2605.o [1]
+  .bss                zero     0x2000496a      0x1  drv2605.o [1]
+  .bss                zero     0x2000496b      0x1  drv2605.o [1]
+  .bss                zero     0x2000496c      0x1  drv2605.o [1]
+  .bss                zero     0x2000496d      0x1  flash_task.o [1]
+  .bss                zero     0x2000496e      0x1  GlobalData.o [1]
+  .bss                zero     0x2000496f      0x1  GlobalData.o [1]
+  .bss                zero     0x20004970      0x1  GlobalData.o [1]
+  .bss                zero     0x20004971      0x1  i2c_driver.o [1]
+  .bss                zero     0x20004972      0x1  i2c_driver.o [1]
+  .bss                zero     0x20004973      0x1  low_power_tick_management.o [1]
+  .bss                zero     0x20004974      0x1  M00930.o [1]
+  .bss                zero     0x20004975      0x1  mems.o [1]
+  .bss                zero     0x20004976      0x1  mems.o [1]
+  .bss                zero     0x20004977      0x1  mems.o [1]
+  .bss                zero     0x20004978      0x1  mems.o [1]
+  .bss                zero     0x20004979      0x1  mems.o [1]
+  .bss                zero     0x2000497a      0x1  mems.o [1]
+  .bss                zero     0x2000497b      0x1  mems.o [1]
+  .bss                zero     0x2000497c      0x1  mems.o [1]
+  .bss                zero     0x2000497d      0x1  mems_tracking.o [1]
+  .bss                zero     0x2000497e      0x1  mems_tracking.o [1]
+  .bss                zero     0x2000497f      0x1  mems_tracking.o [1]
+  .bss                zero     0x20004980      0x1  mems_tracking.o [1]
+  .bss                zero     0x20004981      0x1  mems_tracking.o [1]
+  .bss                zero     0x20004982      0x1  mems_tracking.o [1]
+  .bss                zero     0x20004983      0x1  mems_tracking.o [1]
+  .bss                zero     0x20004984      0x1  mems_tracking.o [1]
+  .bss                zero     0x20004985      0x1  mems_tracking.o [1]
+  .bss                zero     0x20004986      0x1  Menu.o [1]
+  .bss                zero     0x20004987      0x1  port.o [1]
+  .bss                zero     0x20004988      0x1  signal_proc.o [1]
+  .bss                zero     0x20004989      0x1  signal_proc.o [1]
+  .bss                zero     0x2000498a      0x1  signal_proc.o [1]
+  .bss                zero     0x2000498b      0x1  signal_proc.o [1]
+  .bss                zero     0x2000498c      0x1  signal_proc.o [1]
+  .bss                zero     0x2000498d      0x1  signal_proc.o [1]
+  .bss                zero     0x2000498e      0x1  signal_proc.o [1]
+  .bss                zero     0x2000498f      0x1  signal_proc.o [1]
+  .bss                zero     0x20004990      0x1  signal_proc.o [1]
+  .bss                zero     0x20004991      0x1  signal_proc.o [1]
+  .bss                zero     0x20004992      0x1  subMenu.o [1]
+  .bss                zero     0x20004993      0x1  subMenu.o [1]
+  .bss                zero     0x20004994      0x1  subMenu.o [1]
+  .bss                zero     0x20004995      0x1  subMenu.o [1]
+  .bss                zero     0x20004996      0x1  sys_sharing_source.o [1]
+  .bss                zero     0x20004997      0x1  sys_sharing_source.o [1]
+  .bss                zero     0x20004998      0x1  sys_sharing_source.o [1]
+  .bss                zero     0x20004999      0x1  sys_sharing_source.o [1]
+  .bss                zero     0x2000499a      0x1  sys_sharing_source.o [1]
+  .bss                zero     0x2000499b      0x1  sys_sharing_source.o [1]
+  .bss                zero     0x2000499c      0x1  sys_sharing_source.o [1]
+  .bss                zero     0x2000499d      0x1  sys_sharing_source.o [1]
+  .bss                zero     0x2000499e      0x1  sys_sharing_source.o [1]
+  .bss                zero     0x2000499f      0x1  sys_sharing_source.o [1]
+  .bss                zero     0x200049a0      0x1  sys_sharing_source.o [1]
+  .bss                zero     0x200049a1      0x1  sys_sharing_source.o [1]
+  .bss                zero     0x200049a2      0x1  sys_sharing_source.o [1]
+  CSTACK                       0x200049a8   0x1100  <Block>
+    CSTACK            uninit   0x200049a8   0x1100  <Block tail>
+  HEAP                         0x20005aa8   0x2000  <Block>
+    HEAP              uninit   0x20005aa8   0x2000  <Block tail>
+                             - 0x20007aa8   0x7aa8
+
+
+*******************************************************************************
+*** INIT TABLE
+***
+
+          Address     Size
+          -------     ----
+Zero (__iar_zero_init3)
+    1 destination range, total size 0x4517:
+          0x2000048c  0x4517
+
+Copy/lz77 (__iar_lz77_init3)
+    1 source range, total size 0x2a1 (57% of destination):
+          0x00034a00   0x2a1
+    1 destination range, total size 0x489:
+          0x20000000   0x489
+
+
+
+*******************************************************************************
+*** MODULE SUMMARY
+***
+
+    Module                       ro code  rw code  ro data  rw data
+    ------                       -------  -------  -------  -------
+D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj: [1]
+    AFE44x0.o                      1 640               139      243
+    BLE-LEUART-DMA.o              11 320                93    1 041
+    CapTouchDetect.o                 708                 2       20
+    DelayUsingTimerInt.o             516                16       98
+    Device_task.o                  2 924                41       42
+    GlobalData.o                   1 176                 1       28
+    M00930.o                         688                16        1
+    Menu.o                         2 272               112      969
+    Si14x.o                        1 636                20
+    bsp.o                            348                12        1
+    caplesense.o                     592             1 108       15
+    clock.o                          124                         16
+    clockApp.o                       576                36       28
+    common_vars.o                                       15      514
+    cortex-m_faults.o                196                 2        8
+    crc.o                            158
+    data_gather.o                  1 104                93      757
+    display_task.o                   724                24       12
+    dmactrl.o                                                   128
+    drv2605.o                        500                          5
+    em_acmp.o                         92
+    em_adc.o                         388
+    em_burtc.o                       224
+    em_cmu.o                       2 652
+    em_dma.o                         548
+    em_emu.o                         436                          2
+    em_gpio.o                        214
+    em_i2c.o                         730                 4       24
+    em_int.o                                                      4
+    em_lesense.o                     740
+    em_letimer.o                     138
+    em_leuart.o                      194
+    em_msc.o                         124      288      166
+    em_rmu.o                         224
+    em_rtc.o                          74
+    em_system.o                       32
+    em_timer.o                       154
+    em_usart.o                       220
+    em_wdog.o                        148
+    flash_task.o                   2 800               121      211
+    heap_1.o                          88                      6 152
+    i2c_driver.o                     184                         10
+    interrupt.o                      116
+    led_font.o                                      13 104
+    list.o                           144
+    low_power_tick_management.o      480                         13
+    m25pxx.o                       2 140                36        4
+    main.o                           524                         70
+    mcp9804.o                        968                16        6
+    mems.o                         2 364                26      254
+    mems_tracking.o                2 500                 5    1 810
+    notification.o                   124
+    port.o                           304                 2        9
+    portasm.o                        180
+    queue.o                        1 012                         80
+    signal_proc.o                  1 628                48    4 796
+    sleep.o                          196                         12
+    startup_efm32wg.o                372
+    subMenu.o                      7 710                44        4
+    sys_sharing_source.o           3 160                26       61
+    system_efm32wg.o                 396                 5       12
+    tasks.o                        2 084                10      192
+    ---------------------------------------------------------------
+    Total:                        64 008      288   15 343   17 652
+
+command line: [2]
+    ---------------------------------------------------------------
+    Total:
+
+dl7M_tln.a: [3]
+    abort.o                            6
+    div.o                             14
+    dlmalloc.o                     5 400                        496
+    errno.o                           12                 2        4
+    exit.o                             4
+    getzone.o                         10
+    localtim.o                       182                 5        8
+    mktime.o                         208
+    setlocale.o                       41                 4        8
+    sprintf.o                         52
+    xgetdst.o                        356
+    xgetmemchunk.o                    44                          4
+    xgettime.o                        66
+    xisdst.o                         308                 3        4
+    xisdstData.o                                         2        4
+    xprintflarge_nomb.o            3 074
+    xsprout.o                         10
+    xstol.o                          134
+    xstoul.o                         408
+    xtls.o                             2
+    xttotm.o                         392                26       44
+    ---------------------------------------------------------------
+    Total:                        10 723                42      572
+
+iar_cortexM4lf_math.a: [4]
+    arm_bitreversal2.o               106
+    arm_cfft_f32.o                 1 864
+    arm_cfft_radix8_f32.o          1 376
+    arm_cmplx_mag_f32.o              266
+    arm_common_tables.o                             78 936
+    arm_rfft_fast_f32.o              404
+    arm_rfft_fast_init_f32.o         324
+    ---------------------------------------------------------------
+    Total:                         4 340            78 936
+
+m7M_tls.a: [5]
+    DblAdd.o                         232
+    DblCmpLe.o                        46
+    DblDiv.o                         582
+    DblMul.o                         418
+    DblSub.o                         384
+    DblToFlt.o                       144
+    DblToI32.o                        88
+    FltToDbl.o                        78
+    I32ToDbl.o                        48
+    ceil.o                           110
+    fpinit_M.o                        34
+    sqrt.o                           256
+    sqrtf.o                           28
+    xdnorm.o                          66
+    ---------------------------------------------------------------
+    Total:                         2 514
+
+rt7M_tl.a: [6]
+    ABImemclr.o                        6
+    ABImemclr4.o                       6
+    ABImemcpy_unaligned.o            118
+    ABImemset.o                      102
+    ABImemset48.o                     58
+    I64DivMod.o                      238
+    I64DivZer.o                        2
+    XXexit.o                          12
+    cexit.o                           10
+    cmain.o                           26
+    cstartup_M.o                      12
+    data_init.o                       40
+    iarEdom.o                         12
+    lz77_init.o                      450
+    memchr.o                          88
+    strchr.o                          22
+    strlen.o                          54
+    zero_init3.o                      34
+    ---------------------------------------------------------------
+    Total:                         1 290
+
+    Gaps                              51                 6      339
+    Linker created                    16                44   12 544
+-------------------------------------------------------------------
+    Grand Total:                  82 942      288   94 371   31 107
+
+
+*******************************************************************************
+*** ENTRY LIST
+***
+
+Entry                      Address    Size  Type      Object
+-----                      -------    ----  ----      ------
+.iar.init_table$$Base   0x0003469c           --   Gb  - Linker created -
+.iar.init_table$$Limit  0x000346c8           --   Gb  - Linker created -
+?main                   0x00034741          Code  Gb  cmain.o [6]
+ACC_8S                  0x2000208c   0x400  Data  Gb  signal_proc.o [1]
+ACC_Mag_ORI             0x20003ce0   0x100  Data  Gb  signal_proc.o [1]
+ACMP_CapsenseInit       0x0002e519    0x3e  Code  Gb  em_acmp.o [1]
+ACMP_GPIOSetup          0x0002e557    0x16  Code  Gb  em_acmp.o [1]
+ADC_INIT                0x00021a85    0x40  Code  Gb  sys_sharing_source.o [1]
+ADC_Init                0x00029745    0x32  Code  Gb  em_adc.o [1]
+ADC_InitSingle          0x00029779    0xce  Code  Gb  em_adc.o [1]
+ADC_PrescaleCalc        0x00029847    0x32  Code  Gb  em_adc.o [1]
+ADC_TimebaseCalc        0x00029879    0x28  Code  Gb  em_adc.o [1]
+AFE44xx_Default_Reg_Init
+                        0x00024f3d    0x1e  Code  Gb  AFE44x0.o [1]
+AFE44xx_Default_Register_Settings
+                        0x20000120    0xc4  Data  Lc  AFE44x0.o [1]
+AFE44xx_PowerOn_Init    0x00025069   0x164  Code  Gb  AFE44x0.o [1]
+AFE44xx_Reg_Read        0x00024ee5    0x58  Code  Gb  AFE44x0.o [1]
+AFE44xx_Reg_Write       0x00024e75    0x52  Code  Gb  AFE44x0.o [1]
+AFE44xx_SW_CMD          0x00024e25    0x50  Code  Gb  AFE44x0.o [1]
+AFE44xx_Shutoff         0x00024fad    0xbc  Code  Gb  AFE44x0.o [1]
+AFE_AN_Voltage          0x2000492c     0x1  Data  Gb  AFE44x0.o [1]
+AFE_DATA_PROC           0x000251cd   0x108  Code  Gb  AFE44x0.o [1]
+AFE_INT_CALLBACK        0x000252d5    0x86  Code  Gb  AFE44x0.o [1]
+AMB_TMP                 0x200048f2     0x2  Data  Gb  mcp9804.o [1]
+AMB_uA                  0x2000492a     0x1  Data  Gb  AFE44x0.o [1]
+AdjustCapVal            0x00027ff9    0x60  Code  Gb  CapTouchDetect.o [1]
+AmbientLight            0x200048e8     0x2  Data  Gb  common_vars.o [1]
+AutoLockScreen          0x0002811f    0x4a  Code  Gb  CapTouchDetect.o [1]
+AxieOUT                 0x200046a4     0x8  Data  Gb  AFE44x0.o [1]
+BAT_ADC_INIT            0x000348e4     0xc  Data  Gb  sys_sharing_source.o [1]
+BLE2EFM32_ANCSHandle    0x0001ea35   0x304  Code  Gb  BLE-LEUART-DMA.o [1]
+BLE_APP_Model           0x20000475     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+BLE_BROADCAST_UPDATE    0x0001f0fd   0x146  Code  Gb  BLE-LEUART-DMA.o [1]
+BLE_BUSY_COUNT          0x200048ca     0x2  Data  Gb  BLE-LEUART-DMA.o [1]
+BLE_Close               0x0001f2e9    0x20  Code  Gb  BLE-LEUART-DMA.o [1]
+BLE_DATA_UPLOADING_PROC
+                        0x0001e8c9   0x11a  Code  Gb  BLE-LEUART-DMA.o [1]
+BLE_DevChip             0x2000465c     0xc  Data  Gb  BLE-LEUART-DMA.o [1]
+BLE_INIT                0x0001ef43    0x7c  Code  Gb  BLE-LEUART-DMA.o [1]
+BLE_Open                0x0001f311    0x2e  Code  Gb  BLE-LEUART-DMA.o [1]
+BLE_RESET               0x0001ef21    0x22  Code  Gb  BLE-LEUART-DMA.o [1]
+BLE_STATE               0x2000492e     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+BLE_Should_Status       0x20004932     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+BMR_PER_SECOND          0x20004770     0x4  Data  Gb  common_vars.o [1]
+BMR_RATE                0x20004774     0x4  Data  Gb  common_vars.o [1]
+BURTC_CompareGet        0x0002e08b     0x6  Code  Gb  em_burtc.o [1]
+BURTC_CompareSet        0x0002e05d    0x2e  Code  Gb  em_burtc.o [1]
+BURTC_ERR               0x2000494a     0x1  Data  Gb  bsp.o [1]
+BURTC_IRQHandler        0x00027d2f    0x40  Code  Gb  clockApp.o [1]
+BURTC_Init              0x0002dff9    0x64  Code  Gb  em_burtc.o [1]
+BURTC_Sync              0x0002dfcd    0x2c  Code  Lc  em_burtc.o [1]
+Band_PassFIR_Coefs      0x00034620    0x30  Data  Gb  signal_proc.o [1]
+BatteryDrainVibratorControlFunc
+                        0x00027bb7     0xa  Code  Gb  GlobalData.o [1]
+Battery_ADC_Init        0x00021ac5    0x26  Code  Gb  sys_sharing_source.o [1]
+Battery_ADC_Read        0x00021aed   0x138  Code  Gb  sys_sharing_source.o [1]
+BleLeUartSta            0x20004936     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+BleTxDMADone            0x0001cf31     0xe  Code  Gb  BLE-LEUART-DMA.o [1]
+BspInit                 0x0002c517    0xce  Code  Gb  bsp.o [1]
+CAPLESENSE_Init         0x0002b063    0x84  Code  Gb  caplesense.o [1]
+CAPLESENSE_setupCMU     0x0002af5f    0x34  Code  Gb  caplesense.o [1]
+CAPLESENSE_setupScaners
+                        0x0002af93    0x56  Code  Gb  caplesense.o [1]
+CHARGER_STA_INIT        0x0002c4fd    0x1a  Code  Gb  bsp.o [1]
+CHECK_BATTERY           0x000220d9   0x212  Code  Gb  sys_sharing_source.o [1]
+CHECK_BLE_STUFF         0x0001cda7    0x32  Code  Gb  BLE-LEUART-DMA.o [1]
+CHECK_PER_Xsecond       0x00021dc1    0xcc  Code  Gb  sys_sharing_source.o [1]
+CMU_AUXClkGet           0x0001fcaf    0x54  Code  Lc  em_cmu.o [1]
+CMU_ClockDivGet         0x0001fd51    0xbe  Code  Gb  em_cmu.o [1]
+CMU_ClockDivSet         0x0001fe0f   0x190  Code  Gb  em_cmu.o [1]
+CMU_ClockEnable         0x0001ffa1    0xae  Code  Gb  em_cmu.o [1]
+CMU_ClockFreqGet        0x0002004f   0x25e  Code  Gb  em_cmu.o [1]
+CMU_ClockSelectGet      0x000202cd    0xc8  Code  Gb  em_cmu.o [1]
+CMU_ClockSelectSet      0x00020395   0x1a6  Code  Gb  em_cmu.o [1]
+CMU_FlashWaitStateControl
+                        0x0001fc43    0x6c  Code  Lc  em_cmu.o [1]
+CMU_FlashWaitStateMax   0x0001fc1d    0x26  Code  Lc  em_cmu.o [1]
+CMU_HFRCOBandSet        0x0002053d    0x72  Code  Gb  em_cmu.o [1]
+CMU_LFClkGet            0x0001fd03    0x4c  Code  Lc  em_cmu.o [1]
+CMU_OscillatorEnable    0x000205b1    0x52  Code  Gb  em_cmu.o [1]
+CRC_TEMP                0x200048dc     0x2  Data  Gb  BLE-LEUART-DMA.o [1]
+CRC_Tracking            0x00025459    0x36  Code  Gb  crc.o [1]
+CRC_calc                0x00025427    0x32  Code  Gb  crc.o [1]
+CSTACK$$Base            0x200049a8           --   Gb  - Linker created -
+CSTACK$$Limit           0x20005aa8           --   Gb  - Linker created -
+CallBackSubMenuActivate
+                        0x00025ed5    0x58  Code  Gb  subMenu.o [1]
+CallBackSubMenuAlarm    0x00025f55   0x258  Code  Gb  subMenu.o [1]
+CallBackSubMenuAmbientTemper
+                        0x00026d79    0x38  Code  Gb  subMenu.o [1]
+CallBackSubMenuBattery  0x000261c9   0x112  Code  Gb  subMenu.o [1]
+CallBackSubMenuBleMAC   0x00026311   0x234  Code  Gb  subMenu.o [1]
+CallBackSubMenuBodyTemper
+                        0x00026d3d    0x3a  Code  Gb  subMenu.o [1]
+CallBackSubMenuCalories
+                        0x00026a19    0xc6  Code  Gb  subMenu.o [1]
+CallBackSubMenuDistance
+                        0x00026bdd   0x12c  Code  Gb  subMenu.o [1]
+CallBackSubMenuDownload
+                        0x0002654b    0xee  Code  Gb  subMenu.o [1]
+CallBackSubMenuFallAlert
+                        0x00026f61    0x5a  Code  Gb  subMenu.o [1]
+CallBackSubMenuHeartRate
+                        0x00026859   0x1b2  Code  Gb  subMenu.o [1]
+CallBackSubMenuStep     0x00026ae9    0xca  Code  Gb  subMenu.o [1]
+CallBackSubMenuTesting  0x00026e55   0x10a  Code  Gb  subMenu.o [1]
+CallBackSubMenuTime     0x00025f2d    0x22  Code  Gb  subMenu.o [1]
+CallBackSubMenuUltraViolet
+                        0x00026d09    0x32  Code  Gb  subMenu.o [1]
+CheckFall               0x0001f6e1    0xb6  Code  Gb  BLE-LEUART-DMA.o [1]
+CheckFlashBusyStatus    0x00020ed3    0x1a  Code  Gb  flash_task.o [1]
+CheckFlashStatus        0x00020ea3    0x30  Code  Gb  flash_task.o [1]
+CheckGoalsAccomplish    0x00021f13   0x1c6  Code  Gb  sys_sharing_source.o [1]
+CheckSOS                0x0001f797    0x5a  Code  Gb  BLE-LEUART-DMA.o [1]
+CheckVibrateStatus      0x00029aeb    0x2a  Code  Gb  drv2605.o [1]
+Check_ADV_Counter       0x2000493f     0x1  Data  Lc  BLE-LEUART-DMA.o [1]
+Check_Connect_Counter   0x2000493e     0x1  Data  Lc  BLE-LEUART-DMA.o [1]
+Check_UV_Sensor         0x00021e91    0x82  Code  Gb  sys_sharing_source.o [1]
+ChunksPerSector         0x20000483     0x1  Data  Gb  data_gather.o [1]
+ClearFlashBusyBit       0x00020e81    0x10  Code  Gb  flash_task.o [1]
+ClearSysEnergyModeFlag  0x00027b8f     0xc  Code  Gb  GlobalData.o [1]
+Close_ALLCAPLESENSE     0x0002b0e7    0x58  Code  Gb  caplesense.o [1]
+CombinIndexNumber       0x0002166b    0x9c  Code  Gb  flash_task.o [1]
+Current_Connect_Interval
+                        0x20000479     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+DATA_DEF_ACTIVE_LEVEL   0x20000334    0x10  Data  Lc  data_gather.o [1]
+DATA_DEF_ACTIVE_LEVEL   0x200003b4    0x10  Data  Lc  flash_task.o [1]
+DATA_DEF_AMBIENT_TEMPERATURE
+                        0x20000314    0x10  Data  Lc  data_gather.o [1]
+DATA_DEF_AMBIENT_TEMPERATURE
+                        0x20000394    0x10  Data  Lc  flash_task.o [1]
+DATA_DEF_CALORIE_CONSUMPTION
+                        0x20000364    0x10  Data  Lc  data_gather.o [1]
+DATA_DEF_CALORIE_CONSUMPTION
+                        0x200003e4    0x10  Data  Lc  flash_task.o [1]
+DATA_DEF_DISTANCE       0x20000354    0x10  Data  Lc  data_gather.o [1]
+DATA_DEF_DISTANCE       0x200003d4    0x10  Data  Lc  flash_task.o [1]
+DATA_DEF_HEART_RATE     0x20000304    0x10  Data  Lc  data_gather.o [1]
+DATA_DEF_HEART_RATE     0x20000384    0x10  Data  Lc  flash_task.o [1]
+DATA_DEF_SKIN_TEMPERATURE
+                        0x20000324    0x10  Data  Lc  data_gather.o [1]
+DATA_DEF_SKIN_TEMPERATURE
+                        0x200003a4    0x10  Data  Lc  flash_task.o [1]
+DATA_DEF_STEPS          0x20000344    0x10  Data  Lc  data_gather.o [1]
+DATA_DEF_STEPS          0x200003c4    0x10  Data  Lc  flash_task.o [1]
+DATA_DEF_UV             0x20000374    0x10  Data  Lc  data_gather.o [1]
+DATA_DEF_UV             0x200003f4    0x10  Data  Lc  flash_task.o [1]
+DMA_ActivateBasic       0x00020903    0x28  Code  Gb  em_dma.o [1]
+DMA_CfgChannel          0x0002092b    0x3a  Code  Gb  em_dma.o [1]
+DMA_CfgDescr            0x00020965    0x36  Code  Gb  em_dma.o [1]
+DMA_IRQHandler          0x00020893    0x70  Code  Gb  em_dma.o [1]
+DMA_Init                0x0002099b    0x34  Code  Gb  em_dma.o [1]
+DMA_Prepare             0x00020815    0x7e  Code  Lc  em_dma.o [1]
+DMA_Reset               0x000209cf    0x30  Code  Gb  em_dma.o [1]
+DRV2605_Driver          0x00029b15    0x70  Code  Gb  drv2605.o [1]
+DRV2605_Init            0x00029a01    0xea  Code  Gb  drv2605.o [1]
+DRV2605_TEST_VAL        0x20004968     0x1  Data  Gb  drv2605.o [1]
+DRV2605_WriteReg        0x00029ba3    0x2a  Code  Gb  drv2605.o [1]
+Data_Upload_Pak_Size    0x20000478     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+DelayTimerCallback      0x0001faad    0xa2  Code  Gb  DelayUsingTimerInt.o [1]
+DelayTimerStatus        0x200048ea     0x2  Data  Gb  DelayUsingTimerInt.o [1]
+DevChip                 0x20004600    0x10  Data  Gb  GlobalData.o [1]
+DeviceTask              0x0002baa1   0x5a6  Code  Gb  Device_task.o [1]
+DisableDelayTimer       0x0001f9c9    0x56  Code  Gb  DelayUsingTimerInt.o [1]
+DisableLeUart           0x0001efbf    0x48  Code  Gb  BLE-LEUART-DMA.o [1]
+DisableLongTimer        0x00022f17    0x12  Code  Gb  main.o [1]
+DisplayTask             0x0002c191   0x23e  Code  Gb  display_task.o [1]
+DoNeed_Change_CONNECT_INTERVAL
+                        0x0001cdd9    0xdc  Code  Gb  BLE-LEUART-DMA.o [1]
+EMU_BUPDInit            0x00028f5f    0x64  Code  Gb  em_emu.o [1]
+EMU_EM4Init             0x00028f3b    0x24  Code  Gb  em_emu.o [1]
+EMU_EnterEM2            0x00028e95    0x28  Code  Gb  em_emu.o [1]
+EMU_EnterEM3            0x00028ebd    0x46  Code  Gb  em_emu.o [1]
+EMU_EnterEM4            0x00028f03    0x2e  Code  Gb  em_emu.o [1]
+EMU_Restore             0x00028e39    0x5c  Code  Lc  em_emu.o [1]
+EMU_UpdateOscConfig     0x00028f31     0xa  Code  Gb  em_emu.o [1]
+EXT_FLASH_SECTOR_OFFSET
+                        0x200048da     0x2  Data  Gb  BLE-LEUART-DMA.o [1]
+En_HR_Read              0x20004931     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+EnableDelayTimer        0x0001fa2d    0x80  Code  Gb  DelayUsingTimerInt.o [1]
+EnableLeUart            0x0001f007    0x92  Code  Gb  BLE-LEUART-DMA.o [1]
+EnableLongTimer         0x00022f29    0x26  Code  Gb  main.o [1]
+EnableMenu              0x00028319    0x3c  Code  Gb  Menu.o [1]
+FD_result               0x20004984     0x1  Data  Gb  mems_tracking.o [1]
+FFT_PROC                0x0002c865   0x13c  Code  Gb  signal_proc.o [1]
+FLASH_POWER_BACK        0x0002344f    0x64  Code  Gb  m25pxx.o [1]
+FLASH_POWER_DOWN        0x000233ef    0x60  Code  Gb  m25pxx.o [1]
+FONT_ARIAL_8x16         0x00034708    0x1c  Data  Gb  led_font.o [1]
+FONT_ASCII_12x24        0x00034724    0x1c  Data  Gb  led_font.o [1]
+FONT_DATA_ARIAL_8x16    0x000323a4   0x5f0  Data  Gb  led_font.o [1]
+FONT_DATA_ASCII_12x24   0x00030c48   0xd5c  Data  Gb  led_font.o [1]
+FW_INFO                 0x200045f0    0x10  Data  Gb  BLE-LEUART-DMA.o [1]
+FW_RX_BUFF              0x20003f98    0x98  Data  Gb  BLE-LEUART-DMA.o [1]
+FW_RX_BUFF_WP           0x20004938     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+FW_Update_sta           0x20004937     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+Fall_Detect             0x0002d4d1   0x1be  Code  Gb  mems_tracking.o [1]
+FlashBulkErase          0x000235bb    0x58  Code  Gb  m25pxx.o [1]
+FlashCRC                0x00023797    0xa0  Code  Gb  m25pxx.o [1]
+FlashOpeartionCallback  0x000215c9    0x3e  Code  Gb  flash_task.o [1]
+FlashPageProgram        0x00023613    0x76  Code  Gb  m25pxx.o [1]
+FlashProgram            0x00023689   0x10e  Code  Gb  m25pxx.o [1]
+FlashRead               0x000234b3    0x74  Code  Gb  m25pxx.o [1]
+FlashReadManufacturerIdentification
+                        0x000233a5    0x4a  Code  Gb  m25pxx.o [1]
+FlashReadStatusRegister
+                        0x000231e3    0x34  Code  Gb  m25pxx.o [1]
+FlashSectorErase        0x00023527    0x94  Code  Gb  m25pxx.o [1]
+FlashTask               0x00021745   0x17a  Code  Gb  flash_task.o [1]
+FlashUsingTimeCount     0x200048ee     0x2  Data  Gb  flash_task.o [1]
+FlashWriteEnable        0x000231b5    0x28  Code  Gb  m25pxx.o [1]
+ForceShowMenu           0x000283c5    0xbe  Code  Gb  Menu.o [1]
+GATHERABLE_INDEX_DATA   0x200002c4    0x20  Data  Lc  data_gather.o [1]
+GATHERABLE_INDEX_DATA   0x200002e4    0x20  Data  Lc  flash_task.o [1]
+GPIO_DriveModeSet       0x0002073d    0x14  Code  Gb  em_gpio.o [1]
+GPIO_EVEN_IRQHandler    0x0003434b    0x10  Code  Gb  interrupt.o [1]
+GPIO_IntConfig          0x00020751    0x4a  Code  Gb  em_gpio.o [1]
+GPIO_ODD_IRQHandler     0x0003435b    0x26  Code  Gb  interrupt.o [1]
+GPIO_PinModeSet         0x000207b1    0x62  Code  Gb  em_gpio.o [1]
+GetAmbLight             0x0002aeef    0x30  Code  Gb  Si14x.o [1]
+GetCurrentMenuType      0x00028263    0x16  Code  Gb  Menu.o [1]
+GetEnabledMenus         0x000282f1    0x28  Code  Gb  Menu.o [1]
+GetEnergyMode           0x00027ba1    0x16  Code  Gb  GlobalData.o [1]
+GetFlashCapacity        0x00023217   0x18e  Code  Gb  m25pxx.o [1]
+GetMenuIndex            0x00028231    0x32  Code  Gb  Menu.o [1]
+GetMenuInfo             0x00028279    0x78  Code  Gb  Menu.o [1]
+GetRTCCalendar          0x00027e45    0x16  Code  Gb  clockApp.o [1]
+GetTotalChunks          0x0001f805    0x90  Code  Gb  BLE-LEUART-DMA.o [1]
+GetUVindex              0x0002ae6b    0x84  Code  Gb  Si14x.o [1]
+GoStopMCU               0x00022365    0xd2  Code  Gb  sys_sharing_source.o [1]
+HEAP$$Base              0x20005aa8           --   Gb  - Linker created -
+HEAP$$Limit             0x20007aa8           --   Gb  - Linker created -
+HardFault_Handler       0x000341a9    0x22  Code  Gb  cortex-m_faults.o [1]
+HardFault_HandlerC      0x000341cb    0x84  Code  Gb  cortex-m_faults.o [1]
+I2C0_IRQHandler         0x0002dd19     0xe  Code  Gb  i2c_driver.o [1]
+I2C0_Status             0x20004971     0x1  Data  Gb  i2c_driver.o [1]
+I2C0_error_count        0x200047f8     0x4  Data  Gb  i2c_driver.o [1]
+I2C0_used               0x20004970     0x1  Data  Gb  GlobalData.o [1]
+I2C1_IRQHandler         0x0002dd27     0xe  Code  Gb  i2c_driver.o [1]
+I2C1_Status             0x20004972     0x1  Data  Gb  i2c_driver.o [1]
+I2C1_error_count        0x200047fc     0x4  Data  Gb  i2c_driver.o [1]
+I2CReadNByte            0x0002dd35    0x10  Code  Gb  i2c_driver.o [1]
+I2CWriteNByte           0x0002dd45     0xe  Code  Gb  i2c_driver.o [1]
+I2C_Init                0x0002da3d    0x66  Code  Gb  em_i2c.o [1]
+I2C_Transfer            0x0002daa5   0x1ec  Code  Gb  em_i2c.o [1]
+I2C_TransferInit        0x0002dc91    0x5e  Code  Gb  em_i2c.o [1]
+INS                     0x2000454c    0x18  Data  Gb  signal_proc.o [1]
+INT_Enable              0x0001f971     0x4  Code  Lc  DelayUsingTimerInt.o [1]
+INT_LockCnt             0x200047e0     0x4  Data  Gb  em_int.o [1]
+InOutdoorChange         0x0002acab    0x36  Code  Gb  Si14x.o [1]
+InStream_Read           0x00033675    0x22  Code  Lc  lz77_init.o [6]
+Init_AFE44xx_DRDY_Interrupt
+                        0x00024d89    0x1e  Code  Gb  AFE44x0.o [1]
+Init_AFE44xx_Resource   0x00024da7    0x7e  Code  Gb  AFE44x0.o [1]
+Integral_ppg            0x0002cabb    0x2a  Code  Gb  signal_proc.o [1]
+IsForcedShowMenu        0x000284bd     0x8  Code  Gb  Menu.o [1]
+IsMenuAvaliable         0x00028355    0x3a  Code  Gb  Menu.o [1]
+JumpToMenu              0x0002838f    0x36  Code  Gb  Menu.o [1]
+KeyCode                 0x2000494f     0x1  Data  Gb  CapTouchDetect.o [1]
+KeyTouchDetect          0x00028059    0x96  Code  Gb  CapTouchDetect.o [1]
+LEDFlashingCallback     0x00021ce5    0xd0  Code  Gb  sys_sharing_source.o [1]
+LED_INTENSITY           0x20000474     0x1  Data  Gb  AFE44x0.o [1]
+LED_Val_AMB_Cancellation
+                        0x00024f63    0x4a  Code  Gb  AFE44x0.o [1]
+LEN_WP                  0x20004914     0x2  Data  Gb  signal_proc.o [1]
+LESENSE_ChannelAllConfig
+                        0x0002e3ab    0x18  Code  Gb  em_lesense.o [1]
+LESENSE_ChannelConfig   0x0002e3c3    0x9c  Code  Gb  em_lesense.o [1]
+LESENSE_ClkDivSet       0x0002e389    0x22  Code  Gb  em_lesense.o [1]
+LESENSE_IRQHandler      0x0002b025    0x3e  Code  Gb  caplesense.o [1]
+LESENSE_Init            0x0002e235   0x10c  Code  Gb  em_lesense.o [1]
+LESENSE_Reset           0x0002e45f    0x8c  Code  Gb  em_lesense.o [1]
+LESENSE_ScanFreqSet     0x0002e341    0x48  Code  Gb  em_lesense.o [1]
+LETIMER0_IRQHandler     0x0003432f    0x1c  Code  Gb  interrupt.o [1]
+LETIMER_CompareSet      0x0002b28d    0x12  Code  Gb  em_letimer.o [1]
+LETIMER_Enable          0x0002b29f     0xc  Code  Gb  em_letimer.o [1]
+LETIMER_Init            0x0002b2ab    0x6c  Code  Gb  em_letimer.o [1]
+LEUART0_IRQHandler      0x0001cfcd    0x6e  Code  Gb  BLE-LEUART-DMA.o [1]
+LEUARTCallback          0x0001d121    0x20  Code  Gb  BLE-LEUART-DMA.o [1]
+LEUARTRXBUFF            0x2000328c   0x200  Data  Gb  BLE-LEUART-DMA.o [1]
+LEUARTSentByDma         0x0001d03b    0xe6  Code  Gb  BLE-LEUART-DMA.o [1]
+LEUART_BaudrateSet      0x00020679    0x40  Code  Gb  em_leuart.o [1]
+LEUART_Init             0x000206c9    0x48  Code  Gb  em_leuart.o [1]
+LEUART_Reset            0x00020711    0x2a  Code  Gb  em_leuart.o [1]
+LIS3DH_FIFOModeEnable   0x0002a3e5   0x14c  Code  Gb  mems.o [1]
+LIS3DH_ReadReg          0x0002a19f    0x32  Code  Gb  mems.o [1]
+LIS3DH_SetAxis          0x0002a399    0x2a  Code  Gb  mems.o [1]
+LIS3DH_SetFullScale     0x0002a369    0x30  Code  Gb  mems.o [1]
+LIS3DH_SetInt1Pin       0x0002a3c3    0x22  Code  Gb  mems.o [1]
+LIS3DH_SetMode          0x0002a243    0x9a  Code  Gb  mems.o [1]
+LIS3DH_SetODR           0x0002a201    0x42  Code  Gb  mems.o [1]
+LIS3DH_WriteReg         0x0002a1d1    0x2a  Code  Gb  mems.o [1]
+Last_BLE_STATE          0x2000492f     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+LeUartTxBuff            0x20004030    0x80  Data  Gb  BLE-LEUART-DMA.o [1]
+LeUartTxCount           0x200048c8     0x2  Data  Gb  BLE-LEUART-DMA.o [1]
+LeUartWorkTimeCount     0x200048c6     0x2  Data  Gb  BLE-LEUART-DMA.o [1]
+Left_SEC_DATA           0x20004704     0x4  Data  Gb  BLE-LEUART-DMA.o [1]
+LeuartConfig            0x0001ceb5    0x7c  Code  Gb  BLE-LEUART-DMA.o [1]
+LoadBackupData          0x0002b6d3    0x38  Code  Gb  Device_task.o [1]
+LoadInt                 0x0002efdf    0x6e  Code  Lc  xprintflarge_nomb.o [3]
+LoadSystemSettings      0x000278b7   0x1c4  Code  Gb  GlobalData.o [1]
+LockScreen              0x000280ef    0x30  Code  Gb  CapTouchDetect.o [1]
+LongTimerFunc           0x00022f5b    0x70  Code  Gb  main.o [1]
+LongTimerStatus         0x200048f0     0x2  Data  Gb  main.o [1]
+M25Pxx_INIT             0x00023015    0xf0  Code  Gb  m25pxx.o [1]
+MCP9804_Init            0x0002a5bd    0x48  Code  Gb  mcp9804.o [1]
+MCP9804_TemperatureGet  0x0002a85f    0x54  Code  Gb  mcp9804.o [1]
+MEMS_BUFF               0x20003ed8    0xc0  Data  Gb  mems.o [1]
+MEMS_CLOSE              0x0002a079     0x4  Code  Gb  mems.o [1]
+MEMS_FIFO_INIT          0x00029e89   0x114  Code  Gb  mems.o [1]
+MEMS_FRQ                0x20004978     0x1  Data  Gb  mems.o [1]
+MEMS_INT1_CALLBACK      0x0002a05d     0x6  Code  Gb  mems.o [1]
+MEMS_INT2_CALLBACK      0x0002a063     0x4  Code  Gb  mems.o [1]
+MEMS_Init               0x00029c37    0xbc  Code  Gb  mems.o [1]
+MEMS_MOTION_MONITOR     0x00029cf3    0xde  Code  Gb  mems.o [1]
+MEMS_Monitor_Model      0x20004976     0x1  Data  Gb  mems.o [1]
+MEMS_NO_FIFO_INIT       0x00029dd1    0xb8  Code  Gb  mems.o [1]
+MEMS_OPEN               0x0002a07d     0x4  Code  Gb  mems.o [1]
+MEMS_Par_Init           0x00029bf5    0x42  Code  Gb  mems.o [1]
+MEMS_TRACKING           0x0002d255   0x27a  Code  Gb  mems_tracking.o [1]
+MEMS_XYZ_DC             0x2000468c     0xc  Data  Gb  mems.o [1]
+MEMS_XYZ_DC_REG         0x20004698     0xc  Data  Gb  mems_tracking.o [1]
+MENU_AppLeft            0x000287fb    0x14  Code  Gb  Menu.o [1]
+MENU_AppUpdata          0x0002894b    0x2c  Code  Gb  Menu.o [1]
+MENU_FadeOut            0x0002869b   0x160  Code  Gb  Menu.o [1]
+MENU_Init               0x000281ed    0x44  Code  Gb  Menu.o [1]
+MENU_ReplyUpdata        0x000285d9    0x2e  Code  Gb  Menu.o [1]
+MENU_RequestUpdata      0x00028557    0x82  Code  Gb  Menu.o [1]
+MENU_RequestUpdataAt    0x000284ff    0x58  Code  Gb  Menu.o [1]
+MENU_UpdataRam          0x00028607    0x94  Code  Gb  Menu.o [1]
+MSC_Deinit              0x0002dfab    0x10  Code  Gb  em_msc.o [1]
+MSC_ErasePage           0x20000001    0x5a  Code  Gb  em_msc.o [1]
+MSC_Init                0x0002df51    0x5a  Code  Gb  em_msc.o [1]
+MSC_WriteWord           0x2000006d    0xaa  Code  Gb  em_msc.o [1]
+MemesErrorCount         0x20004824     0x4  Data  Gb  mems.o [1]
+MemesEventCount         0x2000481c     0x4  Data  Gb  mems.o [1]
+MemsSleepCount          0x200047e8     0x4  Data  Gb  GlobalData.o [1]
+Mems_Proc               0x00029f9d    0x6c  Code  Gb  mems.o [1]
+Mems_TimeCount          0x20004814     0x4  Data  Gb  mems.o [1]
+Mems_WakeUp             0x0002a009    0x16  Code  Gb  mems.o [1]
+MenuFilterActivate      0x000284df    0x14  Code  Gb  Menu.o [1]
+MenuFilterDownlaod      0x000284f3     0xc  Code  Gb  Menu.o [1]
+MenuFilterFallAlert     0x000284d7     0x8  Code  Gb  Menu.o [1]
+MenuFilterTesting       0x000284c5    0x12  Code  Gb  Menu.o [1]
+Menu_FlyIn              0x0002880f   0x13c  Code  Gb  Menu.o [1]
+ModelSwitched           0x2000494c     0x1  Data  Gb  caplesense.o [1]
+MotionModel             0x20004975     0x1  Data  Gb  mems.o [1]
+NoTOUCHPressCount       0x20000480     0x1  Data  Gb  CapTouchDetect.o [1]
+OLEDInit                0x00027399    0xce  Code  Gb  M00930.o [1]
+OLEDON                  0x00027353    0x46  Code  Gb  M00930.o [1]
+OLEDOff                 0x0002732b    0x28  Code  Gb  M00930.o [1]
+OLED_Contrast_Con       0x00027467    0x8a  Code  Gb  M00930.o [1]
+OLED_Write_Command      0x000274f1    0x1a  Code  Gb  M00930.o [1]
+OLED_Write_CommandNBytes
+                        0x0002750b     0xc  Code  Gb  M00930.o [1]
+OLED_Write_DataNBytes   0x00027517     0xa  Code  Gb  M00930.o [1]
+OledDisplayDecimals     0x00025525   0x2aa  Code  Gb  subMenu.o [1]
+OledDisplayNumber       0x000257d7   0x37a  Code  Gb  subMenu.o [1]
+OledDisplaySingle       0x00025d31   0x19e  Code  Gb  subMenu.o [1]
+OledDisplayTimeAndDate  0x00025b55   0x1dc  Code  Gb  subMenu.o [1]
+OledDisplayUV           0x000271f1    0xb8  Code  Gb  subMenu.o [1]
+OledDrawGuage           0x00026fd9   0x18a  Code  Gb  subMenu.o [1]
+OledI2CInit             0x000272b1    0x70  Code  Gb  M00930.o [1]
+OledShowString          0x000254b9    0x6a  Code  Gb  subMenu.o [1]
+Oled_DrawPixel          0x0002898b    0x38  Code  Gb  Menu.o [1]
+OutOfBatteryProcess     0x000222f1    0x66  Code  Gb  sys_sharing_source.o [1]
+OutStream_Write         0x00033697    0x40  Code  Lc  lz77_init.o [6]
+PPG_8S                  0x20001c8c   0x400  Data  Gb  signal_proc.o [1]
+PPG_FFT_COMPLEX         0x2000288c   0x400  Data  Gb  signal_proc.o [1]
+PPG_Filter              0x0002cae9    0x6c  Code  Gb  signal_proc.o [1]
+PPG_INIT                0x0002c82d    0x34  Code  Gb  signal_proc.o [1]
+PPG_IN_1S_WP            0x20004916     0x2  Data  Gb  signal_proc.o [1]
+PPG_Mag_ORI             0x20003be0   0x100  Data  Gb  signal_proc.o [1]
+PPG_OUT_DATA            0x20004912     0x2  Data  Gb  signal_proc.o [1]
+PPG_PROCESSING          0x0002c77b    0xb2  Code  Gb  signal_proc.o [1]
+PPG_RESULT_OUT_Len      0x20004844     0x4  Data  Gb  signal_proc.o [1]
+ParseBleUartPak         0x0001ed61   0x1b0  Code  Gb  BLE-LEUART-DMA.o [1]
+ParseHostData           0x0001d1e1  0x16e2  Code  Gb  BLE-LEUART-DMA.o [1]
+PendSV_Handler          0x00029205          Code  Gb  portasm.o [1]
+PermitUpdateBroadcast   0x0001f243    0xa6  Code  Gb  BLE-LEUART-DMA.o [1]
+Pre_INIT_I2C1           0x0002a531    0x8c  Code  Gb  mcp9804.o [1]
+PutFlashToSleep         0x00020eed    0x24  Code  Gb  flash_task.o [1]
+RMU_ResetCauseClear     0x0002b1b5    0x26  Code  Gb  em_rmu.o [1]
+RMU_ResetCauseGet       0x0002b1db    0x9e  Code  Gb  em_rmu.o [1]
+RMU_ResetControl        0x0002b1ad     0x8  Code  Gb  em_rmu.o [1]
+RTC_CompareSet          0x0002b319    0x14  Code  Gb  em_rtc.o [1]
+RTC_CounterReset        0x0002b355     0xe  Code  Gb  em_rtc.o [1]
+RTC_Enable              0x0002b32d     0x8  Code  Gb  em_rtc.o [1]
+RTC_IRQHandler          0x0002b3f9    0x3c  Code  Gb  low_power_tick_management.o [1]
+RTC_Init                0x0002b335    0x18  Code  Gb  em_rtc.o [1]
+RaiseNotification       0x00028acd    0x2c  Code  Gb  notification.o [1]
+ReadMemsFIFO            0x0002a101    0x9e  Code  Gb  mems.o [1]
+ReadMemsRawData         0x0002a081    0x80  Code  Gb  mems.o [1]
+RealDataOnPhone         0x20004930     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+Rec_Ble_Pak             0x200044f4    0x20  Data  Gb  BLE-LEUART-DMA.o [1]
+Ref_F                   0x2000492b     0x1  Data  Gb  AFE44x0.o [1]
+Region$$Table$$Base     0x0003469c           --   Gb  - Linker created -
+Region$$Table$$Limit    0x000346c8           --   Gb  - Linker created -
+RemoveIncomingCallNotify
+                        0x00028af9     0xa  Code  Gb  notification.o [1]
+RemoveNotification      0x00028b03     0xc  Code  Gb  notification.o [1]
+ResetLongTimer          0x00022f4f     0xc  Code  Gb  main.o [1]
+ResetParaSettings       0x000277d5    0xe2  Code  Gb  GlobalData.o [1]
+RpIndex                 0x20004934     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+SI14x_IIC_Init          0x0002a8f9    0xa0  Code  Gb  Si14x.o [1]
+SI14x_ReadReg           0x0002a9af    0x4c  Code  Gb  Si14x.o [1]
+SI14x_WriteReg          0x0002a9fb    0x4e  Code  Gb  Si14x.o [1]
+SKIN_TEMP_INIT          0x0002a605    0x4a  Code  Gb  mcp9804.o [1]
+SKIN_TMP                0x200048f4     0x2  Data  Gb  mcp9804.o [1]
+SLEEP_EnterEMx          0x0002c473    0x54  Code  Lc  sleep.o [1]
+SLEEP_Init              0x0002c419    0x2e  Code  Gb  sleep.o [1]
+SLEEP_Sleep             0x0002c447    0x2c  Code  Gb  sleep.o [1]
+SOS_hit_count           0x20004983     0x1  Data  Gb  mems_tracking.o [1]
+SOS_result              0x20004982     0x1  Data  Gb  mems_tracking.o [1]
+SPI_Read_Bytes          0x00023189    0x2c  Code  Gb  m25pxx.o [1]
+SPI_Send_And_Read_Byte  0x00023105    0x26  Code  Gb  m25pxx.o [1]
+SPI_Send_And_Read_Bytes
+                        0x0002312b    0x34  Code  Gb  m25pxx.o [1]
+SPI_Send_Bytes          0x0002315f    0x2a  Code  Gb  m25pxx.o [1]
+SVC_Handler             0x00029269          Code  Gb  portasm.o [1]
+SYSCLOCK                0x20000485     0x1  Data  Gb  GlobalData.o [1]
+SYSTEM_ChipRevisionGet  0x0002c4dd    0x1c  Code  Gb  em_system.o [1]
+SaveSystemSettings      0x00027b21    0x5e  Code  Gb  GlobalData.o [1]
+ScanSectorCapacity      0x00020f25    0x82  Code  Gb  flash_task.o [1]
+SearchMaxSectorIndex    0x00021707    0x30  Code  Gb  flash_task.o [1]
+SearchSectorForTimestamp
+                        0x00020feb    0xe6  Code  Gb  flash_task.o [1]
+SearchSectorIndex       0x00021607    0x5e  Code  Gb  flash_task.o [1]
+SecondPakCount          0x20004848     0x4  Data  Gb  signal_proc.o [1]
+SendAlertNotification   0x2000495d     0x1  Data  Gb  common_vars.o [1]
+SendCmd                 0x0002ab2b   0x164  Code  Lc  Si14x.o [1]
+SendData2Host           0x0001f0ab    0x16  Code  Gb  BLE-LEUART-DMA.o [1]
+SendDiagnoseInfo        0x000219bd    0xc8  Code  Gb  sys_sharing_source.o [1]
+SendNotificationAlert   0x0001f5b5   0x106  Code  Gb  BLE-LEUART-DMA.o [1]
+SendRealDataOverBLE     0x0001f3a1   0x104  Code  Gb  BLE-LEUART-DMA.o [1]
+Send_1HZ_PacketOverBLE  0x0001f4c5    0xe4  Code  Gb  BLE-LEUART-DMA.o [1]
+SensorOffDelay          0x2000494e     0x1  Data  Gb  CapTouchDetect.o [1]
+SetDelayTimerFlag       0x0001f975    0x54  Code  Gb  DelayUsingTimerInt.o [1]
+SetFlashBusyBit         0x00020e6f    0x12  Code  Gb  flash_task.o [1]
+SetFlashUsingTime       0x00020e9b     0x8  Code  Gb  flash_task.o [1]
+SetSysEnergyModeFlag    0x00027b83     0xc  Code  Gb  GlobalData.o [1]
+SetupLeuartDma          0x0001cf3f    0x8e  Code  Gb  BLE-LEUART-DMA.o [1]
+ShowVersion             0x00026641   0x20c  Code  Gb  subMenu.o [1]
+Si114xAlsForce          0x0002ac8f    0x1c  Code  Gb  Si14x.o [1]
+Si114xBlockWrite        0x0002aa49    0x6a  Code  Gb  Si14x.o [1]
+Si114xParamSet          0x0002aab3    0x60  Code  Gb  Si14x.o [1]
+Si114xPauseAll          0x0002ace1    0xec  Code  Gb  Si14x.o [1]
+SimuUart_9600           0x00021925    0x90  Code  Gb  sys_sharing_source.o [1]
+SkinTouchDetect         0x00027f29    0xce  Code  Gb  CapTouchDetect.o [1]
+SkinTouchVal            0x200048e4     0x2  Data  Gb  caplesense.o [1]
+StartBatteryDrain       0x00027bc1    0x34  Code  Gb  GlobalData.o [1]
+StartDataGathering      0x00029575    0x28  Code  Gb  data_gather.o [1]
+Start_Cap_Temp          0x0002a64f    0x54  Code  Gb  mcp9804.o [1]
+StepsTrack              0x0002d099   0x1b6  Code  Gb  mems_tracking.o [1]
+StopDataGathering       0x0002959d    0x26  Code  Gb  data_gather.o [1]
+SysCtlDelay             0x00022e09     0x8  Code  Gb  main.o [1]
+SysSleepCallBack        0x00027b7f     0x2  Code  Gb  GlobalData.o [1]
+SysTick_Handler         0x00029127    0x1e  Code  Gb  port.o [1]
+SysWakeupCallBack       0x00027b81     0x2  Code  Gb  GlobalData.o [1]
+SystemCoreClock         0x20004888     0x4  Data  Gb  system_efm32wg.o [1]
+SystemCoreClockGet      0x00028cad    0xa4  Code  Gb  system_efm32wg.o [1]
+SystemEnergyMode        0x200047ec     0x4  Data  Gb  GlobalData.o [1]
+SystemHFClockGet        0x00028d51    0x84  Code  Gb  system_efm32wg.o [1]
+SystemHFXOClock         0x2000045c     0x4  Data  Lc  system_efm32wg.o [1]
+SystemHFXOClockGet      0x00028dd5     0x6  Code  Gb  system_efm32wg.o [1]
+SystemInit              0x00028ddb     0xc  Code  Gb  system_efm32wg.o [1]
+SystemLFRCOClockGet     0x00028de7     0x2  Code  Gb  system_efm32wg.o [1]
+SystemLFXOClock         0x20000460     0x4  Data  Lc  system_efm32wg.o [1]
+SystemLFXOClockGet      0x00028df5     0x6  Code  Gb  system_efm32wg.o [1]
+SystemULFRCOClockGet    0x00028def     0x6  Code  Gb  system_efm32wg.o [1]
+TEMPBUFF                0x2000248c   0x400  Data  Gb  signal_proc.o [1]
+TEMPSENS_RegisterGet    0x0002a783    0x76  Code  Gb  mcp9804.o [1]
+TEMPSENS_RegisterSet    0x0002a7f9    0x66  Code  Gb  mcp9804.o [1]
+TIMER2_IRQHandler       0x00034381    0x10  Code  Gb  interrupt.o [1]
+TIMER_Enable            0x00028c11     0xc  Code  Gb  em_timer.o [1]
+TIMER_Init              0x00028c1d    0x8e  Code  Gb  em_timer.o [1]
+TX_DMA_CALLBACK         0x20004650     0xc  Data  Gb  BLE-LEUART-DMA.o [1]
+TempReadAndStop         0x0002a6a3    0xe0  Code  Gb  mcp9804.o [1]
+TimingCount             0x20004850     0x4  Data  Gb  signal_proc.o [1]
+Track_INIT              0x0002ca3d    0x7e  Code  Gb  signal_proc.o [1]
+Tracking_heart_rate     0x0002cb55   0x1a2  Code  Gb  signal_proc.o [1]
+TxDone                  0x20000477     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+USART_InitSync          0x0002c659    0xac  Code  Gb  em_usart.o [1]
+USART_Rx                0x0002c71d     0x8  Code  Gb  em_usart.o [1]
+USART_Tx                0x0002c72b     0xa  Code  Gb  em_usart.o [1]
+USB_IRQHandler          0x0003432d     0x2  Code  Gb  interrupt.o [1]
+UV_Init                 0x0002ae1f    0x4c  Code  Gb  Si14x.o [1]
+UV_RST                  0x0002adcd    0x52  Code  Gb  Si14x.o [1]
+UnLockScreen            0x00028169    0x2e  Code  Gb  CapTouchDetect.o [1]
+UnforceShowMenu         0x00028483    0x3a  Code  Gb  Menu.o [1]
+UpdateBaseLine          0x00027a7d    0xa4  Code  Gb  GlobalData.o [1]
+UpdatePedometerInfor    0x0002cdc5   0x2c8  Code  Gb  mems_tracking.o [1]
+Upload_Count            0x200048d4     0x2  Data  Gb  BLE-LEUART-DMA.o [1]
+Upload_Left             0x200048d8     0x2  Data  Gb  BLE-LEUART-DMA.o [1]
+Upload_Sector_Crc       0x200048d6     0x2  Data  Gb  BLE-LEUART-DMA.o [1]
+Upload_Sector_Num       0x200048cc     0x2  Data  Gb  BLE-LEUART-DMA.o [1]
+Upload_Sector_index     0x20004714     0x4  Data  Gb  BLE-LEUART-DMA.o [1]
+Upload_physical_add     0x20004718     0x4  Data  Gb  BLE-LEUART-DMA.o [1]
+Variance_Val_threshold  0x20004977     0x1  Data  Gb  mems.o [1]
+Vcc_Buff                0x200046d4     0x8  Data  Gb  sys_sharing_source.o [1]
+Vcc_Buff_Rp             0x20004924     0x2  Data  Gb  sys_sharing_source.o [1]
+VibrateBusyTime         0x20004969     0x1  Data  Gb  drv2605.o [1]
+VibrateCon              0x00029b85    0x16  Code  Gb  drv2605.o [1]
+VibrateRunningDuration  0x2000496b     0x1  Data  Gb  drv2605.o [1]
+VibrateRunningMode      0x2000496c     0x1  Data  Gb  drv2605.o [1]
+VibrateRunningTimes     0x2000496a     0x1  Data  Gb  drv2605.o [1]
+WDOG_Enable             0x0002b365    0x10  Code  Gb  em_wdog.o [1]
+WDOG_Feed               0x0002b375    0x1a  Code  Gb  em_wdog.o [1]
+WDOG_Init               0x0002b38f    0x5a  Code  Gb  em_wdog.o [1]
+WR_SEC_COUNT            0x20004708     0x4  Data  Gb  BLE-LEUART-DMA.o [1]
+WR_SEC_LOC              0x200046fc     0x4  Data  Gb  BLE-LEUART-DMA.o [1]
+WR_SEC_OFFSET           0x20004700     0x4  Data  Gb  BLE-LEUART-DMA.o [1]
+WR_SEC_STA              0x20004939     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+WaitUntilSleep          0x0002a999    0x16  Code  Lc  Si14x.o [1]
+WakeFlashUp             0x00020e53    0x1c  Code  Gb  flash_task.o [1]
+Window_ACT_LEVEL        0x20004680     0xc  Data  Gb  mems.o [1]
+WpIndex                 0x20004933     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+XYZFilter_TRACK         0x0002c769    0x12  Code  Gb  signal_proc.o [1]
+XYZ_BUFF                0x20002c8c   0x300  Data  Gb  mems_tracking.o [1]
+XYZ_BUFF_Wp             0x20004908     0x2  Data  Gb  mems_tracking.o [1]
+XYZ_ROOT                0x20004828     0x4  Data  Gb  mems_tracking.o [1]
+_GenldLargeNoMb         0x0002f3d5   0x248  Code  Lc  xprintflarge_nomb.o [3]
+_Getdst                 0x00030b0d   0x13c  Code  Gb  xgetdst.o [3]
+_Gettime                0x0002f69f    0x42  Code  Gb  xgettime.o [3]
+_IsdstStr               0x20000424     0x4  Data  Gb  setlocale.o [3]
+_Isdst_olddst           0x20000468     0x4  Data  Lc  xisdst.o [3]
+_Isdst_rules            0x20000470     0x4  Data  Gb  xisdstData.o [3]
+_LdtobLargeNoMb         0x0002f155   0x27a  Code  Lc  xprintflarge_nomb.o [3]
+_LitobLargeNoMb         0x0002f04d   0x106  Code  Lc  xprintflarge_nomb.o [3]
+_Localtime_oldzone      0x20000418     0x4  Data  Lc  localtim.o [3]
+_Localtime_tzoff        0x2000041c     0x4  Data  Lc  localtim.o [3]
+_PrintfLargeNoMb        0x0002ea65   0x574  Code  Gb  xprintflarge_nomb.o [3]
+_PutcharsLargeNoMb      0x0002f61d    0x2e  Code  Lc  xprintflarge_nomb.o [3]
+_SProut                 0x0001fc13     0xa  Code  Gb  xsprout.o [3]
+_Ttotm_ts               0x20000298    0x2c  Data  Lc  xttotm.o [3]
+_Tzoff                  0x0002e0ad    0x94  Code  Gb  localtim.o [3]
+_TzoneStr               0x20000420     0x4  Data  Gb  setlocale.o [3]
+__Vectors               0x00009800           --   Gb  startup_efm32wg.o [1]
+__Vectors_End           0x000098e0          Data  Gb  startup_efm32wg.o [1]
+__Vectors_Size {Abs}    0x000000e0           --   Gb  startup_efm32wg.o [1]
+__aeabi_cdcmple         0x00030201          Code  Gb  DblCmpLe.o [5]
+__aeabi_d2f             0x00027735          Code  Gb  DblToFlt.o [5]
+__aeabi_d2iz            0x00028bb9          Code  Gb  DblToI32.o [5]
+__aeabi_d2uiz           0x00028be5          Code  Gb  DblToI32.o [5]
+__aeabi_dadd            0x00029919          Code  Gb  DblAdd.o [5]
+__aeabi_ddiv            0x0002d7f5          Code  Gb  DblDiv.o [5]
+__aeabi_dmul            0x00027591          Code  Gb  DblMul.o [5]
+__aeabi_dsub            0x0002ddd1          Code  Gb  DblSub.o [5]
+__aeabi_errno_addr      0x000303d5     0x6  Code  Gb  errno.o [3]
+__aeabi_f2d             0x000298c9          Code  Gb  FltToDbl.o [5]
+__aeabi_i2d             0x00027561          Code  Gb  I32ToDbl.o [5]
+__aeabi_ldiv0           0x00030ae1          Code  Gb  I64DivZer.o [6]
+__aeabi_memclr          0x0001fb75          Code  Gb  ABImemclr.o [6]
+__aeabi_memclr4         0x00020e2d          Code  Gb  ABImemclr4.o [6]
+__aeabi_memset          0x0002257d          Code  Gb  ABImemset.o [6]
+__aeabi_memset4         0x000292b9          Code  Gb  ABImemset48.o [6]
+__aeabi_memset8         0x000292b9          Code  Gb  ABImemset48.o [6]
+__aeabi_ui2d            0x00027575          Code  Gb  I32ToDbl.o [5]
+__aeabi_uldivmod        0x000300d1          Code  Gb  I64DivMod.o [6]
+__cmain                 0x00034741          Code  Gb  cmain.o [6]
+__data_GetMemChunk      0x0002c73d    0x2c  Code  Gb  xgetmemchunk.o [3]
+__exit                  0x0002e575          Code  Gb  XXexit.o [6]
+__getzone               0x0002f695     0x6  Code  Gb  getzone.o [3]
+__iar_Daysto32          0x0002f769    0x3a  Code  Gb  xttotm.o [3]
+__iar_Dnorm             0x000301bf    0x42  Code  Gb  xdnorm.o [5]
+__iar_Errno             0x2000046c     0x4  Data  Gb  errno.o [3]
+__iar_Isdst32           0x000303e1   0x134  Code  Gb  xisdst.o [3]
+__iar_Memchr            0x00030079          Code  Gb  memchr.o [6]
+__iar_Memset            0x0002257d          Code  Gb  ABImemset.o [6]
+__iar_Memset4_word      0x000292c1          Code  Gb  ABImemset48.o [6]
+__iar_Memset8_word      0x000292c1          Code  Gb  ABImemset48.o [6]
+__iar_Memset_word       0x00022585          Code  Gb  ABImemset.o [6]
+__iar_Stolx             0x0002f6e1    0x86  Code  Gb  xstol.o [3]
+__iar_Stoulx            0x0003023d   0x142  Code  Gb  xstoul.o [3]
+__iar_Strchr            0x00030061          Code  Gb  strchr.o [6]
+__iar_Ttotm32           0x0002f7a3   0x112  Code  Gb  xttotm.o [3]
+__iar_TzoneStr_init     0x0002f669    0x24  Code  Gb  setlocale.o [3]
+__iar_ceil              0x00028b59          Code  Gb  ceil.o [5]
+__iar_ceill             0x00028b59          Code  Gb  ceil.o [5]
+__iar_d2uiz             0x00028bf1          Code  Gb  DblToI32.o [5]
+__iar_dadd              0x0002992d          Code  Gb  DblAdd.o [5]
+__iar_data_init3        0x00034651    0x28  Code  Gb  data_init.o [6]
+__iar_dlfree            0x0002486f   0x510  Code  Gb  dlmalloc.o [3]
+__iar_dlib_perthread_access
+                        0x00030ae3     0x2  Code  Gb  xtls.o [3]
+__iar_dlmalloc          0x000245af   0x2b4  Code  Gb  dlmalloc.o [3]
+__iar_dsub              0x0002dde5          Code  Gb  DblSub.o [5]
+__iar_dsubStart         0x0002ddf7          Code  Gb  DblSub.o [5]
+__iar_edom              0x00030055          Code  Gb  iarEdom.o [6]
+__iar_init_vfp          0x00034679          Code  Gb  fpinit_M.o [5]
+__iar_lz77_init3        0x000336d7   0x160  Code  Gb  lz77_init.o [6]
+__iar_program_start     0x000348f1          Code  Gb  cstartup_M.o [6]
+__iar_sqrt              0x0002e975          Code  Gb  sqrt.o [5]
+__iar_ui2d              0x00027579          Code  Gb  I32ToDbl.o [5]
+__iar_unaligned___aeabi_memcpy
+                        0x0001fb9d          Code  Gb  ABImemcpy_unaligned.o [6]
+__iar_unaligned___aeabi_memcpy4
+                        0x0001fbbd          Code  Gb  ABImemcpy_unaligned.o [6]
+__iar_unaligned___aeabi_memcpy8
+                        0x0001fbbd          Code  Gb  ABImemcpy_unaligned.o [6]
+__iar_vfp_ceil          0x00028b49          Code  Gb  ceil.o [5]
+__iar_vfp_ceill         0x00028b49          Code  Gb  ceil.o [5]
+__iar_vfp_sqrt          0x0002e965          Code  Gb  sqrt.o [5]
+__iar_vfp_sqrtl         0x0002e965          Code  Gb  sqrt.o [5]
+__iar_zero_init3        0x0001fb7b    0x22  Code  Gb  zero_init3.o [6]
+__localtime32           0x0002e149    0x1a  Code  Gb  localtim.o [3]
+__mktime32              0x0002e165    0xd0  Code  Gb  mktime.o [3]
+__time32                0x00027ead    0x26  Code  Gb  clock.o [1]
+__vector_table          0x00009800          Data  Gb  startup_efm32wg.o [1]
+__vector_table_0x1c     0x0000981c          Data  Gb  startup_efm32wg.o [1]
+_call_main              0x0003474d          Code  Gb  cmain.o [6]
+_exit                   0x00034761          Code  Gb  cexit.o [6]
+_gm_                    0x20003888   0x1d8  Data  Lc  dlmalloc.o [3]
+_main                   0x00034757          Code  Gb  cmain.o [6]
+abort                   0x0002c735     0x6  Code  Gb  abort.o [3]
+active_level            0x20004794     0x4  Data  Gb  common_vars.o [1]
+active_level_bak        0x20004818     0x4  Data  Gb  mems.o [1]
+active_level_delta      0x2000479c     0x4  Data  Gb  common_vars.o [1]
+active_level_lastSaving
+                        0x20004798     0x4  Data  Gb  common_vars.o [1]
+afe_sample_counter      0x200048c0     0x2  Data  Gb  AFE44x0.o [1]
+allSector               0x20000428     0x4  Data  Gb  BLE-LEUART-DMA.o [1]
+ambTempFlag             0x20004951     0x1  Data  Gb  common_vars.o [1]
+ambient_light_low_counter
+                        0x200046dc     0x4  Data  Gb  AFE44x0.o [1]
+armBitRevIndexTable1024
+                        0x000121e8   0xe10  Data  Gb  arm_common_tables.o [4]
+armBitRevIndexTable128  0x00011958   0x1a0  Data  Gb  arm_common_tables.o [4]
+armBitRevIndexTable16   0x00011860    0x28  Data  Gb  arm_common_tables.o [4]
+armBitRevIndexTable2048
+                        0x00012ff8  0x1dc0  Data  Gb  arm_common_tables.o [4]
+armBitRevIndexTable256  0x00011af8   0x370  Data  Gb  arm_common_tables.o [4]
+armBitRevIndexTable32   0x00011888    0x60  Data  Gb  arm_common_tables.o [4]
+armBitRevIndexTable512  0x00011e68   0x380  Data  Gb  arm_common_tables.o [4]
+armBitRevIndexTable64   0x000118e8    0x70  Data  Gb  arm_common_tables.o [4]
+arm_bitreversal_32      0x00030a75          Code  Gb  arm_bitreversal2.o [4]
+arm_cfft_f32            0x0002fea9   0x190  Code  Gb  arm_cfft_f32.o [4]
+arm_cfft_radix8by2_f32  0x0002f8f1   0x190  Code  Gb  arm_cfft_f32.o [4]
+arm_cfft_radix8by4_f32  0x0002fa81   0x428  Code  Gb  arm_cfft_f32.o [4]
+arm_cmplx_mag_f32       0x0002e859   0x10a  Code  Gb  arm_cmplx_mag_f32.o [4]
+arm_radix8_butterfly_f32
+                        0x00030515   0x560  Code  Gb  arm_cfft_radix8_f32.o [4]
+arm_rfft_fast_f32       0x0002e815    0x44  Code  Gb  arm_rfft_fast_f32.o [4]
+arm_rfft_fast_init_f32  0x0002e581   0x144  Code  Gb  arm_rfft_fast_init_f32.o [4]
+avg_pos_dela            0x2000491a     0x2  Data  Gb  signal_proc.o [1]
+axie                    0x200046ac     0x8  Data  Gb  AFE44x0.o [1]
+axis_filter             0x20003a60   0x180  Data  Gb  mems_tracking.o [1]
+axis_filter_index       0x20004910     0x2  Data  Gb  mems_tracking.o [1]
+axis_rms                0x2000348c   0x200  Data  Gb  mems_tracking.o [1]
+axis_rms_index          0x2000490e     0x2  Data  Gb  mems_tracking.o [1]
+b2t_peak_pos_dela       0x2000498b     0x1  Data  Gb  signal_proc.o [1]
+bUltraViolet            0x20004953     0x1  Data  Gb  common_vars.o [1]
+bUltraVioletGather      0x20004954     0x1  Data  Gb  common_vars.o [1]
+backupDCS               0x20000448     0x4  Data  Gb  Device_task.o [1]
+backupLedFlashSettings  0x20004640    0x10  Data  Gb  sys_sharing_source.o [1]
+blAccomplishGoalShine   0x20004959     0x1  Data  Gb  common_vars.o [1]
+blAlertMenu             0x2000495e     0x1  Data  Gb  common_vars.o [1]
+blCalorieAccomplish     0x20004957     0x1  Data  Gb  common_vars.o [1]
+blDataDumpMode          0x2000493c     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+blDistanceAccomplish    0x20004956     0x1  Data  Gb  common_vars.o [1]
+blDuringDownload        0x2000495a     0x1  Data  Gb  common_vars.o [1]
+blLastLongPressedisBLE  0x20004965     0x1  Data  Gb  Device_task.o [1]
+blLedFlashSettingsBackuped
+                        0x20004998     0x1  Data  Gb  sys_sharing_source.o [1]
+blOLEDPowerOn           0x20004974     0x1  Data  Gb  M00930.o [1]
+blStepAccomplish        0x20004958     0x1  Data  Gb  common_vars.o [1]
+blTimeReset             0x20000482     0x1  Data  Gb  common_vars.o [1]
+blTurnedOffPpgByBleTask
+                        0x2000493a     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+bottom_peak_position    0x20004854     0x4  Data  Gb  signal_proc.o [1]
+bottom_peak_val         0x20004864     0x4  Data  Gb  signal_proc.o [1]
+bottom_pos_dela         0x20004920     0x2  Data  Gb  signal_proc.o [1]
+budSetup                0x00027c6d    0x6e  Code  Gb  clockApp.o [1]
+burtcCount              0x20004754     0x4  Data  Lc  clockApp.o [1]
+burtcCountAtWakeup      0x20004768     0x4  Data  Lc  clockApp.o [1]
+burtcOverflowCounter    0x20004758     0x4  Data  Lc  clockApp.o [1]
+burtcOverflowIntervalRem
+                        0x2000475c     0x4  Data  Lc  clockApp.o [1]
+burtcSetup              0x00027cdb    0x54  Code  Gb  clockApp.o [1]
+burtcTimestamp          0x20004760     0x4  Data  Lc  clockApp.o [1]
+calcCRC                 0x000253f1    0x36  Code  Gb  crc.o [1]
+capSenseChTrigger       0x0002af5d     0x2  Code  Gb  caplesense.o [1]
+capSenseScanComplete    0x0002b001    0x24  Code  Gb  caplesense.o [1]
+capSenseSwitchModel     0x0002afe9    0x16  Code  Gb  caplesense.o [1]
+ceil                    0x00028b59          Code  Gb  ceil.o [5]
+ceill                   0x00028b59          Code  Gb  ceil.o [5]
+checkAndPrepareBuffer2  0x0002949b    0x3e  Code  Gb  data_gather.o [1]
+checkNotification       0x00028b0f     0xa  Code  Gb  notification.o [1]
+checkResetIndexData     0x00029517    0x5e  Code  Gb  data_gather.o [1]
+cleanUpAsciiString      0x0001cd5f    0x48  Code  Gb  BLE-LEUART-DMA.o [1]
+clearScreen             0x00025491    0x28  Code  Gb  subMenu.o [1]
+clockAppInit            0x00027dc9    0x7c  Code  Gb  clockApp.o [1]
+clockAppRestore         0x00027d6f    0x5a  Code  Gb  clockApp.o [1]
+clockGetOverflowCounter
+                        0x00027f0f     0x6  Code  Gb  clock.o [1]
+clockGetStartTime       0x00027ed9     0x6  Code  Gb  clock.o [1]
+clockInit               0x00027edf    0x16  Code  Gb  clock.o [1]
+clockOverflow           0x00027eff     0xa  Code  Gb  clock.o [1]
+clockSetOverflowCounter
+                        0x00027f09     0x6  Code  Gb  clock.o [1]
+clockSetStartTime       0x00027ed3     0x6  Code  Gb  clock.o [1]
+cmuStatus               0x200048ec     0x2  Data  Lc  em_emu.o [1]
+createDeviceTask        0x0002c047    0x20  Code  Gb  Device_task.o [1]
+createDisplayTask       0x0002c3cf    0x22  Code  Gb  display_task.o [1]
+createFlashTask         0x000218bf    0x1e  Code  Gb  flash_task.o [1]
+currentChunkNo          0x200048de     0x2  Data  Gb  BLE-LEUART-DMA.o [1]
+currentLedFlashSettings
+                        0x20004630    0x10  Data  Gb  sys_sharing_source.o [1]
+current_touchsensor_feq
+                        0x2000494b     0x1  Data  Gb  caplesense.o [1]
+dataUploadMode          0x2000493b     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+data_index              0x200048fe     0x2  Data  Gb  mems_tracking.o [1]
+debug_info              0x200046c4     0x8  Data  Gb  signal_proc.o [1]
+digits                  0x00030384    0x28  Data  Lc  xstoul.o [3]
+displayTaskHeartBeat    0x200047d0     0x4  Data  Gb  Device_task.o [1]
+div                     0x0003022f     0xe  Code  Gb  div.o [3]
+dmaControlBlock         0x20004200    0x80  Data  Gb  dmactrl.o [1]
+doDataGathering         0x000295c3   0x112  Code  Gb  data_gather.o [1]
+downloadPercentage      0x200047c0     0x4  Data  Gb  common_vars.o [1]
+downloadProgress        0x00033ebc   0x100  Data  Gb  led_font.o [1]
+dumpData                0x20000444     0x4  Data  Gb  cortex-m_faults.o [1]
+eTaskConfirmSleepModeStatus
+                        0x00022c5f    0x28  Code  Gb  tasks.o [1]
+endUploadSectorNum      0x200048d0     0x2  Data  Gb  BLE-LEUART-DMA.o [1]
+errlocated              0x2000457c    0x14  Data  Gb  common_vars.o [1]
+existIndexCounter       0x200046f8     0x4  Data  Gb  BLE-LEUART-DMA.o [1]
+exit                    0x0003475b     0x4  Code  Gb  exit.o [3]
+fAmbientTemperature     0x20000440     0x4  Data  Gb  common_vars.o [1]
+fSkinTemperature        0x200047a0     0x4  Data  Gb  common_vars.o [1]
+fd_hi_threshold         0x20000450     0x4  Data  Gb  mems_tracking.o [1]
+fd_low_threshold        0x20000454     0x4  Data  Gb  mems_tracking.o [1]
+fireDisplayEvent        0x0002c145    0x32  Code  Gb  display_task.o [1]
+first                   0x2000047a     0x1  Data  Lc  BLE-LEUART-DMA.o [1]
+firstWearOff            0x2000047e     0x1  Data  Gb  CapTouchDetect.o [1]
+flashBusyIndicator      0x2000496d     0x1  Data  Gb  flash_task.o [1]
+flashSectorHead         0x20004514    0x20  Data  Gb  flash_task.o [1]
+flashTaskHeartBeat      0x200047d4     0x4  Data  Gb  Device_task.o [1]
+flipAndInitIndexDataBuffer
+                        0x0002945f    0x3c  Code  Gb  data_gather.o [1]
+g_ns                    0x20004943     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+g_sAncs                 0x200045e0    0x10  Data  Gb  BLE-LEUART-DMA.o [1]
+g_tMenuInfo             0x2000483c     0x4  Data  Gb  Menu.o [1]
+gatherBufferHead        0x20004354    0x58  Data  Gb  data_gather.o [1]
+getBleDeviceInfo        0x0001f099     0xa  Code  Gb  BLE-LEUART-DMA.o [1]
+getConnectTime          0x20004935     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+getGMTTimestamp         0x00022fcb    0x18  Code  Gb  main.o [1]
+getNextIndexDataSector  0x00020f11    0x14  Code  Gb  flash_task.o [1]
+getNotifications        0x00028b19    0x26  Code  Gb  notification.o [1]
+getint                  0x00030ae5    0x28  Code  Lc  xgetdst.o [3]
+hEvtQueueDevice         0x200047c8     0x4  Data  Gb  Device_task.o [1]
+hEvtQueueDisplay        0x200047dc     0x4  Data  Gb  display_task.o [1]
+hEvtQueueFlash          0x200047e4     0x4  Data  Gb  flash_task.o [1]
+hFlashSemaphore         0x2000480c     0x4  Data  Gb  m25pxx.o [1]
+hI2CSemaphore           0x200047cc     0x4  Data  Gb  Device_task.o [1]
+hasEnteredOutofbatteryState
+                        0x20004996     0x1  Data  Gb  sys_sharing_source.o [1]
+heart_buffer            0x20004870     0x4  Data  Gb  signal_proc.o [1]
+heart_display           0x2000498f     0x1  Data  Gb  signal_proc.o [1]
+heart_time              0x2000484c     0x4  Data  Gb  signal_proc.o [1]
+heart_timecount         0x20004990     0x1  Data  Gb  signal_proc.o [1]
+hr_confirm_count        0x2000498d     0x1  Data  Gb  signal_proc.o [1]
+i2cNSum                 0x00034968     0x4  Data  Lc  em_i2c.o [1]
+i2cTransfer             0x20004534    0x18  Data  Lc  em_i2c.o [1]
+iCalories               0x2000477c     0x4  Data  Gb  common_vars.o [1]
+iCaloriesAccumulated    0x200047b4     0x4  Data  Gb  common_vars.o [1]
+iCaloriesBase           0x200047a8     0x4  Data  Gb  common_vars.o [1]
+iCalories_lastSaving    0x20004780     0x4  Data  Gb  common_vars.o [1]
+iDistance               0x2000478c     0x4  Data  Gb  common_vars.o [1]
+iDistanceAccumulated    0x200047bc     0x4  Data  Gb  common_vars.o [1]
+iDistanceBase           0x200047b0     0x4  Data  Gb  common_vars.o [1]
+iDistance_lastSaving    0x20004790     0x4  Data  Gb  common_vars.o [1]
+iHeartRate              0x20004778     0x4  Data  Gb  common_vars.o [1]
+iSteps                  0x20004784     0x4  Data  Gb  common_vars.o [1]
+iStepsAccumulated       0x200047b8     0x4  Data  Gb  common_vars.o [1]
+iStepsBase              0x200047ac     0x4  Data  Gb  common_vars.o [1]
+iSteps_lastSaving       0x20004788     0x4  Data  Gb  common_vars.o [1]
+iUVexp                  0x200047a4     0x4  Data  Gb  common_vars.o [1]
+iconAlarmColon          0x000347f4    0x14  Data  Gb  led_font.o [1]
+iconAlarmHourNumber_20_24
+                        0x00032d04   0x2d0  Data  Gb  led_font.o [1]
+iconAlarmMintuesNumbers_14_24
+                        0x00033838   0x1a4  Data  Gb  led_font.o [1]
+iconAlarmOnOff_9_16     0x00033fbc    0xfc  Data  Gb  led_font.o [1]
+iconAlarmTimeNow        0x00033cbc   0x100  Data  Gb  led_font.o [1]
+iconAlarm_10_8          0x000346c8    0x20  Data  Gb  led_font.o [1]
+iconBLEConnected        0x000345f0    0x30  Data  Gb  led_font.o [1]
+iconBLEDisconnected     0x000346e8    0x20  Data  Gb  led_font.o [1]
+iconBattery64_32        0x000319a4   0xa00  Data  Gb  led_font.o [1]
+iconBigNumbers_12_16    0x000340b8    0xf0  Data  Gb  led_font.o [1]
+iconCaloriesPercentage_64_4
+                        0x000339dc   0x180  Data  Gb  led_font.o [1]
+iconCalories_32_13      0x00034488    0x40  Data  Gb  led_font.o [1]
+iconDecimalPoint_4_16   0x0003492c     0x8  Data  Gb  led_font.o [1]
+iconDistance            0x00034508    0x40  Data  Gb  led_font.o [1]
+iconHeartNumbers_14_32  0x00032fd4   0x2a0  Data  Gb  led_font.o [1]
+iconHeart_22_32         0x000343a0    0x58  Data  Gb  led_font.o [1]
+iconKmMeter             0x00034548    0x3c  Data  Gb  led_font.o [1]
+iconNumbers_22_32       0x00032994   0x370  Data  Gb  led_font.o [1]
+iconSmallNumbers_8_13   0x0003426c    0xc0  Data  Gb  led_font.o [1]
+iconStep                0x000344c8    0x40  Data  Gb  led_font.o [1]
+iconTemperatureUnit_12_16
+                        0x000345c0    0x30  Data  Gb  led_font.o [1]
+iconTemperature_15_16   0x00034584    0x3c  Data  Gb  led_font.o [1]
+iconUV                  0x000343f8    0x50  Data  Gb  led_font.o [1]
+indexDataBuffer         0x2000368c   0x1fc  Data  Gb  data_gather.o [1]
+initDeviceTask          0x0002ba35    0x1e  Code  Gb  Device_task.o [1]
+initDisplayTask         0x0002c177    0x1a  Code  Gb  display_task.o [1]
+initFlashTask           0x00020e35    0x1e  Code  Gb  flash_task.o [1]
+initIndexDataBuffer     0x000292f5   0x16a  Code  Gb  data_gather.o [1]
+initLETIMER             0x0002c5e5    0x50  Code  Gb  bsp.o [1]
+initSystemStatus        0x00022e11    0x92  Code  Gb  main.o [1]
+init_mparams            0x0002388b    0x32  Code  Lc  dlmalloc.o [3]
+init_top                0x000238bd    0x34  Code  Lc  dlmalloc.o [3]
+insert_zero_number      0x20000476     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+inside_iSteps           0x2000497f     0x1  Data  Gb  mems_tracking.o [1]
+intTickFlag             0x20004973     0x1  Data  Lc  low_power_tick_management.o [1]
+isBLEError              0x0001f33f    0x58  Code  Gb  BLE-LEUART-DMA.o [1]
+isChargeStatusChange    0x20004961     0x1  Data  Gb  common_vars.o [1]
+isDetectedFall          0x2000495c     0x1  Data  Gb  common_vars.o [1]
+isLedFlashing           0x20004997     0x1  Data  Gb  sys_sharing_source.o [1]
+isMemsDeepSleeping      0x2000496e     0x1  Data  Gb  GlobalData.o [1]
+isMemsError             0x0002a01f    0x3e  Code  Gb  mems.o [1]
+isMemsSleeping          0x2000496f     0x1  Data  Gb  GlobalData.o [1]
+isOLEDOff               0x00027321     0xa  Code  Gb  M00930.o [1]
+isSOSDetected           0x2000495f     0x1  Data  Gb  common_vars.o [1]
+isTouchSensorOn         0x2000494d     0x1  Data  Gb  caplesense.o [1]
+key_released            0x2000047f     0x1  Data  Gb  CapTouchDetect.o [1]
+lastKeyTouchTime        0x200047d8     0x4  Data  Gb  Device_task.o [1]
+lastLongPressedisBLE    0x20004966     0x1  Data  Gb  Device_task.o [1]
+last_bottom_peak_position
+                        0x20004858     0x4  Data  Gb  signal_proc.o [1]
+last_bottom_pos_dela    0x20004922     0x2  Data  Gb  signal_proc.o [1]
+last_heart_ac_signal    0x2000486c     0x4  Data  Gb  signal_proc.o [1]
+last_mems_sample        0x20004900     0x2  Data  Gb  mems_tracking.o [1]
+last_top_peak_position  0x20004860     0x4  Data  Gb  signal_proc.o [1]
+last_top_pos_dela       0x2000491e     0x2  Data  Gb  signal_proc.o [1]
+lesenseChCb             0x20004734     0x4  Data  Lc  caplesense.o [1]
+lesenseScanCb           0x20004730     0x4  Data  Lc  caplesense.o [1]
+lmos                    0x0002f8c0    0x18  Data  Lc  xttotm.o [3]
+longTimerDefs           0x20004448    0x40  Data  Gb  main.o [1]
+long_pressed_happened   0x20004950     0x1  Data  Gb  CapTouchDetect.o [1]
+lowBatteryLevelAlert    0x20004962     0x1  Data  Gb  common_vars.o [1]
+macAddrdata             0x00033b5c   0x160  Data  Gb  led_font.o [1]
+main                    0x00022ea3    0x74  Code  Gb  main.o [1]
+maxUVIndex              0x00033dbc   0x100  Data  Gb  led_font.o [1]
+memchr                  0x00030079          Code  Gb  memchr.o [6]
+mems_P2P_Val_Delta      0x2000482c     0x4  Data  Gb  mems_tracking.o [1]
+mems_test_val           0x2000497a     0x1  Data  Gb  mems.o [1]
+menu_enabled_status     0x20004610    0x10  Data  Gb  Menu.o [1]
+menu_enabled_status_saved
+                        0x20004986     0x1  Data  Gb  Menu.o [1]
+merge_rfft_f32          0x0002e775    0xa0  Code  Gb  arm_rfft_fast_f32.o [4]
+mos                     0x0002f8d8    0x18  Data  Lc  xttotm.o [3]
+mparams                 0x20004564    0x18  Data  Lc  dlmalloc.o [3]
+ndigs                   0x000303ac    0x28  Data  Lc  xstoul.o [3]
+oldFallStatus           0x20004985     0x1  Data  Gb  mems_tracking.o [1]
+oled_drawHortLine       0x000289c3    0x2a  Code  Gb  Menu.o [1]
+oled_drawPic            0x000289ed    0xaa  Code  Gb  Menu.o [1]
+onBleHeartBeatCheck     0x0002ba53    0x40  Code  Gb  Device_task.o [1]
+onBleTaskTimeOut        0x0001cd39    0x26  Code  Gb  BLE-LEUART-DMA.o [1]
+onCmdFlashInit          0x000210d7    0xb8  Code  Gb  flash_task.o [1]
+onCmdInitChip           0x00020fad    0x3e  Code  Gb  flash_task.o [1]
+onCmdPrepareSector      0x0002118f    0x86  Code  Gb  flash_task.o [1]
+onCmdSaveDataToFlash    0x000212fb   0x122  Code  Gb  flash_task.o [1]
+onManualRestMCU         0x0002b799     0xa  Code  Gb  Device_task.o [1]
+onMenuAction            0x0002b7a5   0x17e  Code  Gb  Device_task.o [1]
+onPostScanFlashStorage  0x00021545    0x48  Code  Gb  flash_task.o [1]
+onPostWroteDataToFlash  0x0002158d    0x3c  Code  Gb  flash_task.o [1]
+onRealtimeClockTick     0x0002b923   0x112  Code  Gb  Device_task.o [1]
+onSystemModeChanged     0x0002b70b    0x8e  Code  Gb  Device_task.o [1]
+overflow_interval       0x2000474c     0x4  Data  Lc  clock.o [1]
+overflow_interval_r     0x20004750     0x4  Data  Lc  clock.o [1]
+pAlarmSetting           0x2000042c     0x4  Data  Gb  common_vars.o [1]
+pFlashInfo              0x20000438     0x4  Data  Gb  common_vars.o [1]
+pFlashStorageIndicator  0x2000043c     0x4  Data  Gb  common_vars.o [1]
+pFuncUpDataMenu         0x200001e4    0xb4  Data  Gb  Menu.o [1]
+pSystemTime             0x20000434     0x4  Data  Gb  common_vars.o [1]
+pUserProfile            0x20000430     0x4  Data  Gb  common_vars.o [1]
+peak_buff_wpr           0x20004989     0x1  Data  Gb  signal_proc.o [1]
+peak_good_count         0x2000498e     0x1  Data  Gb  signal_proc.o [1]
+peak_interval           0x200046cc     0x8  Data  Gb  signal_proc.o [1]
+perimitSend             0x20004948     0x1  Data  Gb  BLE-LEUART-DMA.o [1]
+pos_at_bottom_peak      0x2000490c     0x2  Data  Gb  mems_tracking.o [1]
+pos_at_top_peak         0x2000490a     0x2  Data  Gb  mems_tracking.o [1]
+pos_max_interval        0x200048f8     0x2  Data  Gb  mems.o [1]
+pos_min_interval        0x200048fa     0x2  Data  Gb  mems.o [1]
+ppg_avg_peak2peak       0x20004918     0x2  Data  Gb  signal_proc.o [1]
+prepareNextFlashSector  0x00021215    0x32  Code  Gb  flash_task.o [1]
+prepend_alloc           0x000238f1   0x36e  Code  Lc  dlmalloc.o [3]
+prev_inside_iSteps      0x20004906     0x2  Data  Gb  mems_tracking.o [1]
+prvAddCurrentTaskToDelayedList
+                        0x00022c87    0x38  Code  Lc  tasks.o [1]
+prvCopyDataFromQueue    0x00020d6d    0x26  Code  Lc  queue.o [1]
+prvCopyDataToQueue      0x00020cff    0x6e  Code  Lc  queue.o [1]
+prvIdleTask             0x00022c15    0x4a  Code  Lc  tasks.o [1]
+prvTaskExitError        0x00029069     0x8  Code  Lc  port.o [1]
+prvUnlockQueue          0x00020d93    0x64  Code  Lc  queue.o [1]
+putIndexData            0x000294d9    0x3e  Code  Gb  data_gather.o [1]
+pvPortMalloc            0x00028fed    0x48  Code  Gb  heap_1.o [1]
+pvTaskIncrementMutexHeldCount
+                        0x00022da7    0x12  Code  Gb  tasks.o [1]
+pxCurrentTCB            0x2000488c     0x4  Data  Gb  tasks.o [1]
+pxDelayedTaskList       0x20004890     0x4  Data  Lc  tasks.o [1]
+pxOverflowDelayedTaskList
+                        0x20004894     0x4  Data  Lc  tasks.o [1]
+pxPortInitialiseStack   0x00029045    0x24  Code  Gb  port.o [1]
+pxReadyTasksLists       0x20004488    0x3c  Data  Lc  tasks.o [1]
+read_AB_reg             0x200048c4     0x2  Data  Gb  AFE44x0.o [1]
+read_AB_reg_22bit       0x200046e4     0x4  Data  Gb  AFE44x0.o [1]
+read_IR_reg             0x200048c2     0x2  Data  Gb  AFE44x0.o [1]
+read_IR_reg_22bit       0x200046e0     0x4  Data  Gb  AFE44x0.o [1]
+resendTimes             0x200046b4     0x8  Data  Gb  BLE-LEUART-DMA.o [1]
+resetcause              0x20004764     0x4  Data  Lc  clockApp.o [1]
+rtcOverflowCounter      0x20004748     0x4  Data  Lc  clock.o [1]
+rtcStartTime            0x20004744     0x4  Data  Lc  clock.o [1]
+saveIndexDataToFlash    0x0002141d   0x128  Code  Gb  flash_task.o [1]
+save_activity_delta     0x20004820     0x4  Data  Gb  mems.o [1]
+scanWholeFlash          0x20000481     0x1  Data  Gb  common_vars.o [1]
+searchEndIndex          0x20004710     0x4  Data  Gb  BLE-LEUART-DMA.o [1]
+searchStartIndex        0x2000470c     0x4  Data  Gb  BLE-LEUART-DMA.o [1]
+sectorNode              0x200046f0     0x4  Data  Gb  BLE-LEUART-DMA.o [1]
+segment_holding         0x00023871    0x1a  Code  Lc  dlmalloc.o [3]
+si114x_default_ucoef    0x0002ab13    0x18  Code  Gb  Si14x.o [1]
+skinTempFlag            0x20004952     0x1  Data  Gb  common_vars.o [1]
+sleepBlockCnt           0x20004884     0x4  Data  Lc  sleep.o [1]
+sleepCallback           0x2000487c     0x4  Data  Lc  sleep.o [1]
+smooth_hr_output        0x0002c9a1    0x9c  Code  Gb  signal_proc.o [1]
+sosNotification         0x20004960     0x1  Data  Gb  common_vars.o [1]
+sprintf                 0x0002d789    0x34  Code  Gb  sprintf.o [3]
+sqrt                    0x0002e975          Code  Gb  sqrt.o [5]
+sqrtf                   0x00030039          Code  Gb  sqrtf.o [5]
+sqrtl                   0x0002e975          Code  Gb  sqrt.o [5]
+stage_rfft_f32          0x0002e6c5    0xb0  Code  Gb  arm_rfft_fast_f32.o [4]
+startCharging           0x20004955     0x1  Data  Gb  common_vars.o [1]
+startFlashLed           0x00021c25    0x80  Code  Gb  sys_sharing_source.o [1]
+startUploadSectorNum    0x200048ce     0x2  Data  Gb  BLE-LEUART-DMA.o [1]
+status                  0x20004988     0x1  Data  Gb  signal_proc.o [1]
+step_count              0x20004980     0x1  Data  Gb  mems_tracking.o [1]
+step_sign               0x2000497d     0x1  Data  Gb  mems_tracking.o [1]
+steps_time              0x20000486     0x1  Data  Gb  mems_tracking.o [1]
+stopFlashLed            0x00021ca5    0x38  Code  Gb  sys_sharing_source.o [1]
+stopVibrate             0x00029b9b     0x8  Code  Gb  drv2605.o [1]
+strchr                  0x00030061          Code  Gb  strchr.o [6]
+strlen                  0x0002d7bd          Code  Gb  strlen.o [6]
+switchToNextSector      0x00021251    0x78  Code  Gb  flash_task.o [1]
+sys_alloc               0x00023c5f   0x38c  Code  Lc  dlmalloc.o [3]
+systemSetting           0x20004280    0x74  Data  Gb  common_vars.o [1]
+systemStatus            0x20003de0    0xf8  Data  Gb  common_vars.o [1]
+t2b_peak_pos_dela       0x2000498a     0x1  Data  Gb  signal_proc.o [1]
+tempSectorNode          0x200046f4     0x4  Data  Gb  BLE-LEUART-DMA.o [1]
+test_index              0x200047c4     0x4  Data  Gb  cortex-m_faults.o [1]
+test_menu_loopcount     0x20004994     0x1  Data  Gb  subMenu.o [1]
+test_val                0x200048f6     0x2  Data  Gb  mcp9804.o [1]
+timerDefs               0x200042f4    0x60  Data  Gb  DelayUsingTimerInt.o [1]
+tmalloc_large           0x00023ff9   0x39c  Code  Lc  dlmalloc.o [3]
+tmalloc_small           0x00024395   0x21a  Code  Lc  dlmalloc.o [3]
+top_index               0x20004981     0x1  Data  Gb  mems_tracking.o [1]
+top_peak_position       0x2000485c     0x4  Data  Gb  signal_proc.o [1]
+top_peak_val            0x20004868     0x4  Data  Gb  signal_proc.o [1]
+top_pos_dela            0x2000491c     0x2  Data  Gb  signal_proc.o [1]
+top_value               0x200043fc    0x4c  Data  Gb  mems_tracking.o [1]
+totalUploadSector       0x200048d2     0x2  Data  Gb  BLE-LEUART-DMA.o [1]
+touchValues             0x200048e2     0x2  Data  Gb  caplesense.o [1]
+triggerAlarm            0x0002b5d9    0xfa  Code  Gb  Device_task.o [1]
+twiddleCoef_1024        0x0000b860  0x2000  Data  Gb  arm_common_tables.o [4]
+twiddleCoef_128         0x00009c60   0x400  Data  Gb  arm_common_tables.o [4]
+twiddleCoef_16          0x000098e0    0x80  Data  Gb  arm_common_tables.o [4]
+twiddleCoef_2048        0x0000d860  0x4000  Data  Gb  arm_common_tables.o [4]
+twiddleCoef_256         0x0000a060   0x800  Data  Gb  arm_common_tables.o [4]
+twiddleCoef_32          0x00009960   0x100  Data  Gb  arm_common_tables.o [4]
+twiddleCoef_512         0x0000a860  0x1000  Data  Gb  arm_common_tables.o [4]
+twiddleCoef_64          0x00009a60   0x200  Data  Gb  arm_common_tables.o [4]
+twiddleCoef_rfft_1024   0x00015d38  0x1000  Data  Gb  arm_common_tables.o [4]
+twiddleCoef_rfft_128    0x00014f38   0x200  Data  Gb  arm_common_tables.o [4]
+twiddleCoef_rfft_2048   0x00016d38  0x2000  Data  Gb  arm_common_tables.o [4]
+twiddleCoef_rfft_256    0x00015138   0x400  Data  Gb  arm_common_tables.o [4]
+twiddleCoef_rfft_32     0x00014db8    0x80  Data  Gb  arm_common_tables.o [4]
+twiddleCoef_rfft_4096   0x00018d38  0x4000  Data  Gb  arm_common_tables.o [4]
+twiddleCoef_rfft_512    0x00015538   0x800  Data  Gb  arm_common_tables.o [4]
+twiddleCoef_rfft_64     0x00014e38   0x100  Data  Gb  arm_common_tables.o [4]
+uResetCause             0x20004810     0x4  Data  Gb  main.o [1]
+ucHeap                  0x2000048c  0x1800  Data  Lc  heap_1.o [1]
+ucMaxSysCallPriority    0x20004987     0x1  Data  Lc  port.o [1]
+ucMenuRamBuf            0x20002f8c   0x300  Data  Gb  Menu.o [1]
+ulMaxPRIGROUPValue      0x20004840     0x4  Data  Lc  port.o [1]
+ulPortSetInterruptMask  0x00029255          Code  Gb  portasm.o [1]
+ulStoppedTimerCompensation
+                        0x20004808     0x4  Data  Lc  low_power_tick_management.o [1]
+ulTimerReloadValueForOneTick
+                        0x20004800     0x4  Data  Lc  low_power_tick_management.o [1]
+up_dir                  0x2000498c     0x1  Data  Gb  signal_proc.o [1]
+uxCriticalNesting       0x20000458     0x4  Data  Lc  port.o [1]
+uxCurrentNumberOfTasks  0x20004898     0x4  Data  Lc  tasks.o [1]
+uxListRemove            0x000291e1    0x24  Code  Gb  list.o [1]
+uxPendedTicks           0x200048a8     0x4  Data  Lc  tasks.o [1]
+uxSchedulerSuspended    0x200048b8     0x4  Data  Lc  tasks.o [1]
+uxTaskNumber            0x200048b4     0x4  Data  Lc  tasks.o [1]
+uxTopReadyPriority      0x200048a0     0x4  Data  Lc  tasks.o [1]
+vListInitialise         0x00029175    0x1a  Code  Gb  list.o [1]
+vListInitialiseItem     0x0002918f     0x6  Code  Gb  list.o [1]
+vListInsert             0x000291ad    0x34  Code  Gb  list.o [1]
+vListInsertEnd          0x00029195    0x18  Code  Gb  list.o [1]
+vPortClearInterruptMask
+                        0x00029263          Code  Gb  portasm.o [1]
+vPortEnableVFP          0x0002929d          Code  Gb  portasm.o [1]
+vPortEnterCritical      0x000290fd    0x18  Code  Gb  port.o [1]
+vPortExitCritical       0x00029115    0x12  Code  Gb  port.o [1]
+vPortFree               0x00029035     0x2  Code  Gb  heap_1.o [1]
+vPortSetupTimerInterrupt
+                        0x0002b435    0x8a  Code  Gb  low_power_tick_management.o [1]
+vPortStartFirstTask     0x00029285          Code  Gb  portasm.o [1]
+vPortSuppressTicksAndSleep
+                        0x0002b4bf    0xda  Code  Gb  low_power_tick_management.o [1]
+vPortValidateInterruptPriority
+                        0x00029145     0xe  Code  Gb  port.o [1]
+vPortYield              0x000290eb    0x12  Code  Gb  port.o [1]
+vQueueAddToRegistry     0x00020df7    0x30  Code  Gb  queue.o [1]
+vTaskDelay              0x00022751    0x58  Code  Gb  tasks.o [1]
+vTaskMissedYield        0x00022c0d     0x8  Code  Gb  tasks.o [1]
+vTaskPlaceOnEventList   0x00022b05    0x3a  Code  Gb  tasks.o [1]
+vTaskPriorityInherit    0x00022cbf    0x82  Code  Gb  tasks.o [1]
+vTaskSetTimeOutState    0x00022bb5     0xe  Code  Gb  tasks.o [1]
+vTaskStartScheduler     0x000227a9   0x154  Code  Gb  tasks.o [1]
+vTaskStepTick           0x000229bd     0xc  Code  Gb  tasks.o [1]
+vTaskSuspendAll         0x000228fd     0xc  Code  Gb  tasks.o [1]
+vTaskSwitchContext      0x00022ab9    0x4c  Code  Gb  tasks.o [1]
+val_at_bottom_peak      0x20004904     0x2  Data  Gb  mems_tracking.o [1]
+val_at_top_peak         0x20004902     0x2  Data  Gb  mems_tracking.o [1]
+val_threshold           0x200048fc     0x2  Data  Gb  mems.o [1]
+waitValidHeartrate      0x2000495b     0x1  Data  Gb  common_vars.o [1]
+wakeUpCallback          0x20004880     0x4  Data  Lc  sleep.o [1]
+walk_state              0x2000497e     0x1  Data  Gb  mems_tracking.o [1]
+wathdoginit             0x20000404     0xc  Data  Gb  Device_task.o [1]
+wearoffCurrentTime      0x2000473c     0x4  Data  Gb  CapTouchDetect.o [1]
+wearoffOldTime          0x20004738     0x4  Data  Gb  CapTouchDetect.o [1]
+wearonTime              0x20004740     0x4  Data  Gb  CapTouchDetect.o [1]
+which_ax_near_zero      0x20004979     0x1  Data  Gb  mems.o [1]
+writeToFlash            0x000212c9    0x32  Code  Gb  flash_task.o [1]
+xDelayedTaskList1       0x20004590    0x14  Data  Lc  tasks.o [1]
+xDelayedTaskList2       0x200045a4    0x14  Data  Lc  tasks.o [1]
+xMaximumPossibleSuppressedTicks
+                        0x20004804     0x4  Data  Lc  low_power_tick_management.o [1]
+xNextFreeByte           0x200047f0     0x4  Data  Lc  heap_1.o [1]
+xNextTaskUnblockTime    0x20000464     0x4  Data  Lc  tasks.o [1]
+xNumOfOverflows         0x200048b0     0x4  Data  Lc  tasks.o [1]
+xPendingReadyList       0x200045b8    0x14  Data  Lc  tasks.o [1]
+xPortStartScheduler     0x00029071    0x7a  Code  Gb  port.o [1]
+xQueueGenericCreate     0x00020a39    0x74  Code  Gb  queue.o [1]
+xQueueGenericReceive    0x00020c01    0xfe  Code  Gb  queue.o [1]
+xQueueGenericSend       0x00020aad    0xd8  Code  Gb  queue.o [1]
+xQueueGenericSendFromISR
+                        0x00020b91    0x70  Code  Gb  queue.o [1]
+xQueueRegistry          0x200043ac    0x50  Data  Gb  queue.o [1]
+xSchedulerRunning       0x200048a4     0x4  Data  Lc  tasks.o [1]
+xSuspendedTaskList      0x200045cc    0x14  Data  Lc  tasks.o [1]
+xTaskCheckForTimeOut    0x00022bc3    0x4a  Code  Gb  tasks.o [1]
+xTaskGenericCreate      0x000225e5   0x16c  Code  Gb  tasks.o [1]
+xTaskIncrementTick      0x000229c9    0xf0  Code  Gb  tasks.o [1]
+xTaskPriorityDisinherit
+                        0x00022d41    0x66  Code  Gb  tasks.o [1]
+xTaskRemoveFromEventList
+                        0x00022b59    0x54  Code  Gb  tasks.o [1]
+xTaskResumeAll          0x00022909    0xb4  Code  Gb  tasks.o [1]
+xTickCount              0x2000489c     0x4  Data  Lc  tasks.o [1]
+xYieldPending           0x200048ac     0x4  Data  Lc  tasks.o [1]
+
+
+[1] = D:\uvutechnology-exam\i2watch\trunk\I4_H\MCU Firmware\I4S\projects\ihealthtrack\iar\i4_H-release\Obj
+[2] = command line
+[3] = dl7M_tln.a
+[4] = iar_cortexM4lf_math.a
+[5] = m7M_tls.a
+[6] = rt7M_tl.a
+
+  82 942 bytes of readonly  code memory
+     288 bytes of readwrite code memory
+  94 371 bytes of readonly  data memory
+  31 107 bytes of readwrite data memory
+
+Errors: none
+Warnings: none
