@@ -11,9 +11,9 @@
 
 
 // =================================================================
-#define MAX_TIMER_FLAGS	6					// 定时器个数，上限16（对应uint16_t的16位）
+//#define MAX_TIMER_FLAGS	6					// maximum of timer, upper limit is 16 (uint16_t support 16 bits). Move to DelayUsingTimerInt.h enum.
 
-volatile uint16_t DelayTimerStatus = 0;		// 定时器标志位，每位代表一个定时器请求
+volatile uint16_t DelayTimerStatus = 0;		// timer status, one bit per timer
 
 // 按位置对应每个定时器的定义，如果为 handler=NULL，则向 device task 发送 timer 消息
 TIMER_DEFINE timerDefs[MAX_TIMER_FLAGS] = {NULL};	

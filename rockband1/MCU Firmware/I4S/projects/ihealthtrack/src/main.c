@@ -112,7 +112,7 @@ void initSystemStatus()
 	systemStatus.blAmbTempSensorOnline = false;
 	systemStatus.blSkinTempSensorOnline = false;
     systemStatus.blUVSensorOnline = false;
-#if (BAROMETER_SUPPORT==1) //[BG037]
+#if (BAROMETER_SUPPORT) //[BG037]
     systemStatus.blPressureSensorOnline = false; //[BG037] add.
 #endif
 	systemStatus.blAllSensorsOff = true;
@@ -301,7 +301,7 @@ int main(void)
 	
 	MEMS_Init();
 	L3GD20H_Init();
-	BMM150_init();
+	BMM150_Init();
 	if(systemStatus.blGeoMSensorOnline)
 		LEDG_ON();
 	else

@@ -170,7 +170,7 @@ BMM150_RETURN_FUNCTION_TYPE BMM150_set_presetmode(u8 v_presetmode_u8)
  *
  *
 */
-BMM150_RETURN_FUNCTION_TYPE BMM150_init(void)
+BMM150_RETURN_FUNCTION_TYPE BMM150_Init(void)
 {
 	/* variable used to return the bus communication result*/
 	BMM150_RETURN_FUNCTION_TYPE com_rslt = BMM150_ERROR;
@@ -184,13 +184,26 @@ BMM150_RETURN_FUNCTION_TYPE BMM150_init(void)
 
 	uint8_t p_BMM150_id ;
 	CMU_ClockEnable(cmuClock_GPIO, true);
-	///GPIO_PinModeSet(L3GD20H_DEN_PORT, L3GD20H_DEN_PIN, gpioModePushPull, 1);
-	///GPIO_PinOutClear(L3GD20H_DEN_PORT,L3GD20H_DEN_PIN );
 	GPIO_PinModeSet(BMM150_CS_PORT, BMM150_CS_PIN, gpioModePushPull, 1);
 
+#if 0 /// int tset
+	GPIO_PinModeSet(BMM150_INT_PORT, BMM150_INT_PIN, gpioModeInput, 1);
+	GPIO_IntConfig(BMM150_INT_PORT, BMM150_INT_PIN, false, true, true);
+	GPIO_IntClear(1 << BMM150_INT_PIN); 	
+	NVIC_SetPriority(GPIO_ODD_IRQn,GPIO_ODD_INT_LEVEL);
+	NVIC_EnableIRQ(GPIO_ODD_IRQn);
+	
+	GPIO_PinModeSet(BMM150_INT_PORT, BMM150_DRDY_PIN, gpioModeInput, 1);
+	GPIO_IntConfig(BMM150_INT_PORT, BMM150_DRDY_PIN, false, true, true);	
+	GPIO_IntClear(1 << BMM150_DRDY_PIN); 	
+	NVIC_SetPriority(GPIO_EVEN_IRQn,GPIO_EVEN_INT_LEVEL);
+	NVIC_EnableIRQ(GPIO_EVEN_IRQn);
+#endif
 
 	/* set device from suspend into sleep mode */
-	com_rslt = BMM150_set_power_mode(BMM150_ON);
+	////com_rslt = BMM150_set_power_mode(BMM150_ON);
+	BMM150_write_register(BMM150_POWER_CONTROL,0x01);
+	BMM150_write_register(BMM150_CONTROL,0x00);
 
 
 	/* wait two millisecond for bmc to settle */
@@ -206,12 +219,15 @@ BMM150_RETURN_FUNCTION_TYPE BMM150_init(void)
 		systemStatus.blGeoMSensorOnline = 1;
 		////SetPOWERMode(POWER_DOWN);
 	}
+	else
+		systemStatus.blGeoMSensorOnline = 0;
 
 
 	/* Function to initialise trim values */
 	///com_rslt += BMM150_init_trim_registers();
 	/* set the preset mode as regular*/
 	com_rslt += BMM150_set_presetmode(BMM150_PRESETMODE_REGULAR);
+	/// BMM150_write_register(BMM150_INT_CONTROL,0x80);	/// int tset
 	return com_rslt;
 }
 /*!
@@ -332,109 +348,35 @@ BMM150_RETURN_FUNCTION_TYPE BMM150_read_mag_data_XYZ(void)
 	BMM150_INIT_VALUE, BMM150_INIT_VALUE};
 	
 
-	uint8_t loop;
+	uint8_t loop,DRDYbit;
 
 	{
-		for(loop=0;loop<8;loop++)
-		BMM150_read_register((BMM150_DATA_X_LSB+loop),&v_data_u8[loop]);
-
-		BMM150_mag_data.datax = 
-		((v_data_u8[BMM150_XLSB_DATA]+v_data_u8[BMM150_XMSB_DATA]*0x100)>>3);
 		
-		BMM150_mag_data.datay = 
-		((v_data_u8[BMM150_YLSB_DATA]+v_data_u8[BMM150_YMSB_DATA]*0x100)>>3);
+		BMM150_read_register(BMM150_DATA_R_LSB,&DRDYbit);
+		BMM150_mag_data.data_ready = DRDYbit&0x01;
+
+		if(BMM150_mag_data.data_ready)
+        {
 		
-		BMM150_mag_data.dataz = 
-		((v_data_u8[BMM150_ZLSB_DATA]+v_data_u8[BMM150_ZMSB_DATA]*0x100)>>1);
+          for(loop=0;loop<8;loop++)
+            BMM150_read_register((BMM150_DATA_X_LSB+loop),&v_data_u8[loop]);
 
-		// two¡¦s complement
-		BMM150_mag_data.resistance = 
-		((v_data_u8[BMM150_RLSB_DATA]+v_data_u8[BMM150_RMSB_DATA]*0x100)>>2);
+          BMM150_mag_data.datax = 
+            ((v_data_u8[BMM150_XLSB_DATA]+v_data_u8[BMM150_XMSB_DATA]*0x100)>>3); //<<8
 		
-		/* read the mag xyz and r data*/
-		com_rslt = p_BMM150->BMM150_BUS_READ_FUNC(p_BMM150->dev_addr,
-		BMM150_DATA_X_LSB, v_data_u8, BMM150_ALL_DATA_FRAME_LENGTH);
+          BMM150_mag_data.datay = 
+            ((v_data_u8[BMM150_YLSB_DATA]+v_data_u8[BMM150_YMSB_DATA]*0x100)>>3); //<<8
+		
+          BMM150_mag_data.dataz = 
+            ((v_data_u8[BMM150_ZLSB_DATA]+v_data_u8[BMM150_ZMSB_DATA]*0x100)>>1); //<<8
 
-#if 0
-		if (!com_rslt) {
-			/* Reading data for X axis */
-			v_data_u8[BMM150_XLSB_DATA] =
-			BMM150_GET_BITSLICE(v_data_u8[BMM150_XLSB_DATA],
-			BMM150_DATA_X_LSB_BIT);
-			raw_data_xyz_t.raw_data_x = (s16)((((s32)
-			((s8)v_data_u8[BMM150_XMSB_DATA])) <<
-			BMM150_SHIFT_BIT_POSITION_BY_05_BITS)
-			| v_data_u8[BMM150_XLSB_DATA]);
+          // two's complement
+          BMM150_mag_data.resistance = 
+            ((v_data_u8[BMM150_RLSB_DATA]+v_data_u8[BMM150_RMSB_DATA]*0x100)>>2);  //<<8
 
-
-			/* Reading data for Y axis */
-			v_data_u8[BMM150_YLSB_DATA] =
-			BMM150_GET_BITSLICE(v_data_u8[BMM150_YLSB_DATA],
-			BMM150_DATA_Y_LSB_BIT);
-			raw_data_xyz_t.raw_data_y = (s16)((((s32)
-			((s8)v_data_u8[BMM150_YMSB_DATA])) <<
-			BMM150_SHIFT_BIT_POSITION_BY_05_BITS)
-			| v_data_u8[BMM150_YLSB_DATA]);
-
-
-			/* Reading data for Z axis */
-			v_data_u8[BMM150_ZLSB_DATA] =
-			BMM150_GET_BITSLICE(v_data_u8[BMM150_ZLSB_DATA],
-			BMM150_DATA_Z_LSB_BIT);
-			raw_data_xyz_t.raw_data_z = (s16)((((s32)
-			((s8)v_data_u8[BMM150_ZMSB_DATA])) <<
-			BMM150_SHIFT_BIT_POSITION_BY_07_BITS)
-			| v_data_u8[BMM150_ZLSB_DATA]);
-
-
-
-
-				/* read the data ready status*/
-			mag_data->data_ready = BMM150_GET_BITSLICE(
-			v_data_u8[BMM150_RLSB_DATA],
-			BMM150_DATA_RDYSTAT);
-
-
-
-
-
-
-			/* Reading data for Resistance*/
-			v_data_u8[BMM150_RLSB_DATA] =
-			BMM150_GET_BITSLICE(v_data_u8[BMM150_RLSB_DATA],
-			BMM150_DATA_R_LSB_BIT);
-			raw_data_xyz_t.raw_data_r = (u16)((((u32)
-			v_data_u8[BMM150_RMSB_DATA]) <<
-			BMM150_SHIFT_BIT_POSITION_BY_06_BITS)
-			| v_data_u8[BMM150_RLSB_DATA]);
-
-
-
-
-
-
-			/* Compensation for X axis */
-			mag_data->datax = BMM150_compensate_X(
-			raw_data_xyz_t.raw_data_x,
-			raw_data_xyz_t.raw_data_r);
-
-
-			/* Compensation for Y axis */
-			mag_data->datay = BMM150_compensate_Y(
-			raw_data_xyz_t.raw_data_y,
-			raw_data_xyz_t.raw_data_r);
-
-
-			/* Compensation for Z axis */
-			mag_data->dataz = BMM150_compensate_Z(
-			raw_data_xyz_t.raw_data_z,
-			raw_data_xyz_t.raw_data_r);
-
-
-			/* Output raw resistance value */
-			mag_data->resistance = raw_data_xyz_t.raw_data_r;
-		}
-#endif
+			return 1;
+        }
+	
 	}
 	return com_rslt;
 }

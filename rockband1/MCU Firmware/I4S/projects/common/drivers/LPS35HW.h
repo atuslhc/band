@@ -9,7 +9,7 @@
 #include "stdint.h"
 
 // [BG037] add BAROMETER/Pressure - LPS35HW
-//#if (BAROMETER_SUPPORT==1)   //[BG037]
+//#if (BAROMETER_SUPPORT==2)   //[BG037]
 #define LPS35HW_I2C_cmuClock_I2C       cmuClock_I2C0
 #define LPS35HW_I2C_gpioPort           gpioPortD
 #define LPS35HW_I2C_SCL_PIN            15

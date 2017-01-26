@@ -7976,6 +7976,9 @@
       <name>$PROJ_DIR$\..\..\common\drivers\LPS22HB.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\common\drivers\LPS35HW.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\common\drivers\M00930.C</name>
     </file>
     <file>

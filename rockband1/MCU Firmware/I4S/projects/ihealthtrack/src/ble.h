@@ -89,7 +89,7 @@ typedef enum _cmd_type
 /****************这些均未实现********************************/
 
 
-//这是业务类型
+
 /* query between system(mcu) and ble subcommand */
 typedef enum _BLE_SUBCMD
 {

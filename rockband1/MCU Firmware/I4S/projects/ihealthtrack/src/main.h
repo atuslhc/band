@@ -49,7 +49,7 @@
   #elif (BOARD_TYPE==2)
     #define Dev_Name 2
     #define APP_FW_VER_M  0
-    #define APP_FW_VER_S  13
+    #define APP_FW_VER_S  14
   #endif
  #else
  #error "Please specify VENDOR_TYPE!"

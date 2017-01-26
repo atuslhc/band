@@ -19,7 +19,9 @@ typedef enum
 	TIMER_FLAG_BLE           	,
 //	TIMER_FLAG_WIFI				,
 //	TIMER_FLAG_USBClose    		,
+    TIMER_FLAG_pressure         ,  //
 	TIMER_FLAG_LEDFlashing 		,
+    MAX_TIMER_FLAGS
 } TIMER_FLAG;
 //实际上他们都使用同一个硬件定时器，当定时到了之后就去调用DelayTimerCallback(),这里面计算各个软件定时器的状态，做相应的处理。
 

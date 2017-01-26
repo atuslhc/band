@@ -26,8 +26,16 @@
 #include "mcp9804.h"
 #include "Si14x.h"
 #include "ble.h"
-#if (BAROMETER_SUPPORT)
+#if (BAROMETER_SUPPORT==1)
 #include "LPS22HB.h"
+#elif (BAROMETER_SUPPORT==2)
+#include "LPS35HW.h"
+#endif
+#if (MAGNETIC_SUPPORT==1)
+#include "BMM150.h"
+#endif
+#if (GYRO_SUPPORT==1)
+#include "L3GD20H.h"
 #endif
 #if (CAP_SUPPORT==2)
 #include "AD7156.h"
@@ -406,8 +414,10 @@ void onSystemStartup()
 	UV_Init();
 #endif
 
-#if (BAROMETER_SUPPORT)
+#if (BAROMETER_SUPPORT==1)
     LPS22HB_Init();
+#elif (BAROMETER_SUPPORT==2)
+    LPS35HW_Init();
 #endif
     
 #if (CAP_SUPPORT==2)
@@ -1132,6 +1142,23 @@ void DeviceTask(void* argument)
 #if (VIBRATION_SUPPORT==1)
 	DRV2605_Init(); //vibrating moter.
 #endif
+
+    /* baro/pressure sensor */
+#if (BAROMETER_SUPPORT==1)
+    LPS22HB_Init();
+#elif (BAROMETER_SUPPORT==2)
+    LPS35HW_Init();
+#endif    
+
+    /* magnetic sensor */
+#if (MAGNETIC_SUPPORT==1)
+    BMM150_Init();
+#endif
+    
+    /* gyro sensor */
+#if (GYRO_SUPPORT==1)
+    L3GD20H_Init();
+#endif
     
 	Battery_ADC_Init();
 #if (CHARGER_SUPPORT==1)
@@ -1513,6 +1540,15 @@ void DeviceTask(void* argument)
 
 						break;
 					}
+                case TIMER_FLAG_pressure:  //FIXME: should be divide two event for one by one.
+#if (BAROMETER_SUPPORT==1)
+						LPS22HB_Read_converter();
+#endif
+#if (MAGNETIC_SUPPORT==1)
+						BMM150_read_mag_data_XYZ();
+#endif
+						break;
+					
 
 //当上位机发送一个有效的时间戳，mcu计算出那个sector，具体的读地址后启动定时器，然后时间到即会到这里
 					case TIMER_FLAG_BLE:
@@ -1554,6 +1590,27 @@ void DeviceTask(void* argument)
                 LEDB_OFF();
 				break;
 #endif
+
+#if (GYRO_SUPPORT==1)
+			case MESSAGE_GYRO_DRDY:
+			{
+                ReadL3GD20HFIFO((uint8_t*)&L3GD20H_BUFF[0][0],
+	             (uint8_t*)&L3GD20H_BUFF[1][0],
+	             (uint8_t*)&L3GD20H_BUFF[2][0],
+	             L3GD20H_FIFO_SIZE);
+				break;
+			}
+
+            case MESSAGE_GYRO_INT:
+			{
+                ReadL3GD20HFIFO((uint8_t*)&L3GD20H_BUFF[0][0],
+	             (uint8_t*)&L3GD20H_BUFF[1][0],
+	             (uint8_t*)&L3GD20H_BUFF[2][0],
+	             L3GD20H_FIFO_SIZE);
+				break;
+			}
+#endif
+            
 			case AFE_Message:
 			{
 				//TEST_L();
@@ -1848,6 +1905,15 @@ void DeviceTask(void* argument)
 
 				break;
 			}
+            
+        case MESSAGE_BMM150_DRDY:  //FIXME: patch while need.
+            {
+                LEDR_OFF();
+                LEDG_OFF();
+                LEDB_OFF();
+                
+                break;
+            }
 
 			default:
 				break;

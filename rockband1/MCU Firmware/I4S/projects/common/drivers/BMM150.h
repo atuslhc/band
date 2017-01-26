@@ -797,6 +797,12 @@ struct BMM150_t {
 #define BMM150_CS_H()    GPIO_PinOutSet(BMM150_CS_PORT,BMM150_CS_PIN )
 #define BMM150_CS_L()    GPIO_PinOutClear(BMM150_CS_PORT,BMM150_CS_PIN )
 
+#define BMM150_INT_PORT    (gpioPortA)
+#define BMM150_DRDY_PIN    (12)
+
+#define BMM150_INT_PORT    (gpioPortA)
+#define BMM150_INT_PIN    (13)
+
 /********************************************/
 /**\name INITIALIZATION  */
 /********************************************/
@@ -821,7 +827,7 @@ struct BMM150_t {
  *
  *
 */
-BMM150_RETURN_FUNCTION_TYPE BMM150_init(void);
+BMM150_RETURN_FUNCTION_TYPE BMM150_Init(void);
 /********************************************/
 /**\name DATA READ FUNCTIONS  */
 /********************************************/

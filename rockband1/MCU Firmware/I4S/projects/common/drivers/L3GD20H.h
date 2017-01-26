@@ -38,25 +38,25 @@ typedef enum
 
 typedef enum
 {
-	L3GD20H_POWER_DOWN         =		0x00,
+	L3GD20H_POWER_DOWN                      =   0x00,
 	L3GD20H_POWER_NORMAL,
 	L3GD20H_POWER_Sleep,
 } L3GD20H_Mode_t;
 
 typedef enum
 {
-	L3GD20H_HPM_NORMAL_MODE_RES           =               0x00,
-	L3GD20H_HPM_REF_SIGNAL                =               0x01,
-	L3GD20H_HPM_NORMAL_MODE               =               0x02,
-	L3GD20H_HPM_AUTORESET_INT             =               0x03
+	L3GD20H_HPM_NORMAL_MODE_RES             =   0x00,
+	L3GD20H_HPM_REF_SIGNAL                  =   0x01,
+	L3GD20H_HPM_NORMAL_MODE                 =   0x02,
+	L3GD20H_HPM_AUTORESET_INT               =   0x03
 } L3GD20H_HPFMode_t;
 
 typedef enum
 {
-	L3GD20H_HPFCF_0                       =               0x00,
-	L3GD20H_HPFCF_1                       =               0x01,
-	L3GD20H_HPFCF_2                       = 		0x02,
-	L3GD20H_HPFCF_3                       =               0x03
+	L3GD20H_HPFCF_0                         =   0x00,
+	L3GD20H_HPFCF_1                         =   0x01,
+	L3GD20H_HPFCF_2                         = 	0x02,
+	L3GD20H_HPFCF_3                         =   0x03
 } L3GD20H_HPFCutOffFreq_t;
 
 typedef struct
@@ -68,81 +68,81 @@ typedef struct
 
 typedef enum
 {
-	L3GD20H_FULLSCALE_2                   =               0x00,
-	L3GD20H_FULLSCALE_4                   =               0x01,
-	L3GD20H_FULLSCALE_8                   =               0x02,
-	L3GD20H_FULLSCALE_16                  =               0x03
+	L3GD20H_FULLSCALE_2                     =   0x00,
+	L3GD20H_FULLSCALE_4                     =   0x01,
+	L3GD20H_FULLSCALE_8                     =   0x02,
+	L3GD20H_FULLSCALE_16                    =   0x03
 } L3GD20H_Fullscale_t;
 
 typedef enum
 {
-	L3GD20H_BLE_LSB			=		0x00,
-	L3GD20H_BLE_MSB			=		0x01
+	L3GD20H_BLE_LSB			                =	0x00,
+	L3GD20H_BLE_MSB			                =	0x01
 } L3GD20H_Endianess_t;
 
 typedef enum
 {
-	L3GD20H_SELF_TEST_DISABLE             =               0x00,
-	L3GD20H_SELF_TEST_0                   =               0x01,
-	L3GD20H_SELF_TEST_1                   =               0x02
+	L3GD20H_SELF_TEST_DISABLE               =   0x00,
+	L3GD20H_SELF_TEST_0                     =   0x01,
+	L3GD20H_SELF_TEST_1                     =   0x02
 } L3GD20H_SelfTest_t;
 
 typedef enum
 {
-L3GD20H_FIFO_Bypass_mode,
-L3GD20H_FIFO_mode,
-L3GD20H_FIFO_Stream_mode,
-L3GD20H_FIFO_Stream2FIFO_mode,
-L3GD20H_FIFO_Bypass2stream_mode,
-L3GD20H_FIFO_Dynamic_stream_mode,
-L3GD20H_FIFO_Bypass2FIFO_mode,
+    L3GD20H_FIFO_Bypass_mode,
+    L3GD20H_FIFO_mode,
+    L3GD20H_FIFO_Stream_mode,
+    L3GD20H_FIFO_Stream2FIFO_mode,
+    L3GD20H_FIFO_Bypass2stream_mode,
+    L3GD20H_FIFO_Dynamic_stream_mode,
+    L3GD20H_FIFO_Bypass2FIFO_mode,
 } L3GD20H_FifoMode_t;
 
 typedef enum
 {
-	L3GD20H_TRIG_INT1                     =		0x00,
-	L3GD20H_TRIG_INT2 			=		0x01
+	L3GD20H_TRIG_INT1                       =	0x00,
+	L3GD20H_TRIG_INT2 			            =	0x01
 } L3GD20H_TrigInt_t;
 
 typedef enum
 {
-	L3GD20H_SPI_4_WIRE                    =               0x00,
-	L3GD20H_SPI_3_WIRE                    =               0x01
+	L3GD20H_SPI_4_WIRE                      =   0x00,
+	L3GD20H_SPI_3_WIRE                      =   0x01
 } L3GD20H_SPIMode_t;
 
 typedef enum
 {
-	L3GD20H_Y_ENABLE                      =               0x01,
-	L3GD20H_Y_DISABLE                     =               0x00,
-	L3GD20H_X_ENABLE                      =               0x02,
-	L3GD20H_X_DISABLE                     =               0x00,
-	L3GD20H_Z_ENABLE                      =               0x04,
-	L3GD20H_Z_DISABLE                     =               0x00
+	L3GD20H_Y_ENABLE                        =   0x01,
+	L3GD20H_Y_DISABLE                       =   0x00,
+	L3GD20H_X_ENABLE                        =   0x02,
+	L3GD20H_X_DISABLE                       =   0x00,
+	L3GD20H_Z_ENABLE                        =   0x04,
+	L3GD20H_Z_DISABLE                       =   0x00
 } L3GD20H_AXISenable_t;
 
 typedef enum
 {
-	L3GD20H_INT1_6D_4D_DISABLE            =               0x00,
-	L3GD20H_INT1_6D_ENABLE                =               0x01,
-	L3GD20H_INT1_4D_ENABLE                =               0x02
+	L3GD20H_INT1_6D_4D_DISABLE              =   0x00,
+	L3GD20H_INT1_6D_ENABLE                  =   0x01,
+	L3GD20H_INT1_4D_ENABLE                  =   0x02
 } L3GD20H_INT_6D_4D_t;
 
 typedef enum
 {
-	L3GD20H_UP_SX                         =               0x44,
-	L3GD20H_UP_DX                         =               0x42,
-	L3GD20H_DW_SX                         =               0x41,
-	L3GD20H_DW_DX                         =               0x48,
-	L3GD20H_TOP                           =               0x60,
-	L3GD20H_BOTTOM                        =               0x50
+	L3GD20H_UP_SX                           =   0x44,
+	L3GD20H_UP_DX                           =   0x42,
+	L3GD20H_DW_SX                           =   0x41,
+	L3GD20H_DW_DX                           =   0x48,
+	L3GD20H_TOP                             =   0x60,
+	L3GD20H_BOTTOM                          =   0x50
 } L3GD20H_POSITION_6D_t;
 
 typedef enum
 {
-	L3GD20H_INT_MODE_OR                   =               0x00,
-	L3GD20H_INT_MODE_6D_MOVEMENT          =               0x01,
-	L3GD20H_INT_MODE_AND                  =               0x02,
-	L3GD20H_INT_MODE_6D_POSITION          =               0x03
+	L3GD20H_INT_MODE_OR                     =   0x00,
+	L3GD20H_INT_MODE_6D_MOVEMENT            =   0x01,
+	L3GD20H_INT_MODE_AND                    =   0x02,
+	L3GD20H_INT_MODE_6D_POSITION            =   0x03
 } L3GD20H_Int1Mode_t;
 
 
@@ -151,19 +151,19 @@ typedef enum
 //  b2 = z      b1 = y     b0 = x
 typedef enum
 {
-	L3GD20H_DCLICK_Z_P                      =               0x24,
-	L3GD20H_DCLICK_Z_N                      =               0x2C,
-	L3GD20H_SCLICK_Z_P                      =               0x14,
-	L3GD20H_SCLICK_Z_N                      =               0x1C,
-	L3GD20H_DCLICK_Y_P                      =               0x22,
-	L3GD20H_DCLICK_Y_N                      =               0x2A,
-	L3GD20H_SCLICK_Y_P                      =               0x12,
-	L3GD20H_SCLICK_Y_N			=		0x1A,
-	L3GD20H_DCLICK_X_P                      =               0x21,
-	L3GD20H_DCLICK_X_N                      =               0x29,
-	L3GD20H_SCLICK_X_P                      =               0x11,
-	L3GD20H_SCLICK_X_N                      =               0x19,
-	L3GD20H_NO_CLICK                        =               0x00
+	L3GD20H_DCLICK_Z_P                      =   0x24,
+	L3GD20H_DCLICK_Z_N                      =   0x2C,
+	L3GD20H_SCLICK_Z_P                      =   0x14,
+	L3GD20H_SCLICK_Z_N                      =   0x1C,
+	L3GD20H_DCLICK_Y_P                      =   0x22,
+	L3GD20H_DCLICK_Y_N                      =   0x2A,
+	L3GD20H_SCLICK_Y_P                      =   0x12,
+	L3GD20H_SCLICK_Y_N			            =   0x1A,
+	L3GD20H_DCLICK_X_P                      =   0x21,
+	L3GD20H_DCLICK_X_N                      =   0x29,
+	L3GD20H_SCLICK_X_P                      =   0x11,
+	L3GD20H_SCLICK_X_N                      =   0x19,
+	L3GD20H_NO_CLICK                        =   0x00
 } L3GD20H_Click_Response;
 
 //Register Definition
@@ -212,18 +212,15 @@ typedef enum
 //
 //*****************************************************************************
 #define L3GD20H_CTRL1_DR_M      0xC0        // ODR select, x8 if Low_ODR = 0
-#define L3GD20H_CTRL1_DR_12_5_HZ                                              \
-                                0x00        // 12.5Hz or 100Hz
+#define L3GD20H_CTRL1_DR_12_5_HZ 0x00        // 12.5Hz or 100Hz
 #define L3GD20H_CTRL1_DR_25_HZ  0x40        // 25Hz or 200Hz
 #define L3GD20H_CTRL1_DR_50_HZ  0x80        // 50Hz or 400Hz
 #define L3GD20H_CTRL1_DR_800_HZ 0xC0        // 800Hz of Low_ODR=0, or 50Hz
                                             // otherwise
 #define L3GD20H_CTRL1_BW_M      0x30        // Bandwidth select
 #define L3GD20H_CTRL1_POWER_M   0x08        // Power control
-#define L3GD20H_CTRL1_POWER_LOWPOW                                            \
-                                0x00
-#define L3GD20H_CTRL1_POWER_NORMAL                                            \
-                                0x08
+#define L3GD20H_CTRL1_POWER_LOWPOW 0x00
+#define L3GD20H_CTRL1_POWER_NORMAL 0x08
 #define L3GD20H_CTRL1_AXIS_M    0x7         // Axis power control
 #define L3GD20H_CTRL1_AXIS_Y_EN 0x01        // Y-axis enable
 #define L3GD20H_CTRL1_AXIS_X_EN 0x02        // X-axis enable
@@ -240,8 +237,7 @@ typedef enum
 //
 //*****************************************************************************
 #define L3GD20H_CTRL2_EXTREN_M  0x80        // edge sensitive
-#define L3GD20H_CTRL2_EXTREN_DIS                                              \
-                                0x00
+#define L3GD20H_CTRL2_EXTREN_DIS 0x00
 #define L3GD20H_CTRL2_EXTREN_EN 0x80
 #define L3GD20H_CTRL2_LVLEN_M   0x40        // level sensitive
 #define L3GD20H_CTRL2_LVLEN_DIS 0x00
@@ -260,61 +256,37 @@ typedef enum
 //
 //*****************************************************************************
 #define L3GD20H_CTRL3_INT1_IG_M 0x80        // Interrupt enable on INT1 pin
-#define L3GD20H_CTRL3_INT1_IG_DIS                                             \
-                                0x00
-#define L3GD20H_CTRL3_INT1_IG_EN                                              \
-                                0x80
-#define L3GD20H_CTRL3_INT1_BOOT_M                                             \
-                                0x40        // Boot status available on INT1
-                                            // pin.
-#define L3GD20H_CTRL3_INT1_BOOT_DIS                                           \
-                                0x00
-#define L3GD20H_CTRL3_INT1_BOOT_EN                                            \
-                                0x40
-#define L3GD20H_CTRL3_H_LACTIVE_M                                             \
-                                0x20        // Interrupt active configuration
+#define L3GD20H_CTRL3_INT1_IG_DIS 0x00
+#define L3GD20H_CTRL3_INT1_IG_EN 0x80
+#define L3GD20H_CTRL3_INT1_BOOT_M 0x40        // Boot status available on INT1 pin.
+#define L3GD20H_CTRL3_INT1_BOOT_DIS 0x00
+#define L3GD20H_CTRL3_INT1_BOOT_EN 0x40
+#define L3GD20H_CTRL3_H_LACTIVE_M 0x20        // Interrupt active configuration
                                             // on INT; default value: 0 (0:
                                             // high; 1:low)
-#define L3GD20H_CTRL3_H_LACTIVE_HI                                            \
-                                0x00
-#define L3GD20H_CTRL3_H_LACTIVE_LOW                                           \
-                                0x20
-#define L3GD20H_CTRL3_DRIVE_TYPE_M                                            \
-                                0x10        // Push- Pull / Open drain; default
+#define L3GD20H_CTRL3_H_LACTIVE_HI 0x00
+#define L3GD20H_CTRL3_H_LACTIVE_LOW 0x20
+#define L3GD20H_CTRL3_DRIVE_TYPE_M 0x10        // Push- Pull / Open drain; default
                                             // value: 0 (0: push-pull; 1: open
                                             // drain)
-#define L3GD20H_CTRL3_DRIVE_TYPE_PP                                           \
-                                0x00
-#define L3GD20H_CTRL3_DRIVE_TYPE_OD                                           \
-                                0x10
-#define L3GD20H_CTRL3_INT2_DRDY_M                                             \
-                                0x08        // Date Ready on DRDY/INT2 pin;
+#define L3GD20H_CTRL3_DRIVE_TYPE_PP 0x00
+#define L3GD20H_CTRL3_DRIVE_TYPE_OD 0x10
+#define L3GD20H_CTRL3_INT2_DRDY_M 0x08        // Date Ready on DRDY/INT2 pin;
                                             // default value: 0
-#define L3GD20H_CTRL3_INT2_DRDY_DIS                                           \
-                                0x00
-#define L3GD20H_CTRL3_INT2_DRDY_EN                                            \
-                                0x08
-#define L3GD20H_CTRL3_INT2_FTH_M                                              \
-                                0x04        // FIFO Threshold interrupt on
+#define L3GD20H_CTRL3_INT2_DRDY_DIS 0x00
+#define L3GD20H_CTRL3_INT2_DRDY_EN 0x08
+#define L3GD20H_CTRL3_INT2_FTH_M 0x04        // FIFO Threshold interrupt on
                                             // DRDY/INT2 pin; default value: 0
-#define L3GD20H_CTRL3_INT2_FTH_DIS                                            \
-                                0x00
-#define L3GD20H_CTRL3_INT2_FTH_EN                                             \
-                                0x04
-#define L3GD20H_CTRL3_INT2_ORUN_M                                             \
-                                0x02        // FIFO Overrun interrupt on
+#define L3GD20H_CTRL3_INT2_FTH_DIS 0x00
+#define L3GD20H_CTRL3_INT2_FTH_EN 0x04
+#define L3GD20H_CTRL3_INT2_ORUN_M 0x02        // FIFO Overrun interrupt on
                                             // DRDY/INT2 pin; default value: 0
-#define L3GD20H_CTRL3_INT2_ORUN_DIS                                           \
-                                0x00
-#define L3GD20H_CTRL3_INT2_ORUN_EN                                            \
-                                0x02
-#define L3GD20H_CTRL3_INT2_EMPTY_M                                            \
-                                0x01        // FIFO Empty interrupt on
+#define L3GD20H_CTRL3_INT2_ORUN_DIS 0x00
+#define L3GD20H_CTRL3_INT2_ORUN_EN  0x02
+#define L3GD20H_CTRL3_INT2_EMPTY_M  0x01        // FIFO Empty interrupt on
                                             // DRDY/INT2 pin; default value: 0
-#define L3GD20H_CTRL3_INT2_EMPTY_DIS                                          \
-                                0x00
-#define L3GD20H_CTRL3_INT2_EMPTY_EN                                           \
-                                0x01
+#define L3GD20H_CTRL3_INT2_EMPTY_DIS 0x00
+#define L3GD20H_CTRL3_INT2_EMPTY_EN  0x01
 
 
 //*****************************************************************************
@@ -323,47 +295,35 @@ typedef enum
 // register.
 //
 //*****************************************************************************
-#define L3GD20H_CTRL4_BDU_M     0x80        // Block data update; default
+#define L3GD20H_CTRL4_BDU_M         0x80   // Block data update; default
                                             // value: 0 (0: continuous update;
                                             // 1: output registers not updated
                                             // until MSB and LSB reading)
-#define L3GD20H_CTRL4_BDU_CONTINUOUS                                          \
-                                0x00
-#define L3GD20H_CTRL4_BDU_MSBLSB                                              \
-                                0x80
-#define L3GD20H_CTRL4_ENDIAN_M  0x40        // Endian selection
-#define L3GD20H_CTRL4_ENDIAN_LITTLE                                           \
-                                0x00
-#define L3GD20H_CTRL4_ENDIAN_BIG                                              \
-                                0x40
-#define L3GD20H_CTRL4_FS_M      0x30        // full scale selection; default
+#define L3GD20H_CTRL4_BDU_CONTINUOUS 0x00
+#define L3GD20H_CTRL4_BDU_MSBLSB    0x80
+#define L3GD20H_CTRL4_ENDIAN_M      0x40    // Endian selection
+#define L3GD20H_CTRL4_ENDIAN_LITTLE 0x00
+#define L3GD20H_CTRL4_ENDIAN_BIG    0x40
+#define L3GD20H_CTRL4_FS_M          0x30    // full scale selection; default
                                             // value: 0
-#define L3GD20H_CTRL4_FS_245DPS 0x00        // 245 degrees per second
-#define L3GD20H_CTRL4_FS_500DPS 0x10        // 500 degrees per second
-#define L3GD20H_CTRL4_FS_2000DPS                                              \
-                                0x30        // 2000 degrees per second
-#define L3GD20H_CTRL4_IMPEN_M   0x08        // level sensitive latched enable;
+#define L3GD20H_CTRL4_FS_245DPS     0x00    // 245 degrees per second
+#define L3GD20H_CTRL4_FS_500DPS     0x10    // 500 degrees per second
+#define L3GD20H_CTRL4_FS_2000DPS    0x30    // 2000 degrees per second
+#define L3GD20H_CTRL4_IMPEN_M       0x08    // level sensitive latched enable;
                                             // default value: 0
-#define L3GD20H_CTRL4_IMPEN_LVL_DIS                                           \
-                                0x00
-#define L3GD20H_CTRL4_IMPEN_LVL_EN                                            \
-                                0x08
-#define L3GD20H_CTRL4_SELFTEST_M                                              \
-                                0x06        // self-test mode
-#define L3GD20H_CTRL4_SELFTEST_NORMAL                                         \
-                                0x00        // Normal mode (not self test,
+#define L3GD20H_CTRL4_IMPEN_LVL_DIS 0x00
+#define L3GD20H_CTRL4_IMPEN_LVL_EN  0x08
+#define L3GD20H_CTRL4_SELFTEST_M    0x06    // self-test mode
+#define L3GD20H_CTRL4_SELFTEST_NORMAL 0x00  // Normal mode (not self test,
                                             // default)
-#define L3GD20H_CTRL4_SELFTEST_MODE0                                          \
-                                0x02        // Self-test mode 0 (+)
-#define L3GD20H_CTRL4_SELFTEST_MODE1                                          \
-                                0x06        // Self-test mode 1 (-)
-#define L3GD20H_CTRL4_SIM_M     0x01        // SPI Serial Interface Mode
+#define L3GD20H_CTRL4_SELFTEST_MODE0 0x02   // Self-test mode 0 (+)
+#define L3GD20H_CTRL4_SELFTEST_MODE1 0x06   // Self-test mode 1 (-)
+#define L3GD20H_CTRL4_SIM_M         0x01    // SPI Serial Interface Mode
                                             // selection (default = 0, 4-wire)
-#define L3GD20H_CTRL4_SIM_4WIRE 0x00
-#define L3GD20H_CTRL4_SIM_3WIRE 0x01
-#define L3GD20H_CTRL4_FS_S      4
-#define L3GD20H_CTRL4_SELFTEST_S                                              \
-                                1
+#define L3GD20H_CTRL4_SIM_4WIRE     0x00
+#define L3GD20H_CTRL4_SIM_3WIRE     0x01
+#define L3GD20H_CTRL4_FS_S          4
+#define L3GD20H_CTRL4_SELFTEST_S    1
 
 
 //*****************************************************************************
@@ -372,34 +332,26 @@ typedef enum
 // register.
 //
 //*****************************************************************************
-#define L3GD20H_CTRL5_REBOOTCTL_M                                             \
-                                0x80        // Reboot memory conent
-#define L3GD20H_CTRL5_REBOOTCTL_NORMAL                                        \
-                                0x00
-#define L3GD20H_CTRL5_REBOOTCTL_REBOOT                                        \
-                                0x80
-#define L3GD20H_CTRL5_FIFOCTL_M 0x40        // FIFO control
-#define L3GD20H_CTRL5_FIFOCTL_DIS                                             \
-                                0x00
-#define L3GD20H_CTRL5_FIFOCTL_EN                                              \
-                                0x40
-#define L3GD20H_CTRL5_STOPONFTH_M                                             \
-                                0x20        // Sensing chain FIFO stop values
+#define L3GD20H_CTRL5_REBOOTCTL_M   0x80    // Reboot memory conent
+#define L3GD20H_CTRL5_REBOOTCTL_NORMAL 0x00
+#define L3GD20H_CTRL5_REBOOTCTL_REBOOT 0x80
+#define L3GD20H_CTRL5_FIFOCTL_M     0x40    // FIFO control
+#define L3GD20H_CTRL5_FIFOCTL_DIS   0x00
+#define L3GD20H_CTRL5_FIFOCTL_EN    0x40
+#define L3GD20H_CTRL5_STOPONFTH_M   0x20    // Sensing chain FIFO stop values
                                             // memorization at FIFO Threshold;
                                             // default value: 0
-#define L3GD20H_CTRL5_STOPONFTH_UNLIMITED                                     \
-                                0x00
-#define L3GD20H_CTRL5_STOPONFTH_THRESH_LIMITED                                \
-                                0x20
-#define L3GD20H_CTRL5_HPEN_M    0x10        // high pass filtern enable
+#define L3GD20H_CTRL5_STOPONFTH_UNLIMITED 0x00
+#define L3GD20H_CTRL5_STOPONFTH_THRESH_LIMITED 0x20
+#define L3GD20H_CTRL5_HPEN_M        0x10    // high pass filtern enable
                                             // (default 0)
-#define L3GD20H_CTRL5_HPEN_DIS  0x00
-#define L3GD20H_CTRL5_HPEN_EN   0x10
-#define L3GD20H_CTRL5_IG_SEL_M  0x0C        // interrupt generator section
+#define L3GD20H_CTRL5_HPEN_DIS      0x00
+#define L3GD20H_CTRL5_HPEN_EN       0x10
+#define L3GD20H_CTRL5_IG_SEL_M      0x0C    // interrupt generator section
                                             // configuration
-#define L3GD20H_CTRL5_OUT_SEL_M 0x03        // out selection configuration
-#define L3GD20H_CTRL5_IG_SEL_S  2
-#define L3GD20H_CTRL5_OUT_SEL_S 0
+#define L3GD20H_CTRL5_OUT_SEL_M     0x03    // out selection configuration
+#define L3GD20H_CTRL5_IG_SEL_S      2
+#define L3GD20H_CTRL5_OUT_SEL_S     0
 
 
 //*****************************************************************************
@@ -408,18 +360,18 @@ typedef enum
 // register.
 //
 //*****************************************************************************
-#define L3GD20H_STATUS_OR_M     0xF0        // Axis data overrun
-#define L3GD20H_STATUS_OR_X     0x10        // X-axis data overrun
-#define L3GD20H_STATUS_OR_Y     0x20        // Y-axis data overrun
-#define L3GD20H_STATUS_OR_Z     0x40        // Z-axis data overrun
-#define L3GD20H_STATUS_OR_ZYX   0x80        // X, Y, and X data overrun
-#define L3GD20H_STATUS_DA_M     0xF         // Axis data available
-#define L3GD20H_STATUS_DA_X     0x01        // X-axis data available
-#define L3GD20H_STATUS_DA_Y     0x02        // Y-axis data available
-#define L3GD20H_STATUS_DA_Z     0x04        // Z-axis data available
-#define L3GD20H_STATUS_DA_ZYX   0x08        // X, Y, and X data available
-#define L3GD20H_STATUS_OR_S     4
-#define L3GD20H_STATUS_DA_S     0
+#define L3GD20H_STATUS_OR_M         0xF0    // Axis data overrun
+#define L3GD20H_STATUS_OR_X         0x10    // X-axis data overrun
+#define L3GD20H_STATUS_OR_Y         0x20    // Y-axis data overrun
+#define L3GD20H_STATUS_OR_Z         0x40    // Z-axis data overrun
+#define L3GD20H_STATUS_OR_ZYX       0x80    // X, Y, and X data overrun
+#define L3GD20H_STATUS_DA_M         0xF     // Axis data available
+#define L3GD20H_STATUS_DA_X         0x01    // X-axis data available
+#define L3GD20H_STATUS_DA_Y         0x02    // Y-axis data available
+#define L3GD20H_STATUS_DA_Z         0x04    // Z-axis data available
+#define L3GD20H_STATUS_DA_ZYX       0x08    // X, Y, and X data available
+#define L3GD20H_STATUS_OR_S         4
+#define L3GD20H_STATUS_DA_S         0
 
 
 //*****************************************************************************
@@ -428,14 +380,10 @@ typedef enum
 // register.
 //
 //*****************************************************************************
-#define L3GD20H_FIFO_CTRL_THRESH_M                                            \
-                                0x1F        // FIFO Threshold setting
-#define L3GD20H_FIFO_CTRL_MODE_M                                              \
-                                0xE         // FIFO mode setting
-#define L3GD20H_FIFO_CTRL_MODE_S                                              \
-                                5
-#define L3GD20H_FIFO_CTRL_THRESH_S                                            \
-                                0
+#define L3GD20H_FIFO_CTRL_THRESH_M  0x1F    // FIFO Threshold setting
+#define L3GD20H_FIFO_CTRL_MODE_M    0xE // FIFO mode setting
+#define L3GD20H_FIFO_CTRL_MODE_S    5
+#define L3GD20H_FIFO_CTRL_THRESH_S  0
 
 
 //*****************************************************************************
@@ -448,20 +396,13 @@ typedef enum
                                             // or equal to level or less than
                                             // level
 #define L3GD20H_FIFO_SRC_FTH_LT 0x00
-#define L3GD20H_FIFO_SRC_FTH_GEQ                                              \
-                                0x80
+#define L3GD20H_FIFO_SRC_FTH_GEQ 0x80
 #define L3GD20H_FIFO_SRC_OVRN_M 0x40        // overrun status bit
-#define L3GD20H_FIFO_SRC_OVRN_FILLED                                          \
-                                0x40
-#define L3GD20H_FIFO_SRC_EMPTY_M                                              \
-                                0x20        // FIFO empty
-#define L3GD20H_FIFO_SRC_EMPTY_EMPTY                                          \
-                                0x20
-#define L3GD20H_FIFO_SRC_STORE_SAMPLES_M                                      \
-                                0x1F        // FIFO stored data level of the
-                                            // unread samples
-#define L3GD20H_FIFO_SRC_STORE_SAMPLES_S                                      \
-                                0
+#define L3GD20H_FIFO_SRC_OVRN_FILLED 0x40
+#define L3GD20H_FIFO_SRC_EMPTY_M 0x20       // FIFO empty
+#define L3GD20H_FIFO_SRC_EMPTY_EMPTY 0x20
+#define L3GD20H_FIFO_SRC_STORE_SAMPLES_M 0x1F   // FIFO stored data level of the unread samples
+#define L3GD20H_FIFO_SRC_STORE_SAMPLES_S 0
 
 
 //*****************************************************************************
@@ -470,33 +411,31 @@ typedef enum
 // register.
 //
 //*****************************************************************************
-#define L3GD20H_IG_CFG_ANDOR_M  0x80        // AND/OR combination of Interrupt
+#define L3GD20H_IG_CFG_ANDOR_M      0x80    // AND/OR combination of Interrupt
                                             // events; default value: 0
-#define L3GD20H_IG_CFG_ANDOR_OR 0x00
-#define L3GD20H_IG_CFG_ANDOR_AND                                              \
-                                0x80
-#define L3GD20H_IG_CFG_LIR_M    0x40        // Latch Interrupt Request; default
+#define L3GD20H_IG_CFG_ANDOR_OR     0x00
+#define L3GD20H_IG_CFG_ANDOR_AND    0x80
+#define L3GD20H_IG_CFG_LIR_M        0x40    // Latch Interrupt Request; default
                                             // value: 0
-#define L3GD20H_IG_CFG_LIR_LATCHED                                            \
-                                0x40
-#define L3GD20H_IG_CFG_ZHI_M    0x20        // enable interrupt generation on
+#define L3GD20H_IG_CFG_LIR_LATCHED  0x40
+#define L3GD20H_IG_CFG_ZHI_M        0x20    // enable interrupt generation on
                                             // Z-hi event
-#define L3GD20H_IG_CFG_ZHI_EN   0x20
-#define L3GD20H_IG_CFG_ZLI_M    0x10        // enable interrupt generation on
+#define L3GD20H_IG_CFG_ZHI_EN       0x20
+#define L3GD20H_IG_CFG_ZLI_M        0x10    // enable interrupt generation on
                                             // Z-low event
-#define L3GD20H_IG_CFG_ZLI_EN   0x10
-#define L3GD20H_IG_CFG_YHI_M    0x08        // enable interrupt generation on
+#define L3GD20H_IG_CFG_ZLI_EN       0x10
+#define L3GD20H_IG_CFG_YHI_M        0x08    // enable interrupt generation on
                                             // Y-hi event
-#define L3GD20H_IG_CFG_YHI_EN   0x08
-#define L3GD20H_IG_CFG_YLI_M    0x04        // enable interrupt generation on
+#define L3GD20H_IG_CFG_YHI_EN       0x08
+#define L3GD20H_IG_CFG_YLI_M        0x04    // enable interrupt generation on
                                             // Y-low event
-#define L3GD20H_IG_CFG_YLI_EN   0x04
-#define L3GD20H_IG_CFG_XHI_M    0x02        // enable interrupt generation on
+#define L3GD20H_IG_CFG_YLI_EN       0x04
+#define L3GD20H_IG_CFG_XHI_M        0x02    // enable interrupt generation on
                                             // X-hi event
-#define L3GD20H_IG_CFG_XHI_EN   0x02
-#define L3GD20H_IG_CFG_XLI_M    0x01        // enable interrupt generation on
+#define L3GD20H_IG_CFG_XHI_EN       0x02
+#define L3GD20H_IG_CFG_XLI_M        0x01    // enable interrupt generation on
                                             // X-low event
-#define L3GD20H_IG_CFG_XLI_EN   0x01
+#define L3GD20H_IG_CFG_XLI_EN       0x01
 
 
 //*****************************************************************************
@@ -505,27 +444,20 @@ typedef enum
 // register.
 //
 //*****************************************************************************
-#define L3GD20H_IG_SRC_IA_M     0x40        // interrupt active
-#define L3GD20H_IG_SRC_IA_ACTIVE                                              \
-                                0x40
-#define L3GD20H_IG_SRC_ZH_M     0x20        // Z-Hi event occurred
-#define L3GD20H_IG_SRC_ZH_OCCURRED                                            \
-                                0x20
-#define L3GD20H_IG_SRC_ZL_M     0x10        // Z-Low event occurred
-#define L3GD20H_IG_SRC_ZL_OCCURRED                                            \
-                                0x10
-#define L3GD20H_IG_SRC_YH_M     0x08        // Y-Hi event occurred
-#define L3GD20H_IG_SRC_YH_OCCURRED                                            \
-                                0x08
-#define L3GD20H_IG_SRC_YL_M     0x04        // Y-Low event occurred
-#define L3GD20H_IG_SRC_YL_OCCURRED                                            \
-                                0x04
-#define L3GD20H_IG_SRC_XH_M     0x02        // X-Hi event occurred
-#define L3GD20H_IG_SRC_XH_OCCURRED                                            \
-                                0x02
-#define L3GD20H_IG_SRC_XL_M     0x01        // X-Low event occurred
-#define L3GD20H_IG_SRC_XL_OCCURRED                                            \
-                                0x01
+#define L3GD20H_IG_SRC_IA_M         0x40    // interrupt active
+#define L3GD20H_IG_SRC_IA_ACTIVE    0x40
+#define L3GD20H_IG_SRC_ZH_M         0x20    // Z-Hi event occurred
+#define L3GD20H_IG_SRC_ZH_OCCURRED  0x20
+#define L3GD20H_IG_SRC_ZL_M         0x10    // Z-Low event occurred
+#define L3GD20H_IG_SRC_ZL_OCCURRED  0x10
+#define L3GD20H_IG_SRC_YH_M         0x08    // Y-Hi event occurred
+#define L3GD20H_IG_SRC_YH_OCCURRED  0x08
+#define L3GD20H_IG_SRC_YL_M         0x04    // Y-Low event occurred
+#define L3GD20H_IG_SRC_YL_OCCURRED  0x04
+#define L3GD20H_IG_SRC_XH_M         0x02    // X-Hi event occurred
+#define L3GD20H_IG_SRC_XH_OCCURRED  0x02
+#define L3GD20H_IG_SRC_XL_M         0x01    // X-Low event occurred
+#define L3GD20H_IG_SRC_XL_OCCURRED  0x01
 
 
 //*****************************************************************************
@@ -534,17 +466,12 @@ typedef enum
 // register.
 //
 //*****************************************************************************
-#define L3GD20H_IG_THS_XH_DCRM_M                                              \
-                                0x80        // interrupt generation counter
+#define L3GD20H_IG_THS_XH_DCRM_M    0x80    // interrupt generation counter
                                             // mode
-#define L3GD20H_IG_THS_XH_DCRM_RESET                                          \
-                                0x00
-#define L3GD20H_IG_THS_XH_DCRM_DECREMENT                                      \
-                                0x80
-#define L3GD20H_IG_THS_XH_THSX_M                                              \
-                                0x7F        // THSX[14-8], default 0x0
-#define L3GD20H_IG_THS_XH_THSX_S                                              \
-                                0
+#define L3GD20H_IG_THS_XH_DCRM_RESET 0x00
+#define L3GD20H_IG_THS_XH_DCRM_DECREMENT 0x80
+#define L3GD20H_IG_THS_XH_THSX_M    0x7F    // THSX[14-8], default 0x0
+#define L3GD20H_IG_THS_XH_THSX_S    0
 
 
 //*****************************************************************************
@@ -553,10 +480,8 @@ typedef enum
 // register.
 //
 //*****************************************************************************
-#define L3GD20H_IG_THS_TH_THSY_M                                              \
-                                0x7F        // THSY[14-8], default 0x0
-#define L3GD20H_IG_THS_TH_THSY_S                                              \
-                                0
+#define L3GD20H_IG_THS_TH_THSY_M    0x7F    // THSY[14-8], default 0x0
+#define L3GD20H_IG_THS_TH_THSY_S    0
 
 
 //*****************************************************************************
@@ -565,10 +490,8 @@ typedef enum
 // register.
 //
 //*****************************************************************************
-#define L3GD20H_IG_THS_ZH_THSX_M                                              \
-                                0x7F        // THSZ[14-8], default 0x0
-#define L3GD20H_IG_THS_ZH_THSX_S                                              \
-                                0
+#define L3GD20H_IG_THS_ZH_THSX_M    0x7F    // THSZ[14-8], default 0x0
+#define L3GD20H_IG_THS_ZH_THSX_S    0
 
 
 //*****************************************************************************
@@ -577,18 +500,13 @@ typedef enum
 // register.
 //
 //*****************************************************************************
-#define L3GD20H_IG_DURATION_WAIT_M                                            \
-                                0x80        // If WAIT is enabled then DURATION
+#define L3GD20H_IG_DURATION_WAIT_M  0x80    // If WAIT is enabled then DURATION
                                             // samples must occur before
                                             // asserting the interrupt.
-#define L3GD20H_IG_DURATION_WAIT_DIS                                          \
-                                0x00
-#define L3GD20H_IG_DURATION_WAIT_EN                                           \
-                                0x80
-#define L3GD20H_IG_DURATION_DURATION_M                                        \
-                                0x7F        // Duration D[6-0]
-#define L3GD20H_IG_DURATION_DURATION_S                                        \
-                                0
+#define L3GD20H_IG_DURATION_WAIT_DIS   0x00
+#define L3GD20H_IG_DURATION_WAIT_EN    0x80
+#define L3GD20H_IG_DURATION_DURATION_M 0x7F // Duration D[6-0]
+#define L3GD20H_IG_DURATION_DURATION_S 0
 
 
 //*****************************************************************************
@@ -597,43 +515,35 @@ typedef enum
 // register.
 //
 //*****************************************************************************
-#define L3GD20H_LOW_ODR_DRDY_HL_M                                             \
-                                0x20        // DRDY/INT2 active level
-#define L3GD20H_LOW_ODR_DRDY_HL_ACTIVE_LOW                                    \
-                                0x00
-#define L3GD20H_LOW_ODR_DRDY_HL_ACTIVE_HIGH                                   \
-                                0x20
-#define L3GD20H_LOW_ODR_I2C_DISABLE_M                                         \
-                                0x08        // disable I2C interface
-#define L3GD20H_LOW_ODR_I2C_DISABLE_BOTH                                      \
-                                0x00
-#define L3GD20H_LOW_ODR_I2C_DISABLE_SPI_ONLY                                  \
-                                0x08
-#define L3GD20H_LOW_ODR_SWRESET_M                                             \
-                                0x04        // software reset
-#define L3GD20H_LOW_ODR_SWRESET_NORMAL                                        \
-                                0x00
-#define L3GD20H_LOW_ODR_SWRESET_RESET                                         \
-                                0x04
-#define L3GD20H_LOW_ODR_DATARATE_M                                            \
-                                0x01        // Low-speed data rate enable;
+#define L3GD20H_LOW_ODR_DRDY_HL_M   0x20    // DRDY/INT2 active level
+#define L3GD20H_LOW_ODR_DRDY_HL_ACTIVE_LOW  0x00
+#define L3GD20H_LOW_ODR_DRDY_HL_ACTIVE_HIGH 0x20
+#define L3GD20H_LOW_ODR_I2C_DISABLE_M 0x08  // disable I2C interface
+#define L3GD20H_LOW_ODR_I2C_DISABLE_BOTH    0x00
+#define L3GD20H_LOW_ODR_I2C_DISABLE_SPI_ONLY 0x08
+#define L3GD20H_LOW_ODR_SWRESET_M   0x04    // software reset
+#define L3GD20H_LOW_ODR_SWRESET_NORMAL 0x00
+#define L3GD20H_LOW_ODR_SWRESET_RESET  0x04
+#define L3GD20H_LOW_ODR_DATARATE_M  0x01    // Low-speed data rate enable;
                                             // default value: 0
-#define L3GD20H_LOW_ODR_DATARATE_HIGH                                         \
-                                0x00
-#define L3GD20H_LOW_ODR_DATARATE_LOW                                          \
-                                0x01
+#define L3GD20H_LOW_ODR_DATARATE_HIGH   0x00
+#define L3GD20H_LOW_ODR_DATARATE_LOW    0x01
 	
 #define L3GD20H_FIFO_SIZE 32
 #define L3GD20H_BUFF_SIZE  (L3GD20H_FIFO_SIZE)
 
-#define L3GD20H_SPI           (USART1)
+#define L3GD20H_SPI     (USART1)
 
 
 #define GYRO_CS_PORT    (gpioPortD)
-#define GYRO_CS_PIN    (9)
+#define GYRO_CS_PIN     (9)  //PD9
 
-#define L3GD20H_CS_H()    GPIO_PinOutSet(GYRO_CS_PORT,GYRO_CS_PIN )
-#define L3GD20H_CS_L()    GPIO_PinOutClear(GYRO_CS_PORT,GYRO_CS_PIN )
+#define GYRO_DRDY_PIN	(10)  //PA10
+#define GYRO_INT_PIN	(11)  //PA11
+
+
+#define L3GD20H_CS_H()  GPIO_PinOutSet(GYRO_CS_PORT,GYRO_CS_PIN )
+#define L3GD20H_CS_L()  GPIO_PinOutClear(GYRO_CS_PORT,GYRO_CS_PIN )
 
 #define L3GD20H_INT1_PORT gpioPortA
 #define L3GD20H_INT1_PIN  11
@@ -646,7 +556,7 @@ typedef enum
 #define L3GD20H_DEN_PORT gpioPortD
 #define L3GD20H_DEN_PIN  12
 
-
+extern int16_t L3GD20H_BUFF[3][L3GD20H_BUFF_SIZE];
 
 /* Exported functions --------------------------------------------------------*/
 void L3GD20H_Init(void);
@@ -703,6 +613,7 @@ gyrostatus_t L3GD20H_GetTempRaw(i8_t* val);
 gyrostatus_t L3GD20H_GetWHO_AM_I(u8_t* val);
 gyrostatus_t L3GD20H_Get6DPosition(u8_t* val);
 
+extern void ReadL3GD20HFIFO(uint8_t* px, uint8_t* py, uint8_t* pz, uint8_t len);
 
 #endif
 

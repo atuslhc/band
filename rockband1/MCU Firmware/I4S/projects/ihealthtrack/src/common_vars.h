@@ -311,12 +311,15 @@ typedef enum _MESSAGES
 
 	MESSAGE_TASK_HEARTBEAT,		//30, task of heart beat inform, the displayTask/flashTask send to deviceTask per second, to issue a keepalive.
 #if (GYRO_SUPPORT)
-    MESSAGE_L3GD20H_INT1,       //31
-    MESSAGE_L3GD20H_INT2,       //32
+    MESSAGE_GYRO_INT,           //31
+    MESSAGE_GYRO_DRDY,          //32
 #endif
 #if (BOARD_TYPE==2)
     KEY1_INT2_Message,          //33, for test button1
     KEY2_INT5_Message,          //34, for test button2
+#endif
+#if (MAGNETIC_SUPPORT==1)
+    MESSAGE_BMM150_DRDY,
 #endif
 } MESSAGE_TYPES;
 
@@ -604,6 +607,7 @@ typedef enum
 
 #define DEVICE_COLOR_BLACK     0x20
 #define DEVICE_COLOR_RED       0x40
+
 
 #pragma pack(push, 4)
 
@@ -963,7 +967,12 @@ extern SemaphoreHandle_t hI2CSemaphore;
 #define IsStillHr()      iHeartRate.component.reliability=iHeartRate.component.reliability|0x01
 
 #define ONE_HOUR_SECONDS  60
+#define ONE_MINUTES_SECONDS    60
+#define TWO_MINUTES_SECONDS   120
 #define FIVE_MINUTES_SECONDS  300
+
+#define EVENT_FD_DURATION       FIVE_MINUTES_SECONDS //TWO_MINUTES_SECONDS
+#define EVENT_SOS_DURATION      FIVE_MINUTES_SECONDS //TWO_MINUTES_SECONDS
 
 typedef struct _SP_VALUE
 {

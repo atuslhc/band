@@ -5,6 +5,12 @@
 #include "main.h"
 #include "common_vars.h"
 #include "device_task.h"
+#if (MAGNETIC_SUPPORT==1)
+#include "BMM150.h"
+#endif
+#if (GYRO_SUPPORT==1)
+#include "L3GD20H.h"
+#endif
 
 extern void SVC_Handler (void);
 extern void PendSV_Handler (void);
@@ -142,7 +148,24 @@ void GPIO_EVEN_IRQHandler(void)
 	xQueueSendFromISR(hEvtQueueDevice, &msg, 0);
   }
 #endif
+
+#if (GYRO_SUPPORT==1)
+  if (status & (1 << L3GD20H_DRDY_PIN)) 
+     {
+      int32_t msg = MESSAGE_GYRO_DRDY;
+      xQueueSendFromISR(hEvtQueueDevice, &msg, 0);
+      //L3GD20H_INT2_CALLBACK();
+    }
+#endif
   
+#if (MAGNETIC_SUPPORT==1 && 0)
+  if (status & (1 << BMM150_DRDY_PIN)) 
+    {   
+       int32_t msg = MESSAGE_BMM150_DRDY; //KEY2_INT5_Message; //FIXME: MESSAGE_BMM150_DRDY, Atus should define a new Message.
+        xQueueSendFromISR(hEvtQueueDevice, &msg, 0);
+    } 
+#endif  
+
  // if (status & (1 << CHARGER_STA_PIN)) 
   //{  
   //osMessagePut(hMsgInterrupt,MESSAGE_BATTERY_CHARGING,0);  	   
@@ -174,6 +197,14 @@ void GPIO_ODD_IRQHandler(void)
 	xQueueSendFromISR(hEvtQueueDevice, &msg, 0);
      }   
 #endif
+
+#if (MAGNETIC_SUPPORT==1 && 0)
+  if (flags&(1<<BMM150_INT_PIN))  	
+     {   
+	///int32_t msg = KEY2_INT5_Message;
+	///xQueueSendFromISR(hEvtQueueDevice, &msg, 0);
+     }   
+#endif
   
   if (flags&(1<<MEMS_INT1_PIN)) 
      {	 
@@ -185,7 +216,17 @@ void GPIO_ODD_IRQHandler(void)
      {	 
      extern void MEMS_INT2_CALLBACK(void);
      MEMS_INT2_CALLBACK(); 
-     }   
+     }
+ 
+#if (GYRO_SUPPORT==1)
+  if (flags & (1 << L3GD20H_INT1_PIN)) 
+     {
+      int32_t msg = MESSAGE_GYRO_INT;
+      xQueueSendFromISR(hEvtQueueDevice, &msg, 0);
+      //L3GD20H_INT1_CALLBACK();
+    }
+#endif
+
 }
 
 extern void DelayTimerCallback(void);

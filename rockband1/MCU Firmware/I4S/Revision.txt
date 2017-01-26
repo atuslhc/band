@@ -1,3 +1,17 @@
+2017.1.26[version 0.14]
+Add FD alert LEDB indicator.
+Change OutOfBatteryProcess() action disable sensors but bypass (close BLE and GoStopMCU EM4), run until dryout.
+Set LEDC_PIN (GPIO PC0) disable(z-impedance) mode.
+Patch gyro DRDY service.
+
+2017.1.18[version 0.13]
+Add DAUIO_1 (GPIO PD4) high disbale RF_RST(BLE_RESET z-impedance).
+Add SW1 SOS notify and advertisment flag.
+
+2017.1.16[version 0.12]
+Modify ADC reference=1.25V and ratio R9=10M change to 5.6M equation.
+Add CR2477 voltage to battery capacity conversion.
+
 2016.9.28[version 3.37H/3.27C]
 Precompiler flag add "MODEL_TYPE=1" replace the HEALTHCARE_TYPE, and "MODEL_TYPE=2" for CONSUMER_TYPE.
 

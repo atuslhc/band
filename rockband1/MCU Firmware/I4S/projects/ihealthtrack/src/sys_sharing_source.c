@@ -17,6 +17,11 @@
 #include "em_int.h"
 
 #include "Si14x.h"
+#if (BAROMETER_SUPPORT==1)
+#include "LPS22HB.h"
+#elif
+#include "LPS35HW.h"
+#endif
 
 //bool DiagnoseInfo_Ready=false;
 
@@ -358,7 +363,7 @@ void ADC_INIT(void)
 
 	/* Set oversampling rate */
 	//init.ovsRateSel = adcOvsRateSel32;//adcOvsRateSel32;
-
+	//init.warmUpMode = adcWarmupKeepADCWarm;
 	ADC_Init(ADC0, &init);
 
 	//ADC_InitSingle(ADC0, &BAT_ADC_INIT);
@@ -790,6 +795,11 @@ void CHECK_PER_Xsecond(void)
 			}
 		}
 
+#if (BAROMETER_SUPPORT==1)
+		LPS22HB_start_conversion();
+		EnableDelayTimer(TIMER_FLAG_pressure, false, 100, NULL, NULL);
+#endif
+        
 		//UpdateCalories();
 		CHECK_BLE_STUFF();
 	}
@@ -1128,12 +1138,12 @@ void CHECK_BATTERY(void)
                 //utest = time(NULL) - time1;
                 //time1 = time(NULL);
 		BAT_CHECK_COUNTER = 0;
-		Battery_ADC_Read();
 		ADC_Start(ADC0, adcStartSingle);
+		Battery_ADC_Read();
+
 		static uint8_t lowBatteryCount = 0;
 		static bool once = true;
 		static bool blHasLowBattery = false;
-
 
 		if((systemStatus.bBatteryRemaining < 25) && once)
 		{
@@ -1278,8 +1288,9 @@ void OutOfBatteryProcess(void)
 	/* Enable access to BURTC registers */
 	RMU_ResetControl(rmuResetBU, false);
 
+	hasEnteredOutofbatteryState = true;
 	//----------------------
-	//把这些值保存到备份域中
+	/* Store accumulative counter to backup area */
 	I_CALORIES = iCalories;
 	I_CALORIES_LASTSAVING = iCalories_lastSaving;
 	I_STEPS = iSteps;
@@ -1289,8 +1300,7 @@ void OutOfBatteryProcess(void)
 	ACTIVE_LEVEL = active_level;
 	ACTIVE_LEVEL_LASTSAVING = active_level_lastSaving;
 
-	//
-	hasEnteredOutofbatteryState = true;
+	/* shutdown all sensor saving power */
 	MEMS_CLOSE();
 #if (TEMPERATURE_SUPPORT==1)
 	TEMPSENS_RegisterSet(TMP_I2C, SKIN_TEMP_ADDR, tempsensRegCONFIG, 0x0100);	//temperature close
@@ -1299,14 +1309,16 @@ void OutOfBatteryProcess(void)
 
     //FIXME:  BAROMETER_SUPPORT, GYRO_SUPPORT, MAGNETIC_SUPPORT turn off.
 
-    
-	BLE_Close(); //send turn off advertising to BLE.
 #if (CAP_SUPPORT==1)
 	Close_ALLCAPLESENSE(); //turn off cap interrupt service.
 #endif
     
-	//
+#if (BOARD_TYPE!=2)  //(CHARGER_SUPPORT==1)
+    // BLE disable and enter EM4.
+	BLE_Close(); //send turn off advertising to BLE
+    
 	GoStopMCU();
+#endif
 }
 
 void BackToWork(void)
@@ -1340,9 +1352,13 @@ void GoStopMCU(void)
 	EMU_EM4Init( &em4Init );
 
 
-
-	/* Set pin PF2 mode to input with pull-up resistor */
+#if (BOARD_TYPE==0 || BOARD_TYPE==1)
+	/* Set pin PC9 mode to input with pull-up resistor */
 	GPIO_PinModeSet(gpioPortC, 9, gpioModeInput, 1);
+#elif (BOARD_TYPE==2)
+	/* Set pin PA6 mode to input with pull-up resistor */
+	GPIO_PinModeSet(gpioPortA, 6, gpioModeInput, 1);
+#endif
 
 	/* Enable GPIO pin mode retention in EM4 */
 	GPIO->CTRL |= GPIO_CTRL_EM4RET;
@@ -1350,9 +1366,13 @@ void GoStopMCU(void)
 	/* Clear wake up requests */
 	GPIO->CMD |= GPIO_CMD_EM4WUCLR;
 
-	/* Enable wakeup on PF2 */
+#if (BOARD_TYPE==0 || BOARD_TYPE==1)
+	/* Enable wakeup on PC9 */
 	GPIO->EM4WUEN = GPIO_EM4WUEN_EM4WUEN_C9;
-
+#elif (BOARD_TYPE==2)
+	/* Enable wakeup on PA6 */
+	GPIO->EM4WUEN = GPIO_EM4WUEN_EM4WUEN_A6;
+#endif
 
 	//主动关闭一些时钟
 	LEUART_IntDisable(LEUART0, LEUART_IEN_SIGF);    //串口在剩余电量达到20%时后再打开。
@@ -1362,7 +1382,10 @@ void GoStopMCU(void)
 	CMU_ClockEnable(cmuClock_DMA, false);
 	CMU_ClockEnable(cmuClock_CORELE, false);
 	RTC_Enable(false);  //把系统彻底关闭
-	NVIC_DisableIRQ(GPIO_ODD_IRQn);  //避免三轴加速度，AFE产生中断。
+	NVIC_DisableIRQ(GPIO_ODD_IRQn);  //disable accelerometer(mems), AFE44x0 key2, interrupt
+#if (BOARD_TYPE==2)
+	NVIC_DisableIRQ(GPIO_EVEN_IRQn);  //disable leuart, key1, gyro, magnetic sensor interrupt
+#endif
 	NVIC_DisableIRQ(TIMER2_IRQn);//尽管关闭了cmuClock_HFPER，这里还是把它中断关掉
 	CMU_ClockEnable(cmuClock_I2C0, false); //i2c的时钟,杜绝亮屏。
 	CMU_ClockEnable(cmuClock_HFPER, false);

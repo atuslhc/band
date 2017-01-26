@@ -3567,26 +3567,27 @@ void BLE_BROADCAST_UPDATE(void)
 
 	data[0] = SBLE_BROADCAST_UPDATE;
 
+    //FD tag
 	if(SendAlertNotification == 1)
 		data[1] = 0x01;
 	else if(SendAlertNotification == 0xff)
 		data[1] = 0xFF;
-
+    //charging tag
 	if(systemStatus.blBatteryCharging == true)
 		data[2] = 0x55;
 	else
 		data[2] = 0xAA;
-
+    //low battery tag
 	if(lowBatteryLevelAlert == 0x01)
 		data[3] = 0x01;
 	else
 		data[3] = 0xFF;
-
+    //time reset
 	if(blTimeReset == 0x01)
 		data[4] = 0x01;
 	else if(blTimeReset == 0xAA)
 		data[4] = 0xFF;
-
+    //SOS tag
 	if(sosNotification == 1)
 		data[5] = 0x01;
 	else if(sosNotification == 0xff)
@@ -4269,17 +4270,17 @@ void StepsDuringOneHour()
 
 #endif
 
-#if FALL_DETECT_SUPPORT
-//检测到跌落之后，使用01更新广播内容，当过了5分钟后，把01换成FF。
-//实际上这里只需要检测到时发送一次，过了5分钟之后再发送一次。
+#if (FALL_DETECT_SUPPORT==1)
+// Check FallDetect flag, then set 0x01 value to update the broadcast and notify.
+// After duration, set 0xFF and update broadcast and notify again.
 void CheckFall(void)
 {
 	extern uint8_t FD_result; //initialize 0
 	static bool fallDetectedTimeCount = true;
 	static bool fallFlashOledTimeCount = true;
-	static time_t startTime = 0;
+	static time_t fdStartTime = 0;
 	static time_t startTimeFlashOled = 0;
-	time_t fiveMinutes = 0;
+	time_t fdCurrTime = 0;
 	time_t flashOledanyTime = 0;
 	extern uint8_t oldFallStatus; //[BG033] static change to global and move to mems_track.h
 	uint8_t currentFallStatus = FD_result;
@@ -4324,13 +4325,16 @@ void CheckFall(void)
 		if(fallDetectedTimeCount)
 		{
 			fallDetectedTimeCount = false;
-			startTime = time(NULL);
+			fdStartTime = time(NULL);
+#if (BOARD_TYPE==2)
+            LEDB_ON();
+#endif
 		}
 	}
 
 	if(isDetectedFall == true) //get the fall flag, start counting time.
 	{
-		fiveMinutes = time(NULL);
+		fdCurrTime = time(NULL);
 		flashOledanyTime = time(NULL);
 	}
 
@@ -4352,11 +4356,14 @@ void CheckFall(void)
 #endif
 	}
 
-	if(fiveMinutes - startTime >= FIVE_MINUTES_SECONDS)
-	{ //over 5 minutes
+	if(fdCurrTime - fdStartTime >= EVENT_FD_DURATION)
+	{ //over duration, reset to non fd envent.
 		fallDetectedTimeCount = true; //clean timeflag for next.
 		isDetectedFall = false; //clean while 5 minutes, terminate。
 		SendAlertNotification = 0xFF;
+#if (BOARD_TYPE==2)
+        LEDB_OFF();
+#endif
 	}
 }
 #endif
@@ -4369,7 +4376,7 @@ void CheckSOS(void)
 	uint8_t currentSOSStatus = SOS_result;
 	static bool sosDetectedTimeCount = true;
 	static time_t sosStartTime = 0;
-	time_t fiveMinutesSos = 0;
+	time_t sosCurrTime = 0;
 
 #ifdef DEBUG0
 	//模拟一次sos
@@ -4402,10 +4409,10 @@ void CheckSOS(void)
 
 	if(isSOSDetected)
 	{
-		fiveMinutesSos = time(NULL);
+		sosCurrTime = time(NULL);
 	}
 
-	if(fiveMinutesSos - sosStartTime > FIVE_MINUTES_SECONDS)
+	if(sosCurrTime - sosStartTime > EVENT_SOS_DURATION)
 	{
 		sosDetectedTimeCount = true;
 		isSOSDetected = false;

@@ -162,7 +162,7 @@ void BspInit(void)
 #endif
 
 
-#if (AFE44XX_SUPPORT==1) //(BOARD_TYPE==0 || BOARD_TYPE==1) 
+#if (AFE44x0_SUPPORT==1) //(BOARD_TYPE==0 || BOARD_TYPE==1) 
     //turn off the afe4400 external power.
 	GPIO_PinModeSet(AFE_POWER_CON_PORT, AFE_POWER_CON_PIN, gpioModePushPull, 0);
 	BOTTOM_POWER_OFF();
@@ -178,8 +178,9 @@ void BspInit(void)
 	LED_OFF();
 
 #elif (BOARD_TYPE==2)
-    GPIO_PinModeSet(LED_GPIOPORT, LEDC_PIN, gpioModePushPull, 1);  //Atus: should be input config. In power test can check if disable.
-#if (1) //(DEBUG)
+    //GPIO_PinModeSet(LED_GPIOPORT, LEDC_PIN, gpioModePushPull, 1);  //Atus: should be input config. In power test can check if disable.
+    GPIO_PinModeSet(LED_GPIOPORT, LEDC_PIN, gpioModeDisabled, 1);  //Atus: make it disable z-impedance saving power.
+#if (0) //(DEBUG)
     unsigned int ledc=0;
     ledc=GetLEDC();
 #endif
@@ -209,13 +210,13 @@ void BspInit(void)
 	LEDB_OFF();
     
 	/* Configure GPIO port PA2(SW1),PA5(SW2) as Key input */
-	GPIO_PinModeSet(KEY_PORT, KEY2_PIN, gpioModeInput, 1);
+	GPIO_PinModeSet(KEY_PORT, KEY2_PIN, gpioModeInput, 1);      //gpioModeInput
 	GPIO_IntConfig(KEY_PORT, KEY2_PIN, false, true, true);
 	GPIO_IntClear(1 << KEY2_PIN); 	
 	NVIC_SetPriority(GPIO_ODD_IRQn,GPIO_ODD_INT_LEVEL);
 	NVIC_EnableIRQ(GPIO_ODD_IRQn);
 	
-	GPIO_PinModeSet(KEY_PORT, KEY1_PIN, gpioModeInput, 1);
+	GPIO_PinModeSet(KEY_PORT, KEY1_PIN, gpioModeInput, 1);  //  gpioModeInput
 	GPIO_IntConfig(KEY_PORT, KEY1_PIN, false, true, true);	
 	GPIO_IntClear(1 << KEY1_PIN); 	
 	NVIC_SetPriority(GPIO_EVEN_IRQn,GPIO_EVEN_INT_LEVEL);  

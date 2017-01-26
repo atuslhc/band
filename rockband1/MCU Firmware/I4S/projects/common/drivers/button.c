@@ -55,7 +55,10 @@ void KeyInit(void)
   /* Enable GPIO */
   CMU_ClockEnable(cmuClock_GPIO, true);
   
-  /* Configure GPIO port A2 as Key input */
+  /* Configure GPIO port PA2(SW1), PA5(SW2) as Key input */
+  #if (BOARD_TYPE==2)
+  GPIO_PinModeSet(KEY_PORT, KEY2_PIN, gpioModeInputPull, 1);
+  #endif
   GPIO_PinModeSet(KEY_PORT, KEY_PIN, gpioModeInputPull, 1);
   
   GPIO_IntConfig(KEY_PORT, KEY_PIN, false, true, true);

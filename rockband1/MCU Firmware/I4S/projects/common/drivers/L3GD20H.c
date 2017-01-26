@@ -65,26 +65,95 @@ void L3GD20H_Par_Init(uint8_t freq)
 */
 }
 
+
+void L3GD20H_FIFO_INIT(void)
+{
+	uint8_t iswhere;
+
+
+
+	L3GD20H_WriteReg(L3GD20H_O_CTRL2, L3GD20H_CTRL2_EXTREN_DIS);
+
+	L3GD20H_WriteReg(L3GD20H_O_CTRL3, 0x02);
+	///L3GD20H_SetInt2Pin(L3GD20H_CTRL3_INT2_ORUN_EN);
+	
+	L3GD20H_SetFullScale(L3GD20H_CTRL4_FS_245DPS); 
+	L3GD20H_WriteReg(L3GD20H_O_LOW_ODR, 0x28);
+	L3GD20H_WriteReg(L3GD20H_O_CTRL5, L3GD20H_CTRL5_FIFOCTL_EN);
+	L3GD20H_FIFOModeEnable(L3GD20H_FIFO_mode);
+	
+	L3GD20H_SetODR(L3GD20H_CTRL1_DR_800_HZ);
+	///L3GD20H_WriteReg(L3GD20H_O_LOW_ODR, 0x08);
+
+	GPIO_IntClear(1 << L3GD20H_INT1_PIN);
+	GPIO_IntClear(1 << L3GD20H_INT2_PIN);
+
+	L3GD20H_SetPOWERMode(L3GD20H_POWER_NORMAL);
+
+	/// ReadL3GD20HRawData((uint8_t*)&L3GD20H_BUFF[0][0]);  // clear the old buff
+
+#if	0
+	L3GD20H_ReadReg(L3GD20H_O_IG_SRC, &iswhere);
+
+	L3GD20H_Monitor_Model = false;
+	L3GD20H_Par_Init(L3GD20H_FIFO_FREQ);
+	XYZ_FIR_INIT(L3GD20H_FIFO_FREQ);
+#endif
+
+#if FALL_DETECT_SUPPORT		
+
+	int i;
+
+	for (i = 0 ; i < AXIS_FILTER_BUFF_SIZE ; i++)
+	{
+		axis_filter[i] = 0;
+	}
+
+
+	axis_filter_index = 0;
+#endif
+}
+
 void L3GD20H_Init(void)
 {
 
 	uint8_t buf;
+	//L3GD20H_WriteReg(L3GD20H_O_LOW_ODR, L3GD20H_LOW_ODR_SWRESET_RESET);
+    
 	CMU_ClockEnable(cmuClock_GPIO, true);
 	GPIO_PinModeSet(L3GD20H_DEN_PORT, L3GD20H_DEN_PIN, gpioModePushPull, 1);
-	GPIO_PinOutClear(L3GD20H_DEN_PORT,L3GD20H_DEN_PIN );
+	GPIO_PinOutClear(L3GD20H_DEN_PORT,L3GD20H_DEN_PIN );    //connect gnd if not used.
 	GPIO_PinModeSet(GYRO_CS_PORT, GYRO_CS_PIN, gpioModePushPull, 1);
 
+	GPIO_PinModeSet(L3GD20H_INT1_PORT, L3GD20H_INT1_PIN, gpioModeInput, 1);
+	GPIO_IntConfig(L3GD20H_INT1_PORT, L3GD20H_INT1_PIN, false, true, true);
+	GPIO_IntClear(1 << L3GD20H_INT1_PIN); 	
+	NVIC_SetPriority(GPIO_ODD_IRQn,GPIO_ODD_INT_LEVEL);
+	NVIC_EnableIRQ(GPIO_ODD_IRQn);
+	
+	GPIO_PinModeSet(L3GD20H_DRDY_PORT, L3GD20H_DRDY_PIN, gpioModeInput, 1);
+	GPIO_IntConfig(L3GD20H_DRDY_PORT, L3GD20H_DRDY_PIN, false, true, true);	
+	GPIO_IntClear(1 << L3GD20H_DRDY_PIN); 	
+	NVIC_SetPriority(GPIO_EVEN_IRQn,GPIO_EVEN_INT_LEVEL);
+	NVIC_EnableIRQ(GPIO_EVEN_IRQn);
 
 	L3GD20H_GetWHO_AM_I(&buf);
 
 	if(buf == L3GD20H_ID)
 	{
+      /* the sensor L3GD20H validated, software reset it. */
+        L3GD20H_WriteReg(L3GD20H_O_LOW_ODR, L3GD20H_LOW_ODR_SWRESET_RESET);
 		systemStatus.blGyroSensorOnline = 1;
+		
+	L3GD20H_ReadReg(L3GD20H_O_FIFO_SRC,&buf);
 		L3GD20H_SetPOWERMode(L3GD20H_POWER_DOWN);
+		L3GD20H_FIFO_INIT();
+	L3GD20H_ReadReg(L3GD20H_O_FIFO_SRC,&buf);
+		
 	}
 }
 
-#if 1
+//#if (1)
 void L3GD20H_MOTION_MONITOR(uint8_t which_ax)
 {
 	uint8_t iswhere;
@@ -132,7 +201,9 @@ void L3GD20H_MOTION_MONITOR(uint8_t which_ax)
 	L3GD20H_ReadReg(L3GD20H_O_IG_SRC, &iswhere);
 	L3GD20H_Monitor_Model = true;
 }
-#else
+//#endif
+
+#if 0
 void L3GD20H_MOTION_MONITOR(void)
 {
 	L3GD20H_WriteReg(L3GD20H_INT1_CFG, 0x3f);
@@ -169,51 +240,6 @@ void L3GD20H_NO_FIFO_INIT(void)
 	L3GD20H_Monitor_Model = true;
 	L3GD20H_Par_Init(PPG_SAM_FREQ);
 	active_level_delta = 0;
-}
-
-void L3GD20H_FIFO_INIT(void)
-{
-	uint8_t iswhere;
-
-	L3GD20H_SetODR(L3GD20H_CTRL1_DR_50_HZ);
-	L3GD20H_SetPOWERMode(L3GD20H_POWER_NORMAL);
-	L3GD20H_SetFullScale(L3GD20H_CTRL4_FS_245DPS); 
-
-	L3GD20H_WriteReg(L3GD20H_O_CTRL2, L3GD20H_CTRL2_EXTREN_DIS);
-
-	L3GD20H_WriteReg(L3GD20H_O_CTRL3, 0x00);
-	L3GD20H_SetInt2Pin(L3GD20H_CTRL3_INT2_ORUN_EN);
-	
-	L3GD20H_FIFOModeEnable(L3GD20H_FIFO_Bypass_mode);
-	L3GD20H_FIFOModeEnable(L3GD20H_FIFO_Stream_mode);
-	
-
-	GPIO_IntClear(1 << L3GD20H_INT1_PIN);
-	GPIO_IntClear(1 << L3GD20H_INT2_PIN);
-	GPIO_IntConfig( L3GD20H_INT1_PORT,  L3GD20H_INT1_PIN, false, true , false); //fallingEdge
-
-	GPIO_IntConfig(L3GD20H_INT2_PORT, L3GD20H_INT2_PIN, false, true , true); //fallingEdge
-	NVIC_EnableIRQ(GPIO_ODD_IRQn);
-
-	ReadL3GD20HRawData((uint8_t*)&L3GD20H_BUFF[0][0]);  // clear the old buff
-
-	L3GD20H_ReadReg(L3GD20H_O_IG_SRC, &iswhere);
-
-	L3GD20H_Monitor_Model = false;
-	L3GD20H_Par_Init(L3GD20H_FIFO_FREQ);
-	XYZ_FIR_INIT(L3GD20H_FIFO_FREQ);
-#if FALL_DETECT_SUPPORT		
-
-	int i;
-
-	for (i = 0 ; i < AXIS_FILTER_BUFF_SIZE ; i++)
-	{
-		axis_filter[i] = 0;
-	}
-
-
-	axis_filter_index = 0;
-#endif
 }
 
 /*
@@ -295,13 +321,13 @@ void isMemsError(void)
 void L3GD20H_INT1_CALLBACK(void)
 {
 	//// MESSAGE_TYPES
-	int32_t msg = MESSAGE_L3GD20H_INT1;
+	int32_t msg = MESSAGE_GYRO_INT;
 	xQueueSendFromISR(hEvtQueueDevice, &msg, 0);
 }
 
 void L3GD20H_INT2_CALLBACK(void)
 {
-	int32_t msg = MESSAGE_L3GD20H_INT2;
+	int32_t msg = MESSAGE_GYRO_DRDY;
 	xQueueSendFromISR(hEvtQueueDevice, &msg, 0);
 }
 
@@ -339,9 +365,23 @@ void ReadL3GD20HRawData(uint8_t* p)
 	L3GD20H_CS_H();
 }
 
+gyrostatus_t L3GD20H_ReadReg(u8_t Reg, u8_t* Data)
+{
+	L3GD20H_CS_L();
+	USART_Tx(L3GD20H_SPI, 0x80 + Reg);
+	uint8_t temp = USART_Rx(L3GD20H_SPI);
+	USART_Tx(L3GD20H_SPI, 0);
+	*Data = USART_Rx(L3GD20H_SPI);
+	L3GD20H_CS_H();
+	return L3GD20H_SUCCESS;
+}
+
 void ReadL3GD20HFIFO(uint8_t* px, uint8_t* py, uint8_t* pz, uint8_t len)
 {
 	unsigned char i;
+
+	L3GD20H_ReadReg(L3GD20H_O_FIFO_SRC,&i);
+	
 	L3GD20H_CS_L();
 	USART_Tx(L3GD20H_SPI, 0x80 + 0x40 + L3GD20H_O_OUT_X_LSB);
 	USART_Rx(L3GD20H_SPI);
@@ -363,17 +403,7 @@ void ReadL3GD20HFIFO(uint8_t* px, uint8_t* py, uint8_t* pz, uint8_t len)
 	}
 
 	L3GD20H_CS_H();
-}
-
-gyrostatus_t L3GD20H_ReadReg(u8_t Reg, u8_t* Data)
-{
-	L3GD20H_CS_L();
-	USART_Tx(L3GD20H_SPI, 0x80 + Reg);
-	uint8_t temp = USART_Rx(L3GD20H_SPI);
-	USART_Tx(L3GD20H_SPI, 0);
-	*Data = USART_Rx(L3GD20H_SPI);
-	L3GD20H_CS_H();
-	return L3GD20H_SUCCESS;
+	L3GD20H_ReadReg(L3GD20H_O_FIFO_SRC,&i);
 }
 
 
@@ -408,7 +438,8 @@ gyrostatus_t L3GD20H_SetODR(u8_t ov)
 		return L3GD20H_ERROR;
 
 	value &= (~L3GD20H_CTRL1_DR_M);
-	value |= (ov *0x40);
+	///value |= (ov *0x40);
+	value |= ov;
 
 	if(!L3GD20H_WriteReg(L3GD20H_O_CTRL1, value))
 		return L3GD20H_ERROR;
@@ -527,6 +558,7 @@ gyrostatus_t L3GD20H_SetInt2Pin(L3GD20H_IntPinConf_t pinConf)
 	if(L3GD20H_CTRL3_INT2_ORUN_EN == pinConf)
 		{
 	value = L3GD20H_CTRL3_INT2_ORUN_EN|
+		L3GD20H_CTRL3_INT2_DRDY_EN|
 		L3GD20H_CTRL3_H_LACTIVE_HI|
 		L3GD20H_CTRL3_DRIVE_TYPE_OD;
 		}

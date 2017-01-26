@@ -15,7 +15,7 @@
 
 uint8_t oledRamBuf[256];
 
-#if (OLED_SUPPORT)
+#if (OLED_SUPPORT==1)
 //void OledPwrEnable(uint8_t enable)
 //{
 //	if(true == enable)
