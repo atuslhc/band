@@ -1,0 +1,82 @@
+[Stack]
+FillEnabled=1
+OverflowWarningsEnabled=1
+WarningThreshold=90
+SpWarningsEnabled=1
+WarnLogOnly=1
+UseTrigger=1
+TriggerName=main
+LimitSize=0
+ByteLimit=50
+[DebugChecksum]
+Checksum=1829369280
+[CallStack]
+ShowArgs=0
+[Disassembly]
+MixedMode=1
+[struct_types]
+Fmt0=attHandleValueNoti_t-pValue	4	0
+Fmt1=halUARTCfg_t-baudRate	3	0
+Fmt2=halUARTCfg_t-configured	3	0
+Fmt3=halUARTCfg_t-flowControl	3	0
+Fmt4=halUARTCfg_t-idleTimeout	3	0
+Fmt5=halUARTCfg_t-intEnable	3	0
+Fmt6=uartDMACfg_t-rxHead	4	0
+Fmt7=uartDMACfg_t-rxTail	4	0
+Fmt8=uartDMACfg_t-txHead	4	0
+Fmt9=uartDMACfg_t-txMT	4	0
+Fmt10=uartDMACfg_t-txTail	4	0
+[array_types]
+Fmt0=uint8 [128]	4	0
+Fmt1=uint8 [64]	4	0
+Fmt2=uint8 [6]	4	0
+[watch_formats]
+Fmt0={W}1:*pData	5	0
+Fmt1={W}1:dmaRdyDly	4	0
+Fmt2={W}1:i	4	0
+Fmt3={W}1:numBytes	3	0
+Fmt4={W}1:pData[0]	4	0
+Fmt5={W}1:pData[1]	4	0
+Fmt6={W}1:pData[2]	4	0
+Fmt7={W}1:pData[3]	4	0
+Fmt8={W}1:pData[4]	4	0
+Fmt9={W}1:pData[5]	4	0
+Fmt10={W}1:temp_buf[0]	4	0
+Fmt11={W}1:temp_buf[1]	4	0
+Fmt12={W}1:temp_buf[2]	4	0
+Fmt13={W}1:temp_buf[3]	4	0
+Fmt14={W}1:temp_buf[4]	4	0
+Fmt15={W}1:temp_buf[5]	4	0
+Fmt16={W}1:temp_buf[i]	4	0
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
+[Breakpoints]
+Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\Source\SensorTag.c}.953.3" 0 0 0 0 "" 0 ""
+Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\Source\SensorTag.c}.2171.13" 0 0 0 0 "" 0 ""
+Bp2=_ "STD_CODE" "{$PROJ_DIR$\..\Source\SensorTag.c}.977.3" 0 0 0 0 "" 0 ""
+Bp3=_ "STD_CODE" "{$PROJ_DIR$\..\Source\SensorTag.c}.2173.4" 0 0 0 0 "" 0 ""
+Bp4=_ "STD_CODE" "{$PROJ_DIR$\..\Source\serialInterface.c}.557.11" 0 0 0 0 "" 0 ""
+Bp5=_ "STD_CODE" "{$PROJ_DIR$\..\..\Profiles\Roles\gapbondmgr.c}.2132.8" 0 0 0 0 "" 0 ""
+Bp6=_ "STD_CODE" "{$PROJ_DIR$\..\..\Profiles\Roles\gapbondmgr.c}.1173.31" 0 0 0 0 "" 0 ""
+Bp7=_ "STD_CODE" "{$PROJ_DIR$\..\..\Profiles\Roles\gapbondmgr.c}.1214.11" 0 0 0 0 "" 0 ""
+Bp8=_ "STD_CODE" "{$PROJ_DIR$\..\Source\serialInterface.c}.146.3" 0 0 0 0 "" 0 ""
+Bp9=_ "STD_CODE" "{$PROJ_DIR$\..\Source\serialInterface.c}.154.3" 0 0 0 0 "" 0 ""
+Bp10=_ "STD_CODE" "{$PROJ_DIR$\..\Source\serialInterface.c}.435.9" 0 0 0 0 "" 0 ""
+Bp11=_ "STD_CODE" "{$PROJ_DIR$\..\Source\serialInterface.c}.419.13" 0 0 0 0 "" 0 ""
+Bp12=_ "STD_CODE" "{$PROJ_DIR$\..\Source\serialInterface.c}.233.15" 0 0 0 0 "" 0 ""
+Bp13=_ "STD_CODE" "{$PROJ_DIR$\..\Source\serialInterface.c}.235.15" 0 0 0 0 "" 0 ""
+Bp14=_ "STD_CODE" "{$PROJ_DIR$\..\Source\serialInterface.c}.649.13" 0 0 0 0 "" 0 ""
+Bp15=_ "STD_CODE" "{$PROJ_DIR$\..\Source\serialInterface.c}.645.11" 0 0 0 0 "" 0 ""
+Bp16=_ "STD_CODE" "{$PROJ_DIR$\..\Source\serialInterface.c}.642.11" 0 0 0 0 "" 0 ""
+Count=17
+[ChipconEmu]
+Stop timers on halt=1
+Leave target running=1
+[Aliases]
+Count=0
+SuppressDialog=0

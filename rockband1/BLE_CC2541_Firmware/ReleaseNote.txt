@@ -1,0 +1,46 @@
+2017/04/12 [V00.07]
+Fix the disconnect and re-connect will wait 60 seconds can not.
+Patch AA00_PATCH=1 enable UUID: AA00 (IR temperature service sample). [yes]
+Patch AA10_PATCH=1 enable UUID: AA10 (accelerometer service sample).
+Patch NOTI_PATCH=1 enable the notification data parsing.
+Patch NOTI2_PATCH=1 event trigger/clean condition.
+Patch AA60_PATCH=1
+Patch the PCtools connected issue. USE_BT_UUID=1, USER_DESCRIPTION, UUID_BACKWARD=1
+Debug with UART_RXOW_CHECK=1
+Patch 180F_PATCH=1
+
+
+2017/02/08 V00.01
+The rockband1 BLE CC2541 release versoin 00.01
+1. BLE_CC2541_V00.01.hex
+2. Create from Ti SensorTag and collect related files into the same directory and allocate these files as previous CC2540 directory
+3. Merege serialinterface.c, serialinterface.h, npi.c and npi.h from Ti BLE_Bridege sample code
+4. Change complier options: xPOWER_SAVING, HAL_UART=TRUE, HAL_UART_DMA=1, xHAL_UART_ISR=0, NPI_UART_PORT=HAL_UART_PORT_0, NPI_UART_FC=FALSE
+5. Create CC2541DK-Sensor-Binary configuration for application code
+6. Fix MCU get device information problem, add 3 packets on power on
+   a) device init
+      (1) BLE module state: bootloader or application
+   b) start device in osal process event 
+     (2) device information (MAC address)
+     (3) BLE state: idle, advertising, connected
+7. Bootloader disable
+8. Power saveing disable for UART not workable
+9. Use SmartRF Flash Programmer software and CC Debugger to download
+
+2017/02/17 V00.02
+The rockband1 BLE CC2541 release versoin 00.02
+1. BLE_CC2541_V00.02.hex
+2. Add Battery Service Profile
+3. Remove temperature, barometer, and humidity functions
+4. Change advertising data (PC tool could scan)
+
+2017/03/06 V00.03
+The rockband1 BLE CC2541 release version 00.03
+1. BLE_CC2541_V00.03.hex
+2. Enable compiler option POWER_SAVING
+3. Change compiler option xHAL_UART_ISR=0 to HAL_UART_ISR=0
+   (This change will not change anything. These two options are the same. Just more specific and not put in head file.)
+4. Remove RTS and CTS related code of UART
+5. Change RX to IO interrupt when enter sleep and back to RX function when exit from sleep
+6. Remove LED setting, Key handling and Simple Key profile
+7. The number of zero padding should be over 10, MCU code version should equal or higher than V00.15

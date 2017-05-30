@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project>
+  <fileVersion>2</fileVersion>
+  <fileChecksum>3952848917</fileChecksum>
+  <configuration>
+    <name>CC254xF256</name>
+    <outputs>
+      <file>$TOOLKIT_DIR$\inc\ioCC2540.h</file>
+      <file>$PROJ_DIR$\CC254xF256\Obj\bim_main.r51</file>
+      <file>$PROJ_DIR$\CC254xF256\Obj\bim_ivec.r51</file>
+      <file>$PROJ_DIR$\..\app\bim_main.h</file>
+      <file>$PROJ_DIR$\CC254xF256\Obj\hal_flash.r51</file>
+      <file>$PROJ_DIR$\..\app\bim_main.c</file>
+      <file>$PROJ_DIR$\..\..\..\..\..\Components\hal\include\hal_defs.h</file>
+      <file>$PROJ_DIR$\CC254xF256\Obj\bim_main.pbi</file>
+      <file>$PROJ_DIR$\..\app\ioCC254x_bitdef.h</file>
+      <file>$PROJ_DIR$\..\..\..\..\..\Components\hal\target\CC2540EB\hal_board_cfg.h</file>
+      <file>$PROJ_DIR$\..\..\..\..\..\Components\hal\include\hal_board.h</file>
+      <file>$PROJ_DIR$\..\..\..\..\..\Components\hal\target\CC2540EB\hal_flash.c</file>
+      <file>$TOOLKIT_DIR$\lib\clib\cl-pli-nlxd-1e16x01.r51</file>
+      <file>$PROJ_DIR$\CC254xF256\Exe\BIM.d51</file>
+      <file>$PROJ_DIR$\..\..\..\..\..\Components\hal\target\CC2540EB\hal_dma.h</file>
+      <file>$PROJ_DIR$\..\..\..\..\..\Components\hal\target\CC2540EB\hal_mcu.h</file>
+      <file>$PROJ_DIR$\CC254xF256\Obj\BIM.pbd</file>
+      <file>$PROJ_DIR$\..\app\bim_ivec.s51</file>
+      <file>$PROJ_DIR$\..\..\..\..\..\Components\hal\include\hal_flash.h</file>
+      <file>$PROJ_DIR$\CC254xF256\Exe\BIM_CC254xF256.hex</file>
+      <file>$PROJ_DIR$\CC254xF256\Obj\hal_flash.pbi</file>
+      <file>$PROJ_DIR$\CC254xF256\List\BIM.map</file>
+      <file>$PROJ_DIR$\..\..\..\..\..\Components\hal\target\CC2540EB\hal_types.h</file>
+      <file>$PROJ_DIR$\bim_cc254x.xcl</file>
+      <file>$PROJ_DIR$\CC254xF256\Obj\hal_flash.__cstat.et</file>
+      <file>$PROJ_DIR$\CC254xF256\Obj\bim_main.__cstat.et</file>
+    </outputs>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 13 21 19</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\app\bim_main.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 7</file>
+        </tool>
+        <tool>
+          <name>ICC8051</name>
+          <file> 1</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 25</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 9 3 10 22 18 8 15 6 0 14</file>
+        </tool>
+        <tool>
+          <name>ICC8051</name>
+          <file> 14 10 9 15 6 22 0 18 8 3</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\Components\hal\target\CC2540EB\hal_flash.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 20</file>
+        </tool>
+        <tool>
+          <name>ICC8051</name>
+          <file> 4</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 24</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 15 0 6 18 22 9 14 10</file>
+        </tool>
+        <tool>
+          <name>ICC8051</name>
+          <file> 9 15 6 22 0 14 10 18</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\CC254xF256\Exe\BIM.d51</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 21 19</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 23 2 1 4 12</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\app\bim_ivec.s51</name>
+      <outputs>
+        <tool>
+          <name>A8051</name>
+          <file> 2</file>
+        </tool>
+      </outputs>
+    </file>
+  </configuration>
+</project>
+
+

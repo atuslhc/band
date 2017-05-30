@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<Workspace>
+  <ConfigDictionary>
+    
+  <CurrentConfigs><Project>sbl/CC254xF256_UART0_ALT1</Project></CurrentConfigs></ConfigDictionary>
+  <Desktop>
+    <Static>
+      <Workspace>
+        <ColumnWidths>
+          
+          
+          
+          
+        <Column0>351</Column0><Column1>1</Column1><Column2>27</Column2><Column3>0</Column3></ColumnWidths>
+      </Workspace>
+    </Static>
+    <Windows>
+      
+    <Wnd1>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-9972-4070</Identity>
+            <TabName>Workspace</TabName>
+            <Factory>Workspace</Factory>
+            <Session>
+              
+            <NodeDict><ExpandedNode>sbl</ExpandedNode><ExpandedNode>sbl/Application</ExpandedNode><ExpandedNode>sbl/Application/sbl_main.c</ExpandedNode><ExpandedNode>sbl/HAL</ExpandedNode><ExpandedNode>sbl/HAL/Include</ExpandedNode><ExpandedNode>sbl/HAL/Target</ExpandedNode><ExpandedNode>sbl/HAL/Target/CC2540EB</ExpandedNode><ExpandedNode>sbl/HAL/Target/CC2540EB/hal_flash.c</ExpandedNode><ExpandedNode>sbl/Output</ExpandedNode><ExpandedNode>sbl/Output/sbl.d51</ExpandedNode></NodeDict></Session>
+          </Tab>
+        </Tabs>
+        
+      <SelectedTab>0</SelectedTab></Wnd1></Windows>
+    <Editor>
+      
+      
+      
+      
+    <Pane/><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Positions>
+      
+      
+      
+      
+      
+    <Top><Row0><Sizes><Toolbar-00B3A120><key>iaridepm.enu1</key></Toolbar-00B3A120></Sizes></Row0></Top><Left><Row0><Sizes><Wnd1><Rect><Top>-2</Top><Left>-2</Left><Bottom>584</Bottom><Right>416</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>352734</sizeHorzCX><sizeHorzCY>317965</sizeHorzCY><sizeVertCX>737213</sizeVertCX><sizeVertCY>931638</sizeVertCY></Rect></Wnd1></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes/></Row0></Bottom><Float><Sizes/></Float></Positions>
+  </Desktop>
+</Workspace>
+
+
