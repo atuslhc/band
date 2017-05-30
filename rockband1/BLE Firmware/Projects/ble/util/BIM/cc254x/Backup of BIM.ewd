@@ -195,7 +195,7 @@
         </option>
         <option>
           <name>ChipconEraseFlash</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>ChipconRetainMemory</name>
@@ -394,56 +394,6 @@
         <option>
           <name>Infineon code in XRAM area</name>
           <state>0xF000-0xF5FF</state>
-        </option>
-      </data>
-    </settings>
-    <settings>
-      <name>JLINK_ID</name>
-      <archiveVersion>1</archiveVersion>
-      <data>
-        <version>0</version>
-        <wantNonLocal>1</wantNonLocal>
-        <debug>1</debug>
-        <option>
-          <name>JLinkDriverMandatory</name>
-          <state>1</state>
-        </option>
-        <option>
-          <name>JLinkSuppressDownload</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>JLinkVerifyDownload</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>JLinkConnectionType</name>
-          <version>0</version>
-          <state>0</state>
-        </option>
-        <option>
-          <name>JLinkSerialNumber</name>
-          <state></state>
-        </option>
-        <option>
-          <name>JLinkSpeed</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>JLinkFrequency</name>
-          <state></state>
-        </option>
-        <option>
-          <name>JLinkPowerSupply</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>JLinkUseLog</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>JLinkLogBrowse</name>
-          <state>$PROJ_DIR$\jlinkcomm.log</state>
         </option>
       </data>
     </settings>
@@ -702,10 +652,6 @@
       <plugin>
         <file>$EW_DIR$\common\plugins\SymList\SymList.ENU.ewplugin</file>
         <loadFlag>1</loadFlag>
-      </plugin>
-      <plugin>
-        <file>$EW_DIR$\common\plugins\uCProbe\uCProbePlugin.ENU.ewplugin</file>
-        <loadFlag>0</loadFlag>
       </plugin>
     </debuggerPlugins>
   </configuration>

@@ -57,7 +57,7 @@ extern "C"
 #define MYALERTNOTIFICATION_CONF                  13     // RW uint8 - Profile Attribute value
 
 // Service UUID
-#define MYALERT_SERV_UUID             0xAA60 // F0000000-0451-4000-B000-00000000-AA60
+#define MYALERT_SERV_UUID             0xAA60 // F0000000-0451-4000-B000-00000000-AA60 F000AA60-0451-4000-B000-000000000000
 #define MYALERT_DATA_UUID             0xAA61 //用于发送报警信息的notification
 #define MYALERT_CONF_UUID             0xAA62
 

@@ -341,9 +341,11 @@ void main(void)
   CLKCONCMD = (CLKCONCMD & ~(CLKCON_OSC | CLKCON_CLKSPD)) | CLKCON_CLKSPD_32M;
   while (CLKCONSTA & CLKCON_OSC);   // Wait until clock source has changed		
  // checkSumCon =*(uint16 *)&mac_buf[4]; // so copy the memory ,but mac is different , protection!!!
+
   HalFlashRead(crcCheck_Page, 0, (uint8 *)&checkSumCode, 2);
+
  // if (checkSumCode == checkSumCon)
-  if (checkSumCode == CRC_CHECK_VALUE)
+  if (checkSumCode == CRC_CHECK_VALUE && 0)
   {
     JumpToImageAorB = 0;
     asm("LJMP 0x0830");
@@ -373,7 +375,10 @@ void main(void)
   URX0IE = 1;
   EA = 1; 
   HAL_DMA_SET_ADDR_DESC0(&dmaCh0);
-  
+ #if (0) //test flash.
+     checkSumCode =CRC_CHECK_VALUE;
+     HalFlashWrite(0xF608,(uint8 *)&checkSumCode,0x01);
+#endif 
   uart0Send(devInfor,21);
   
   //uart0Send(ackData,11);

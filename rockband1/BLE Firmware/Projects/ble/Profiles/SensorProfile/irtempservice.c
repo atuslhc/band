@@ -80,6 +80,24 @@
 static irTempCBs_t *irTemp_AppCBs = NULL;
 
 // IR Temperatur Service UUID
+#if (USE_TI_UUID==1)
+CONST uint8 irTempServUUID[TI_UUID_SIZE] =
+{
+  TI_UUID(IRTEMPERATURE_SERV_UUID),
+};
+
+// IR Temp Characteristic value Data UUID
+CONST uint8 irTempDataUUID[TI_UUID_SIZE] =
+{
+  TI_UUID(IRTEMPERATURE_DATA_UUID),
+};
+
+// IR Temp Characteristic value Configuration UUID
+CONST uint8 irTempConfUUID[TI_UUID_SIZE] =
+{
+  TI_UUID(IRTEMPERATURE_CONF_UUID)
+};
+#else
 CONST uint8 irTempServUUID[ATT_BT_UUID_SIZE] =
 {
   LO_UINT16(IRTEMPERATURE_SERV_UUID),HI_UINT16(IRTEMPERATURE_SERV_UUID),
@@ -96,15 +114,18 @@ CONST uint8 irTempConfUUID[ATT_BT_UUID_SIZE] =
 {
   LO_UINT16(IRTEMPERATURE_CONF_UUID),HI_UINT16(IRTEMPERATURE_CONF_UUID),
 };
-
+#endif
 
 /*********************************************************************
  * Profile Attributes - variables
  */
 
 // IR Temperature Profile Service attribute
+#if (USE_TI_UUID==1)
+static CONST gattAttrType_t irTempService = { TI_UUID_SIZE, irTempServUUID };
+#else
 static CONST gattAttrType_t irTempService = { ATT_BT_UUID_SIZE, irTempServUUID };
-
+#endif
 // IR Temperature Characteristic Properties
 static uint8 irTempDataProps = GATT_PROP_READ | GATT_PROP_NOTIFY;
 
@@ -153,7 +174,11 @@ gattAttribute_t irTempAttrTbl[] =
 
       // Characteristic Value "Data"
       {
+#if (USE_TI_UUID==1)
+        { TI_UUID_SIZE, irTempDataUUID },
+#else
         { ATT_BT_UUID_SIZE, irTempDataUUID },
+#endif
         GATT_PERMIT_READ,
         0,
         irTempData
@@ -185,7 +210,11 @@ gattAttribute_t irTempAttrTbl[] =
 
       // Characteristic Value "Configuration"
       {
+#if (USE_TI_UUID==1)
+        { TI_UUID_SIZE, irTempConfUUID },
+#else
         { ATT_BT_UUID_SIZE, irTempConfUUID },
+#endif
         GATT_PERMIT_READ | GATT_PERMIT_WRITE,
         0,
         &irTempCfg
@@ -419,7 +448,7 @@ static uint8 irTemp_ReadAttrCB( uint16 connHandle, gattAttribute_t *pAttr,
   {
     // No need for "GATT_SERVICE_UUID" or "GATT_CLIENT_CHAR_CFG_UUID" cases;
     // gattserverapp handles those reads
-    case IRTEMPERATURE_DATA_UUID:   //用于上传实时数据。通道0xAA01  
+    case IRTEMPERATURE_DATA_UUID:   //Use as upload RealData channel 0xAA01  
       *pLen = irTempLen;
       VOID osal_memcpy( pValue, pAttr->pValue, irTempLen );
       break;

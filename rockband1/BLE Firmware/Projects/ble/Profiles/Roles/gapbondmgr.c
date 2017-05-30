@@ -887,6 +887,11 @@ bStatus_t GAPBondMgr_PasscodeRsp( uint16 connectionHandle, uint8 status, uint32 
  */
 uint8 GAPBondMgr_ProcessGAPMsg( gapEventHdr_t *pMsg )
 {
+#if (BOUND_DEBUG==1)
+  static uint8 opbuf[16], opidx=0;
+  opbuf[opidx++] = pMsg->opcode;
+  if (opidx>=16) opidx=0;
+#endif
   switch ( pMsg->opcode )
   {
     case GAP_PASSKEY_NEEDED_EVENT:

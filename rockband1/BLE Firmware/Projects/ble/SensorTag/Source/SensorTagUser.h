@@ -12,7 +12,7 @@
 #define Dev_FW_V2				87
 #elif (VENDOR_TYPE==2)
 #define Dev_FW_V1				0
-#define Dev_FW_V2				15
+#define Dev_FW_V2				19
 //EXT_MAX_TX_POWER=3(4_DBM), 0(MINUS_23_DBM)
 //RSSI_DIFF=0
 #else
@@ -51,7 +51,7 @@ extern uint8 SystemBuyDelay;
 
 /*MCU->BLE*/
 //串口通信偏移位置
-#define UART_DATA_EXTRA_LEN             5 //START(<),LEN,CMD,CH,XX,..,00,00,STOP(>)
+#define UART_DATA_EXTRA_LEN             5 // for noti data, full msg minus START(<),LEN,CMD,CH,...STOP(>)
 #define UART_ID_START_POS		0x00
 #define UART_ID_LEN_POS			0x01
 #define UART_ID_CMD_POS			0x02
@@ -87,7 +87,7 @@ extern uint8 SystemBuyDelay;
 #define UART_TYPE_DEV			0x01
 #define UART_TYPE_INFOR			0x02	//ble status information.
 #define UART_TYPE_COM			0x03
-#define UART_TYPE_CONN			0x04
+#define UART_TYPE_CONN			0x04    //ble connect interval
 #define UART_TYPE_ANCS          0x05
 #define UART_TYPE_BROADCAST     0x06
 #if 0
@@ -122,7 +122,8 @@ extern uint8 SystemBuyDelay;
 #define BOOTLOAD		0x00
 #define BLE_APP			0x01
 
-#define UART_LEN_STARTED	 (UART_LEN_FOU+2)	//2: DATA_START(0x3c), DATA_STOP(0x3e)
+//#define UART_LEN_STARTED	 (UART_LEN_FOU+2)	//2: DATA_START(0x3c), DATA_STOP(0x3e)
+#define UART_LEN_STARTED	 (UART_LEN_FOU+3)	//3: DATA_START(0x3c), DATA_STOP(0x3e), gapProfileState
 #define UART_INFOR_IDLE          0x00
 #define UART_INFOR_ADVERTISING   0x01
 #define UART_INFOR_CONNECTED     0x02

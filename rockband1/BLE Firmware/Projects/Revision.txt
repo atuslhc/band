@@ -1,58 +1,63 @@
+V0.15
+remove EXT_MAX_TX_POWER=3, RSSI_DIFF=0 CCprecompiler options back to original.
+
+
 V1.86_H 2016.1.6
-增加SOS的广播和notification信息
+Add SOS advertising and notification message
 
 V1.85_H 2015.12.8
-从该版本起，该工程仅仅用于healthcare market的ble程序
+The version split HEALCARE and CONSUMER two version.
 
 V1.85 2015.11.12
-屏蔽掉短信和来电的数据
+Disable SMS and incoming call message.
 
 V1.84 2015.11.10
-暂时屏蔽掉MCU端送上来的各种notification的处理。
+Disable MCU notification.
 
 V1.83 2015.10.31 
-增加了时间回到2012年，发送广播消息。
+Add the RTC back to 2012 advertising message.
 
 V1.82 2015.09.15
-增加充电和低电压的广播和notification。 其中notification在AA61中实现。
+Add the charging and low battery advertising and notification. The notification in AA61.
 
 
 V1.81 2015.09.02
-把原来的报警notification从service AA10的characteristic AA14中去掉，重新添加一个service AA60， 在characteristic AA61 下发送该notification。这样做的目的是解决dongle下载数据不成功的问题。
+Remove alert notification service AA10 characteristic AA14, create service AA60,characteristic AA61 notification.
+The change to solve dongle download data fail problem.
 
 V1.80 2015.8.31
-同时支持动态修改广播内容和增加一个报警的characteristic AA14
+Support dynamic change advertising data and add a alert in characteristic AA14.
 
-V1.77 2015.7.10（发行版）(作者：李良龙)
-1)在accelerometerservice中添加一个heartAlert Characteristic.用于向APP报告当前心率级别。
-2)把设备的名字从accuLife 改成“Acculife”.
+V1.77 2015.7.10（release version）(Author: Lianglong Lee)
+1. In accelerometerservice add heartAlert Characteristic. Report HR level to APP.
+2. Change device name "accuLife" to "Acculife".
 
-V1.76 20150302（发行版本。）
-默认是bond
-修改：uint8 ioCap = GAPBOND_IO_CAP_NO_INPUT_NO_OUTPUT;
-bond连确定也不用了。
-
---------------------------------------------------------------------------------
-V1.75 20150115（发行版本。）
-修改了一个BUG：广播间隔修改不了
+V1.76 20150302（release version)
+default bond
+Modify: uint8 ioCap = GAPBOND_IO_CAP_NO_INPUT_NO_OUTPUT;
+Without bond confirm.
 
 --------------------------------------------------------------------------------
-
-V1.74 20141028（发行版本。）
-修改了一个BUG：ANCS 送接间隔1S发送有问题。
-
---------------------------------------------------------------------------------
-V1.72 20141028（发行版本。）
+V1.75 20150115（Release version）
+Fix BUG: Advertising interval can not change,
 
 --------------------------------------------------------------------------------
 
-V1.71 20141021（测试板。）
-1.pairing默认是edable。
-2.修改ANCS的通信协议。
+V1.74 20141028（release version）
+Fix BUG: connect interval 1S send problem.
+
+--------------------------------------------------------------------------------
+V1.72 20141028（release version）
+
+--------------------------------------------------------------------------------
+
+V1.71 20141021（Test version）
+1.pairing default is enable。
+2.Modify ANCS communication protocol.
 --------------------------------------------------------------------------------
 
 V1.70 20141016
-1.pairing默认是disable。
+1.pairing default is disable.
 
 --------------------------------------------------------------------------------
 

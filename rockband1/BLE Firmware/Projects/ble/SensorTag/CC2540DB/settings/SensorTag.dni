@@ -1,5 +1,5 @@
 [DebugChecksum]
-Checksum=1082102578
+Checksum=714456329
 [Stack]
 FillEnabled=0
 OverflowWarningsEnabled=1
@@ -21,20 +21,7 @@ Sort=4 0
 Enabled=0
 ShowSource=1
 [BreakpointUsageDialog]
-Placement=_ 2460 301 3050 648
-[struct_types]
-Fmt0=struct attAttribute_t-handle	4	0
-[array_types]
-Fmt0=uint8 [2]	4	0
-[watch_formats]
-Fmt0={W}0:fTemp	4	7
-[Log file]
-LoggingEnabled=_ 0
-LogFile=_ ""
-Category=_ 0
-[TermIOLog]
-LoggingEnabled=_ 0
-LogFile=_ ""
+Placement=_ 665 318 1255 665
 [InterruptLog]
 LogEnabled=0
 GraphEnabled=0
@@ -64,15 +51,43 @@ Enabled=0
 ShowSource=1
 [Simulator]
 Freq=50000000
+[struct_types]
+Fmt0=struct attAttribute_t-handle	4	0
+[array_types]
+Fmt0=uint8 [16]	4	0
+Fmt1=uint8 [2]	4	0
+Fmt2=uint8 [6]	4	0
+[watch_formats]
+Fmt0={W}0:fTemp	4	7
+Fmt1={W}1:opidx	4	0
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
 [Breakpoints]
-Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\..\Profiles\SensorProfile\accelerometerservice.c}.660.6@1" 1 0 0 0 "" 0 ""
-Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\..\Profiles\SensorProfile\accelerometerservice.c}.651.6@1" 1 0 0 0 "" 0 ""
-Bp2=_ "STD_CODE" "{$PROJ_DIR$\..\Source\SensorTag.c}.804.9" 0 0 0 0 "" 0 ""
-Bp3=_ "STD_CODE" "{$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_flash.c}.124.3" 0 0 0 0 "" 0 ""
-Bp4=_ "STD_CODE" "{$PROJ_DIR$\..\Source\SensorTag_Main.c}.247.2" 1 0 0 0 "" 0 ""
-Count=5
+Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_flash.c}.124.3" 0 0 0 0 "" 0 ""
+Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\Source\SensorTag_Main.c}.247.2" 0 0 0 0 "" 0 ""
+Bp2=_ "STD_CODE" "{$PROJ_DIR$\..\Source\serialapp.h}.7.1" 0 0 0 0 "" 0 ""
+Bp3=_ "STD_CODE" "{$PROJ_DIR$\..\..\Profiles\Roles\gapbondmgr.c}.263.3" 0 0 0 0 "" 0 ""
+Bp4=_ "STD_CODE" "{$PROJ_DIR$\..\Source\SensorTag.c}.788.2" 0 0 0 0 "" 0 ""
+Bp5=_ "STD_CODE" "{$PROJ_DIR$\..\Source\serial2service.c}.431.4" 0 0 0 0 "" 0 ""
+Bp6=_ "STD_CODE" "{$PROJ_DIR$\..\Source\SensorTag.c}.1432.6" 0 0 0 0 "" 0 ""
+Bp7=_ "STD_CODE" "{$PROJ_DIR$\..\Source\SensorTag.c}.925.3" 0 0 0 0 "" 0 ""
+Bp8=_ "STD_CODE" "{$PROJ_DIR$\..\Source\SensorTag.c}.1477.1" 0 0 0 0 "" 0 ""
+Bp9=_ "STD_CODE" "{$PROJ_DIR$\..\..\Profiles\Roles\gapbondmgr.c}.1982.8" 0 0 0 0 "" 0 ""
+Bp10=_ "STD_CODE" "{$PROJ_DIR$\..\Source\SensorTag.c}.2335.17" 0 0 0 0 "" 0 ""
+Bp11=_ "STD_CODE" "{$PROJ_DIR$\..\Source\SensorTag.c}.2322.2" 0 0 0 0 "" 0 ""
+Bp12=_ "STD_CODE" "{$PROJ_DIR$\..\Source\SensorTag.c}.2274.2" 0 0 0 0 "" 0 ""
+Bp13=_ "STD_CODE" "{$PROJ_DIR$\..\..\Profiles\Roles\gapbondmgr.c}.1038.31" 0 0 0 0 "" 0 ""
+Bp14=_ "STD_CODE" "{$PROJ_DIR$\..\..\Profiles\Roles\gapbondmgr.c}.975.33" 0 0 0 0 "" 0 ""
+Bp15=_ "STD_CODE" "{$PROJ_DIR$\..\..\Profiles\Roles\gapbondmgr.c}.1080.11" 0 0 0 0 "" 0 ""
+Bp16=_ "STD_CODE" "{$PROJ_DIR$\..\..\Profiles\Roles\gapbondmgr.c}.895.3" 0 0 0 0 "" 0 ""
+Count=17
 [ChipconEmu]
-Stop timers on halt=1
+Stop timers on halt=0
 Leave target running=1
 [Aliases]
 A0=_ "E:\project\01BLE\SensorTag2014-03-15\Projects\ble\SensorTag\Source\SensorTag_Main.c" ""

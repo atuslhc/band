@@ -39,14 +39,14 @@ void serialAppInitTransport( void )
 
 	// configure UART
 	uartConfig.configured           = TRUE;
-	uartConfig.baudRate             = SBP_UART_BR;//波特率
-	uartConfig.flowControl          = SBP_UART_FC;//流控制
-	uartConfig.flowControlThreshold = SBP_UART_FC_THRESHOLD;//流控制阈值，当开启flowControl时，该设置有效
-	uartConfig.rx.maxBufSize        = SBP_UART_RX_BUF_SIZE;//uart接收缓冲区大小
-	uartConfig.tx.maxBufSize        = SBP_UART_TX_BUF_SIZE;//uart发送缓冲区大小
+	uartConfig.baudRate             = SBP_UART_BR;
+	uartConfig.flowControl          = SBP_UART_FC; //Flow Control
+	uartConfig.flowControlThreshold = SBP_UART_FC_THRESHOLD; //flow control threshold. it is validate while FC enable.
+	uartConfig.rx.maxBufSize        = SBP_UART_RX_BUF_SIZE; //uart RX buffer size
+	uartConfig.tx.maxBufSize        = SBP_UART_TX_BUF_SIZE; //uart TX buffer size.
 	uartConfig.idleTimeout          = SBP_UART_IDLE_TIMEOUT;
-	uartConfig.intEnable            = SBP_UART_INT_ENABLE;//是否开启中断
-	uartConfig.callBackFunc         = sbpSerialAppCallback;//uart接收回调函数，在该函数中读取可用uart数据
+	uartConfig.intEnable            = SBP_UART_INT_ENABLE; //enable the inerrupt service.
+	uartConfig.callBackFunc         = sbpSerialAppCallback; //uart receive callback, read uart buffer in the function.
 
 	// start UART
 	// Note: Assumes no issue opening UART port.

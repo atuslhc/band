@@ -189,11 +189,11 @@ static uint8 devInfoFirmwareRev[] = " 1.20 ("__DATE__")";
 static uint8 devInfoFirmwareRevUserDesp[] = "Firmware Ver.";
 #endif
 
-
-//// Hardware Revision String characteristic
-//static uint8 devInfoHardwareRevProps = GATT_PROP_READ;
-//static uint8 devInfoHardwareRev[] = "N.A.";
-
+#if (USE_HARDWAREINFO==1)
+// Hardware Revision String characteristic
+static uint8 devInfoHardwareRevProps = GATT_PROP_READ;
+static uint8 devInfoHardwareRev[] = "00.02";
+#endif
 // Manufacturer Name String characteristic
 static uint8 devInfoMfrNameProps = GATT_PROP_READ;
 static uint8 devInfoMfrName[] = "UVU Tech.";
@@ -373,23 +373,23 @@ static gattAttribute_t devInfoAttrTbl[] =
       },
 #endif      
       
+#if (USE_HARDWAREINFO==1)
+    // Hardware Revision String Declaration
+    {
+      { ATT_BT_UUID_SIZE, characterUUID },
+      GATT_PERMIT_READ,
+      0,
+      &devInfoHardwareRevProps
+    },
 
-//    // Hardware Revision String Declaration
-//    {
-//      { ATT_BT_UUID_SIZE, characterUUID },
-//      GATT_PERMIT_READ,
-//      0,
-//      &devInfoHardwareRevProps
-//    },
-//
-//      // Hardware Revision Value
-//      {
-//        { ATT_BT_UUID_SIZE, devInfoHardwareRevUUID },
-//        GATT_PERMIT_READ,
-//        0,
-//        (uint8 *) devInfoHardwareRev
-//      },
-
+      // Hardware Revision Value
+      {
+        { ATT_BT_UUID_SIZE, devInfoHardwareRevUUID },
+        GATT_PERMIT_READ,
+        0,
+        (uint8 *) devInfoHardwareRev
+      },
+#endif
     // Software Revision String Declaration
     {
       { ATT_BT_UUID_SIZE, characterUUID },
@@ -550,11 +550,11 @@ bStatus_t DevInfo_SetParameter( uint8 param, uint8 len, void *value )
     case DEVINFO_FIRMWARE_REV:
       osal_memcpy(devInfoFirmwareRev, value, len);
       break;
-
-//    case DEVINFO_HARDWARE_REV:
-//     osal_memcpy(devInfoHardwareRev, value, len);
-//      break;
-
+#if (USE_HARDWAREINFO==1)
+    case DEVINFO_HARDWARE_REV:
+      osal_memcpy(devInfoHardwareRev, value, len);
+      break;
+#endif
     case DEVINFO_SOFTWARE_REV:
       osal_memcpy(devInfoSoftwareRev, value, len);
       break;
@@ -603,11 +603,11 @@ bStatus_t DevInfo_GetParameter( uint8 param, void *value )
     case DEVINFO_FIRMWARE_REV:
       osal_memcpy(value, devInfoFirmwareRev, sizeof(devInfoFirmwareRev));
       break;
-
-//    case DEVINFO_HARDWARE_REV:
-//      osal_memcpy(value, devInfoHardwareRev, sizeof(devInfoHardwareRev));
-//      break;
-
+#if (USE_HARDWAREINFO==1)
+    case DEVINFO_HARDWARE_REV:
+      osal_memcpy(value, devInfoHardwareRev, sizeof(devInfoHardwareRev));
+      break;
+#endif
     case DEVINFO_SOFTWARE_REV:
       osal_memcpy(value, devInfoSoftwareRev, sizeof(devInfoSoftwareRev));
       break;
@@ -716,23 +716,23 @@ static uint8 devInfo_ReadAttrCB( uint16 connHandle, gattAttribute_t *pAttr,
         osal_memcpy(pValue, &devInfoFirmwareRev[offset], *pLen);
       }
       break;
+#if (USE_HARDWAREINFO==1)
+    case DEVINFO_HARDWARE_REV_UUID:
+      // verify offset
+      if (offset >= sizeof(devInfoHardwareRev))
+      {
+        status = ATT_ERR_INVALID_OFFSET;
+      }
+      else
+      {
+        // determine read length
+        *pLen = MIN(maxLen, (sizeof(devInfoHardwareRev) - offset));
 
-//    case DEVINFO_HARDWARE_REV_UUID:
-//      // verify offset
-//      if (offset >= sizeof(devInfoHardwareRev))
-//      {
-//        status = ATT_ERR_INVALID_OFFSET;
-//      }
-//      else
-//      {
-//        // determine read length
-//        *pLen = MIN(maxLen, (sizeof(devInfoHardwareRev) - offset));
-//
-//        // copy data
-//        osal_memcpy(pValue, &devInfoHardwareRev[offset], *pLen);
-//      }
-//      break;
-
+        // copy data
+        osal_memcpy(pValue, &devInfoHardwareRev[offset], *pLen);
+      }
+      break;
+#endif
     case DEVINFO_SOFTWARE_REV_UUID:
       // verify offset
       if (offset >= sizeof(devInfoSoftwareRev))

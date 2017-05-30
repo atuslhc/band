@@ -6,7 +6,7 @@
 
 "--proc_code_model" 
 
-"banked" 
+"near" 
 
 "--proc_nr_virtual_regs" 
 
@@ -19,22 +19,6 @@
 "--proc_dptr_nr_of" 
 
 "1" 
-
-"--proc_codebank_reg" 
-
-"0x9F" 
-
-"--proc_codebank_start" 
-
-"0x8000" 
-
-"--proc_codebank_end" 
-
-"0xFFFF" 
-
-"--proc_codebank_mask" 
-
-"0xFF" 
 
 "--proc_data_model" 
 

@@ -50,7 +50,7 @@
 
 "chipcon" 
 
-"--erase_flash" 
+"--retain_memory" 
 
 "--verify_download" 
 

@@ -213,7 +213,7 @@ contact Texas Instruments Incorporated at www.TI.com.
 // System reset
 #define ST_SYS_RESET_DELAY                    3000
 #define sendDataBufSiz		6
-uint8 sendDataBuf[sendDataBufSiz][24]; //2013/9/9 14:10
+uint8 sendDataBuf[sendDataBufSiz][24]; //[i][0]:ID, [i][1]:len, ..[i][21] data. 
 //第一字节放ID，第二个字节放长度，后面20个字节放数据
 //uint8 sendDataBuf_tab = 0;
 #define sendDataLen	1
@@ -487,8 +487,13 @@ static gapRolesCBs_t sensorTag_PeripheralCBs =
 // GAP Bond Manager Callbacks
 static gapBondCBs_t sensorTag_BondMgrCBs =
 {
+#if 1
 	timeAppPasscodeCB,
 	timeAppPairStateCB
+#else //test PC Dongle pair must or not.
+    NULL,
+    NULL
+#endif
 };
 
 // Simple GATT Profile Callbacks
@@ -532,7 +537,7 @@ static uint8 rxBufferUart[BUFFER_SIZE];
 static uint8 rxBufferSlave[BUFFER_SIZE];
 
 //static uint8 TxBufferLen = 0;
-static uint8 rxBufferLen = 0;
+static uint8 rxBufferLen = 0; //index the length of rxBufferUart[] used.
 
 static uint8 BLEBufferSlave[BUFFER_SIZE];
 static uint8 BLEBufferLen = 0;
@@ -614,6 +619,7 @@ void SensorTag_Init( uint8 task_id )
 
 	//总是打开ANCS
 	//  g_ucANCSFlag=ANCS_ENABLE_FLAG;
+	//	g_ucANCSFlag = ANCS_DISABLE_FLAG;
 
 
 #if (VENDOR_TYPE==1)
@@ -719,7 +725,7 @@ void SensorTag_Init( uint8 task_id )
 	// Add services
 	GGS_AddService( GATT_ALL_SERVICES );            // GAP
 	GATTServApp_AddService( GATT_ALL_SERVICES );    // GATT attributes
-	GATT_RegisterForInd(task_id);
+	   GATT_RegisterForInd(task_id);
 	DevInfo_AddService();                           // Device Information Service
 
 	//手机APP端的各种指令都是走AA00service(IR Temperature Service)的AA02的characteristic发送命令的。对于watch来说就是接收，该蓝牙程序运行与watch上，这里就是接收。
@@ -773,7 +779,7 @@ void SensorTag_Init( uint8 task_id )
 	//  VOID Test_RegisterAppCBs( &sensorTag_TestCBs );
 
 	//2015年9月2日10:18:37添加的
-	MyAlert_Register(myAlertCB);
+	MyAlert_Register(myAlertCB); //ATUSDBG
 
 	// Enable clock divide on halt
 	// This reduces active current while radio is active and CC254x MCU
@@ -839,7 +845,6 @@ void SensorTag_Init( uint8 task_id )
 * @return  events not processed
 */
 
-//这里是最顶层的消息处理。
 uint16 g_uiAddr, g_uiLen;
 uint16 SensorTag_ProcessEvent( uint8 task_id, uint16 events )
 {
@@ -995,7 +1000,7 @@ uint16 SensorTag_ProcessEvent( uint8 task_id, uint16 events )
 			{
 				Ancs_Data_Len += 5; //3c uLen 09 02 xx xx 3e
 				ucSendDataTemp[1] = Ancs_Data_Len;
-				ucSendDataTemp[2] = 0x09;
+				ucSendDataTemp[2] = UART_CMD_ANCS; //0x09;
 				ucSendDataTemp[3] = 0x02;
 				ucSendDataTemp[Ancs_Data_Len - 1] = 0x3e;
 				osal_memcpy( &ucSendDataTemp[4], Ancs_Data_Buff, (Ancs_Data_Len - 4) );
@@ -1007,7 +1012,7 @@ uint16 SensorTag_ProcessEvent( uint8 task_id, uint16 events )
 			{
 				//          Ancs_Data_Len+=4;//3c uLen 09 02 xx xx 3e
 				ucSendDataTemp[1] = (ANCS_UART_MAX_NUM + 5);
-				ucSendDataTemp[2] = 0x09;
+				ucSendDataTemp[2] = UART_CMD_ANCS; //0x09;
 				ucSendDataTemp[3] = 0x03;
 				ucSendDataTemp[ANCS_UART_MAX_NUM + 3] = 0x3e;
 				osal_memcpy( &ucSendDataTemp[4], Ancs_Data_Buff, (ANCS_UART_MAX_NUM) );
@@ -1022,7 +1027,7 @@ uint16 SensorTag_ProcessEvent( uint8 task_id, uint16 events )
 			if(g_uiLen > ANCS_UART_MAX_NUM) //分包
 			{
 				ucSendDataTemp[1] = (ANCS_UART_MAX_NUM + 5);
-				ucSendDataTemp[2] = 0x09;
+				ucSendDataTemp[2] = UART_CMD_ANCS; //0x09;
 				ucSendDataTemp[3] = 0x04;
 				ucSendDataTemp[ANCS_UART_MAX_NUM + 3] = 0x3e;
 				osal_memcpy( &ucSendDataTemp[4], &Ancs_Data_Buff[g_uiAddr], (ANCS_UART_MAX_NUM) );
@@ -1035,7 +1040,7 @@ uint16 SensorTag_ProcessEvent( uint8 task_id, uint16 events )
 			else
 			{
 				ucSendDataTemp[1] = (g_uiLen + 5);
-				ucSendDataTemp[2] = 0x09;
+				ucSendDataTemp[2] =UART_CMD_ANCS;// 0x09;
 				ucSendDataTemp[3] = 0x05;
 				ucSendDataTemp[g_uiLen + 3] = 0x3e;
 				osal_memcpy( &ucSendDataTemp[4], &Ancs_Data_Buff[g_uiAddr], (g_uiLen) );
@@ -1236,12 +1241,12 @@ static void peripheralStateNotificationCB( gaprole_States_t newState )
 			if (BLE_State != BLE_STATE_ADVERTISING)
 			{
 				BLE_State = BLE_STATE_ADVERTISING;
-
-				if(SentAlready == 0)
-				{
-					SentAlready = 1;
-				}
-
+//#if (BG036)
+//				if(SentAlready == 0)
+//				{
+//					SentAlready = 1;
+//				}
+//endif
 				SEND_BLE_STA();
 			}
 
@@ -1263,13 +1268,13 @@ static void peripheralStateNotificationCB( gaprole_States_t newState )
 				}
 				else
 				{
-					timeAppDiscoveryCmpl = TRUE;
+					timeAppDiscoveryCmpl = FALSE; //[BG036] TRUE >> FALSE
 				}
 
 				// if this was last connection address don't do discovery
 				if(osal_memcmp( pItem->addr, lastConnAddr, B_ADDR_LEN ))
 				{
-					timeAppDiscoveryCmpl = TRUE;
+					timeAppDiscoveryCmpl = FALSE; //[BG036] TRUE >> FALSE
 					connectedToLastAddress = true;
 				}
 				else
@@ -1282,9 +1287,10 @@ static void peripheralStateNotificationCB( gaprole_States_t newState )
 				if(g_ucANCSFlag != ANCS_DISABLE_FLAG)
 				{
 					// Initiate service discovery if necessary
-					if ( timeAppDiscoveryCmpl == FALSE )
+                  if ( timeAppDiscoveryCmpl == FALSE ) //ATUSDBG: 
 					{
 						osal_start_timerEx( sensorTag_TaskID, BP_START_DISCOVERY_EVT, DEFAULT_DISCOVERY_DELAY );
+                        //[BG036] ATUSDBG: should add timeAppDiscoveryCmpl = TRUE;
 					}
 				}
 
@@ -1300,23 +1306,25 @@ static void peripheralStateNotificationCB( gaprole_States_t newState )
 			setCONN_INTERVAL(0x00);
 			break;
 
-//  case GAPROLE_WAITING:
-//
-//    // Link terminated intentionally: reset all sensors
-//    if (BLE_State != BLE_STATE_IDLE)
-//    {
-//      if(g_stBleStateFlag.advConStatus == true)
-//      {
-//        g_stBleStateFlag.advConStatus = false;
-//        uint8 new_adv_enabled_status =true ;//
-//        GAPRole_SetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &new_adv_enabled_status );
-//      }
-//      DEBUG_PRINT("Disconnect!!!\r\n",0);
-//      SentAlready=0;
-//      BLE_State = BLE_STATE_IDLE;
-//      SEND_BLE_STA();
-//    }
-//    break;
+        case GAPROLE_WAITING:
+#if 1
+          // Link terminated intentionally: reset all sensors
+            if (BLE_State != BLE_STATE_IDLE)
+            {
+                if(g_stBleStateFlag.advConStatus == true)
+                {
+                    g_stBleStateFlag.advConStatus = false;
+                    uint8 new_adv_enabled_status =true ;//
+                    GAPRole_SetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &new_adv_enabled_status );
+                }
+                DEBUG_PRINT("Disconnect!!!\r\n",0);
+                SentAlready=0;
+                BLE_State = BLE_STATE_IDLE;
+                SEND_BLE_STA();
+            }
+#endif
+            break;
+
 		default:
 			if (BLE_State != BLE_STATE_IDLE)
 			{
@@ -1329,14 +1337,18 @@ static void peripheralStateNotificationCB( gaprole_States_t newState )
 
 				DEBUG_PRINT("Disconnect!!!\r\n", 0);
 				SentAlready = 0;
-				BLE_State = BLE_STATE_IDLE;
+				BLE_State = BLE_STATE_ADVERTISING; //BLE_STATE_IDLE;
 				SEND_BLE_STA();
 			}
 
 			break;
 	}
 
+    if (gapProfileState!=newState)    //ATUSDBG: check gapProfileState change.
+    {
 	gapProfileState = newState;
+    SEND_BLE_STA();
+    }
 }
 /*********************************************************************
 * @fn      irTempChangeCB
@@ -1377,10 +1389,9 @@ static void accelChangeCB( uint8 paramID )
 
 
 /*******************************************************
-***	功能描述：发送函数. Send the Data to Host. (Ex, Gather Data).
-***	入口参数：无
-***	返回值：  无
-***	调用方法：sendData();
+***	Desc：Send the notification Data to Host. (Ex, Gather Data, response notification).
+***	Params:
+***	Return: none
 *******************************************************/
 static void sendData(void )
 {
@@ -1390,8 +1401,8 @@ static void sendData(void )
 #define CHANNEL5_LOCAL  2
 #define CHANNEL6_LOCAL  2
 #define CHANNEL7_LOCAL  2
-	extern gattAttribute_t accelAttrTbl[];
-	extern gattAttribute_t irTempAttrTbl[];
+  extern gattAttribute_t accelAttrTbl[]; //AA10:
+	extern gattAttribute_t irTempAttrTbl[]; //AA00
 	extern gattAttribute_t heartRateAttrTbl[] ;
 	extern gattAttribute_t sensorGyroscopeAttrTbl[];
 	extern gattAttribute_t thermometerAttrTbl[];
@@ -1603,7 +1614,7 @@ void UART_Analyze(void)  //URAT_Analyze >> UART_Analyze
 		Uart_Data_ACK[UART_ID_CMD_POS] = UART_CMD_DATA;
 		//
 		uint8 ucCmd = rxBufferSlave[UART_ID_DATA_POS];//这里是数据的位置
-		uint8 ucLen = rxBufferSlave[UART_ID_LEN_POS] - UART_DATA_EXTRA_LEN;
+		uint8 ucLen = rxBufferSlave[UART_ID_LEN_POS] - UART_DATA_EXTRA_LEN;  //pure noti data length only.
 
 		if(ucCmd == DEVICE_INFO_CHANNEL)
 		{
@@ -1631,13 +1642,13 @@ void UART_Analyze(void)  //URAT_Analyze >> UART_Analyze
 			if(temp == 0xfe)
 			{
 				//串口到service的空函数返回0xfe
-				id = rxBufferSlave[UART_ID_DATA_POS];
-				group = rxBufferSlave[UART_ID_LEN_POS];//这里group表示该包数据的长度
-				group = group - 0x04;    //不知道为什么数据长度要4个4个来分。
+				id = rxBufferSlave[UART_ID_DATA_POS]; //channel
+				group = rxBufferSlave[UART_ID_LEN_POS]; //the whole msg length
+				group = group - UART_ID_DATA_NOTI; //0x04: <,len,cmd,ch... the length from noti to end (include stop).
 
 				if (group > 0)
 				{
-					group--;
+					group--; //minus the last stop byte.
 				}
 				else
 				{
@@ -1645,8 +1656,8 @@ void UART_Analyze(void)  //URAT_Analyze >> UART_Analyze
 					return;
 				}
 
-				rem = group % UART_DATA_COM_LEN;//UART_DATA_COM_LEN;
-				group = group / UART_DATA_COM_LEN;//UART_DATA_COM_LEN;
+				rem = group % UART_DATA_COM_LEN;
+				group = group / UART_DATA_COM_LEN;
 
 				for (i = 0; i < group; i++)
 				{
@@ -1662,7 +1673,7 @@ void UART_Analyze(void)  //URAT_Analyze >> UART_Analyze
 						add +=  0x04;
 					}
 
-					rxDtatSave(&rxBufferSlave[add], UART_DATA_COM_LEN, id);//把数据存储在rxBufferSlave
+					rxDtatSave(&rxBufferSlave[add], UART_DATA_COM_LEN, id);//cut by UART_DATA_COM_LEN length store to sendDataBuf[][]
 				}
 
 				if (rem > 0)
@@ -1745,7 +1756,7 @@ void UART_Analyze(void)  //URAT_Analyze >> UART_Analyze
 
 				if ( rxBufferSlave[UART_ID_DATA_POS + 1] == ADVER_EN )
 				{
-					//改变广播间隔 先关，再修改，最后打开。
+					//change the advertising interval, disable, then set interval, then enable.
 					uint16 davInt2 = rxBufferSlave[UART_ID_DATA_POS + 2];
 					new_adv_enabled_status = false ; //
 					GAPRole_SetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &new_adv_enabled_status );//设置广播参数
@@ -1757,7 +1768,7 @@ void UART_Analyze(void)  //URAT_Analyze >> UART_Analyze
 					GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MAX, davInt2 );
 					GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MIN, davInt2 );
 					GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MAX, davInt2 );
-//把广播关闭了，什么时候再次打开？？？？
+                    //the advertising will turn on in peripheralStateNotificationCB()
 				}
 				else
 				{
@@ -1819,7 +1830,7 @@ void UART_Analyze(void)  //URAT_Analyze >> UART_Analyze
 				advertData[17] = rxBufferSlave[UART_ID_DATA_POS + 3];
 #if (MODEL_TYPE==1)
 				advertData[18] = rxBufferSlave[UART_ID_DATA_POS + 4];
-                                advertData[19] = rxBufferSlave[UART_ID_DATA_POS + 5];
+                advertData[19] = rxBufferSlave[UART_ID_DATA_POS + 5];
 
 				GAPRole_SetParameter( GAPROLE_ADVERT_DATA, 20, advertData );//advertising data for HEALTHCARE_TYPE.
 #elif (MODEL_TYPE==2)
@@ -1857,13 +1868,15 @@ void UART_Analyze(void)  //URAT_Analyze >> UART_Analyze
 void SEND_BLE_STA(void)
 {
 
-	//  BLE_STATUS[UART_ID_START] = UART_DATA_START;
+	  BLE_STATUS[UART_ID_START_POS] = UART_DATA_START;
 	BLE_STATUS[UART_ID_LEN_POS] = UART_LEN_STARTED;
 	BLE_STATUS[UART_ID_CMD_POS] = UART_CMD_INFOR;
 	BLE_STATUS[UART_ID_DATA_POS] = UART_TYPE_INFOR;
 	BLE_STATUS[UART_ID_DATA_POS + 1] = BLE_State;
-	//  BLE_STATUS[UART_ID_DATA+2] = UART_DATA_STOP; //2014-03-15
-
+	BLE_STATUS[UART_ID_DATA_POS + 2] = gapProfileState;
+    
+	//  BLE_STATUS[UART_ID_DATA_POS+2] = UART_DATA_STOP;
+	  BLE_STATUS[UART_ID_DATA_POS+3] = UART_DATA_STOP;
 	MessageType = STATE_CMD_INFOR;
 	txDtatSend(BLE_STATUS, BLE_STATUS[UART_ID_LEN_POS]);
 }
@@ -1925,10 +1938,11 @@ void Delay_uS(uint16 microSecs)
 	}
 }
 /*******************************************************
-***	功能描述：数据保存
-***	入口参数：无
-***	返回值：  无
-***	调用方法：rxDtatSave();
+***	desc: save data to sendDataBuf[][]
+***	params:
+***   data: the address(pointer) of data.
+***   len: the data length
+***	  id: the channel tag
 *******************************************************/
 void rxDtatSave(uint8* data, uint8 len, uint8 id)
 {
@@ -1946,10 +1960,9 @@ void rxDtatSave(uint8* data, uint8 len, uint8 id)
 	}
 }
 /*******************************************************
-***	功能描述：检查是否有数据需要发送
-***	入口参数：无
-***	返回值：  无
-***	调用方法：rxDtatSave();
+***	Desc：Check the sendDataBuff[][] available data want to send
+***	Params: None
+***	Return: 0: none; not 0 the array index+1
 *******************************************************/
 uint8 rxDtatCheck(void)
 {
@@ -1966,10 +1979,9 @@ uint8 rxDtatCheck(void)
 	return 0;
 }
 /*******************************************************
-***	功能描述：数据转移
-***	入口参数：无
-***	返回值：  无
-***	调用方法：rxDtatSave();
+***	Desc: data move 24 bytes.
+***	Params: target data address
+***	Return: None
 *******************************************************/
 void rxDtatMov(uint8* data)
 {
@@ -2004,7 +2016,7 @@ void rxDataRead(void)
 #endif
 			if (rxBufferUart[start_add + len - 1] == UART_DATA_STOP)
 			{
-				error = 0;
+				error = 0;  //we got the full msg now. can extract it.
 				break;
 			}
 		}
@@ -2015,9 +2027,11 @@ void rxDataRead(void)
 		P1 ^= 0x10;//仿真板黄灯
 		memcpy(rxBufferSlave, &rxBufferUart[start_add], len); //取数据
 		rxBufferSlave[len - 1] = UART_DATA_STOP;
-		rxBufferSlave[UART_ID_LEN_POS] -= 0x02;//去掉2个不必要0x00
+		rxBufferSlave[UART_ID_LEN_POS] -= 0x02;//remove the tail padding 2 0x00
+        //rxBufferSlave[rxBufferSlave[UART_ID_LEN_POS]-1] = UART_DATA_STOP; //FIXME: ATUS ADD.
+        //clean the rxBufferUart[],rxBufferLen for reuse next time.
 		memset(rxBufferUart, 0, BUFFER_SIZE);
-		rxBufferLen = 0;
+		rxBufferLen = 0;  //We get the whole msg packet, reset to store new msg.
 		osal_set_event( sensorTag_TaskID, ST_UART_READ_EVT);//该为任务设置事件标志
 	}
 }
@@ -2042,9 +2056,9 @@ void txDtatSend(uint8* data, uint8 len)
 	uint8 TxBufferSlave[128];
 	uint8 len_temp, i, char_temp, index;
 
-	delaySleep = DELAYSLEEP_INIT;
+	delaySleep = DELAYSLEEP_INIT; //It seems would like make POWER_SAVING delay to sleep while count is not zero.
 
-	len_temp = len - 3; //skip [0]START,[1] LEN, [LAST]STOP.
+	len_temp = len - 3; //skip [0]START,[1] LEN, [LAST]STOP. All the remain will encode.
 
 
 	TxBufferSlave[0] = 0;
@@ -2088,7 +2102,7 @@ void txDtatSend(uint8* data, uint8 len)
 	}
 
 	TxBufferSlave[index++] = UART_DATA_STOP; //'>'
-	TxBufferSlave[(UART_ID_LEN_POS + ADD_ZERO_NUMBER)] = index - ADD_ZERO_NUMBER; //overwrite len
+	TxBufferSlave[(UART_ID_LEN_POS + ADD_ZERO_NUMBER)] = index - ADD_ZERO_NUMBER; //overwrite len after encode.
 
 
 #ifndef _DEBUG_PRINT
@@ -2128,10 +2142,12 @@ void BLEDtatMOV(void)
 	}
 }
 /*******************************************************
-***	功能描述：串口数据读取
-***	入口参数：无
-***	返回值：  无
-***	调用方法：getRxDataRead();
+***	Desc：UART data read to global rxBufferUart[]
+***	params:
+***     data: the pointer of uart buffer pointer.
+***     len:  the uart data length.
+***	return: none.
+*** output: store the data to global rxBufferUart[]
 *******************************************************/
 void getRxDataRead(uint8* data, uint8 len)
 {
@@ -2224,6 +2240,7 @@ void CONN_INTERVAL_UPDATA_RES(void)
 	BLE_STATUS[UART_ID_CMD_POS] = UART_CMD_INFOR;
 	BLE_STATUS[UART_ID_DATA_POS] = UART_TYPE_CONN;
 	BLE_STATUS[UART_ID_DATA_POS + 1] = g_ucConnInterval;
+	BLE_STATUS[UART_ID_DATA_POS + 2] = UART_DATA_STOP; //ATUSDBG: add to change BLE_STATUS[] size   
 	txDtatSend(BLE_STATUS, BLE_STATUS[UART_ID_LEN_POS]);
 }
 /*********************************************************************
@@ -2280,7 +2297,8 @@ static void timeAppPairStateCB( uint16 connHandle, uint8 state, uint8 status )
 			}
 
 			// If discovery was postponed start discovery
-			if ( timeAppDiscPostponed && timeAppDiscoveryCmpl == FALSE )
+			//if ( timeAppDiscPostponed && timeAppDiscoveryCmpl == FALSE )
+			if ( timeAppDiscPostponed )  //ATUSDBG: try fix hardly connect by nRF 
 			{
 				timeAppDiscPostponed = FALSE;
 				DEBUG_PRINT("Discovery!!!\r\n", 0) ;

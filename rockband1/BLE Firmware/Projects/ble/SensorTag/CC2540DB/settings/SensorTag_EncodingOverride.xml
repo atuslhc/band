@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<userOverrides>
+  <override>
+    <path>D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\Profiles\SensorProfile\irtempservice.c</path>
+    <encoding>GB2312</encoding>
+  </override>
+</userOverrides>
+
+

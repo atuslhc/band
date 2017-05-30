@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\common\bin\cspybat" -f "D:\work\src\atuslhc\band\rockband1\BLE Firmware\Projects\ble\SensorTag\CC2540DB\settings\SensorTag.cc2540SBL-HEALTHCARE.general.xcl" --backend -f "D:\work\src\atuslhc\band\rockband1\BLE Firmware\Projects\ble\SensorTag\CC2540DB\settings\SensorTag.cc2540SBL-HEALTHCARE.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\common\bin\cspybat" -f "D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\util\BIM\cc254x\settings\BIM.CC254xF256.general.xcl" --backend -f "D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\util\BIM\cc254x\settings\BIM.CC254xF256.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\common\bin\cspybat" -f "D:\work\src\atuslhc\band\rockband1\BLE Firmware\Projects\ble\SensorTag\CC2540DB\settings\SensorTag.cc2540SBL-HEALTHCARE.general.xcl" "--debug_file=%~1" --backend -f "D:\work\src\atuslhc\band\rockband1\BLE Firmware\Projects\ble\SensorTag\CC2540DB\settings\SensorTag.cc2540SBL-HEALTHCARE.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\common\bin\cspybat" -f "D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\util\BIM\cc254x\settings\BIM.CC254xF256.general.xcl" "--debug_file=%~1" --backend -f "D:\uvutechnology-exam\i2watch\trunk\I4_H\BLE Firmware\Projects\ble\util\BIM\cc254x\settings\BIM.CC254xF256.driver.xcl" 
 
 @echo off 
 :end

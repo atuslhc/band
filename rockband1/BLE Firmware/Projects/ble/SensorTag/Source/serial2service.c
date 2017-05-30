@@ -378,7 +378,7 @@ static uint8 S2S_DeviceInfo(uint8* pData, uint8 ucLen)
 
 
 
-
+/* The array table define and mapping all of the channel service(notification) function */
 //这里面的序号对应的起始就是通讯协议中的通道号。
 const pFnSerial2Service fnSerial2Service[] =
 {

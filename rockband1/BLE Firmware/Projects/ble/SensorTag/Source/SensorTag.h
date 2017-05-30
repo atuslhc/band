@@ -61,8 +61,8 @@ extern "C"
 #define ST_UART_READ_EVT                                0x0002
 #define ST_SPI_DELAY_EVT                                0x0004
 #define ST_SPI_BLE_EVT                                  0x0008
-#define ST_DELAY_EVT					0x0010
-#define USER_UART_RX_EVT				0x0020
+#define ST_DELAY_EVT					                0x0010
+#define USER_UART_RX_EVT				                0x0020
 #define BP_START_DISCOVERY_EVT                          0x0040
 #define ST_SYS_RESET_EVT                                0x0080
 #define WAIT_CRYSTAL_START_EVT                          0x0100
