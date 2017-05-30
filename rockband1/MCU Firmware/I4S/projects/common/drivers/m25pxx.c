@@ -58,7 +58,9 @@ void M25Pxx_INIT(void)
 
 
 	GPIO_PinModeSet(FLASH_PW_PORT, FLASH_PW_PIN, gpioModePushPull, 1); /* Power */
+	//GPIO_PinModeSet(FLASH_PW_PORT2, FLASH_PW_PIN2, gpioModePushPull, 1); /* Power2 */
 	GPIO_DriveModeSet(FLASH_PW_PORT, gpioDriveModeHigh);
+	GPIO_DriveModeSet(FLASH_PW_PORT2, gpioDriveModeHigh);
 	FLASH_PW_ON();
 	vTaskDelay(1);
 
@@ -456,14 +458,15 @@ void GetFlashCapacity(unsigned char data)
 			break;
 	}
 
-	//===============增加flash的读写操作，用来检测flash能否正常工作===============
+	/* add flash read/write check flash work or not */
 	uint8_t rBuff[32] = {0};
 	uint8_t wBuff[32] = {0};
 	uint8_t i = 0;
 
-	FlashSectorErase(0);//擦除第零个sector。
-	FlashRead(0, rBuff, 32);
-
+    // test the sector 0
+	FlashSectorErase(0); //erase
+    //read check NOR flash default 0xff
+	FlashRead(0, rBuff, 32); //
 	for(i = 0; i < 32; i++)
 	{
 		if(rBuff[i] != 0xff)
@@ -472,7 +475,7 @@ void GetFlashCapacity(unsigned char data)
 			return;
 		}
 	}
-
+    //write increment and check.
 	for(i = 0 ; i < 32; i++)
 		wBuff[i] = i;
 
@@ -489,9 +492,9 @@ void GetFlashCapacity(unsigned char data)
 		}
 	}
 
-	systemStatus.blFlashOnline = true;//经过上面的操作，最终确定flash 正常工作
+	systemStatus.blFlashOnline = true; //set flag
 	
-	FlashSectorErase(0);//检测完毕后擦除，刚才写入的数据，以免影响以后的读。
+	FlashSectorErase(0); //erase after the read/write test.
 }
 
 

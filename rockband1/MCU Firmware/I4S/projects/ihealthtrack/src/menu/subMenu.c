@@ -964,7 +964,7 @@ void CallBackSubMenuBleMAC(void)
 	uint8_t modifyMac[12] = {0};
 	uint8_t m = 0;
 
-	memcpy(&saveBleMac, &BLE_DevChip.BLE_DeviceInfo[4], 6); //mac address
+	memcpy(&saveBleMac, &BLE_DevChip.BLE_DeviceInfo[4], MAC_SIZE); //mac address 6
 
 	for(int8_t k = 5; k >= 0; k--)
 	{

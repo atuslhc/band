@@ -50,9 +50,9 @@
  * @{
  ******************************************************************************/
 
+#include "common_vars.h"
 #include "bsp.h"
 #include "main.h"
-#include "common_vars.h"
 #include "device_task.h"
 
 /**************************************************************************//**
@@ -161,6 +161,16 @@ void BspInit(void)
 	TEST_PORT15_CLEAR();
 #endif
 
+#if (1) //(BOARD_TYPE==2)
+    //Force set the none use GPIO pin to output low.
+    // The pin
+	GPIO_PinModeSet(gpioPortA, 15, gpioModePushPull, 0); //pf4:C51_1
+	GPIO_PinModeSet(gpioPortB, 2, gpioModePushPull, 0); //pf5:C51_2
+	GPIO_PinModeSet(gpioPortC, 8, gpioModePushPull, 0); //pf4:C50_1
+	GPIO_PinModeSet(gpioPortC, 9, gpioModePushPull, 0); //pf5:C50_2
+	GPIO_PinModeSet(gpioPortF, 4, gpioModePushPull, 0); //pf4:C52_1
+	GPIO_PinModeSet(gpioPortF, 5, gpioModePushPull, 0); //pf5:C52_2
+#endif
 
 #if (AFE44x0_SUPPORT==1) //(BOARD_TYPE==0 || BOARD_TYPE==1) 
     //turn off the afe4400 external power.
@@ -179,7 +189,7 @@ void BspInit(void)
 
 #elif (BOARD_TYPE==2)
     //GPIO_PinModeSet(LED_GPIOPORT, LEDC_PIN, gpioModePushPull, 1);  //Atus: should be input config. In power test can check if disable.
-    GPIO_PinModeSet(LED_GPIOPORT, LEDC_PIN, gpioModeDisabled, 1);  //Atus: make it disable z-impedance saving power.
+    GPIO_PinModeSet(LED_GPIOPORT, LEDC_PIN, gpioModeDisabled, 0);  //Atus: make it disable z-impedance saving power. 1 >> 0
 #if (0) //(DEBUG)
     unsigned int ledc=0;
     ledc=GetLEDC();
@@ -193,14 +203,6 @@ void BspInit(void)
 //    while (1);
 	LEDR_OFF();
     
-	GPIO_PinModeSet(LED_GPIOPORT, LEDG_PIN, gpioModePushPull, 1);
-#if (1) //defined(DEBUG)
-    LEDG_ON();
-    SysCtlDelay(900000);
-#endif
-//    while (1);
-//	LEDG_OFF(); //debug keep it on with green
-    
 	GPIO_PinModeSet(LED_GPIOPORT, LEDB_PIN, gpioModePushPull, 1);
 #if (1) //defined(DEBUG)
     LEDB_ON();
@@ -209,15 +211,31 @@ void BspInit(void)
 //    while (1);
 	LEDB_OFF();
     
+	GPIO_PinModeSet(LED_GPIOPORT, LEDG_PIN, gpioModePushPull, 1);
+#if (1) //defined(DEBUG)
+    LEDG_ON();
+    SysCtlDelay(900000);
+#endif
+//    while (1);
+	LEDG_OFF(); //debug keep it on with green
+    
 	/* Configure GPIO port PA2(SW1),PA5(SW2) as Key input */
 	GPIO_PinModeSet(KEY_PORT, KEY2_PIN, gpioModeInput, 1);      //gpioModeInput
-	GPIO_IntConfig(KEY_PORT, KEY2_PIN, false, true, true);
+#if (MECH_TEST==1 || SOS_2S==1 )
+	GPIO_IntConfig(KEY_PORT, KEY2_PIN, true, true, true); //risingEdge and fallingEdge
+#else
+	GPIO_IntConfig(KEY_PORT, KEY2_PIN, false, true, true); //fallingEdge
+#endif
 	GPIO_IntClear(1 << KEY2_PIN); 	
 	NVIC_SetPriority(GPIO_ODD_IRQn,GPIO_ODD_INT_LEVEL);
 	NVIC_EnableIRQ(GPIO_ODD_IRQn);
 	
 	GPIO_PinModeSet(KEY_PORT, KEY1_PIN, gpioModeInput, 1);  //  gpioModeInput
+#if (MECH_TEST==1 || SOS_2S==1)
+	GPIO_IntConfig(KEY_PORT, KEY1_PIN, true, true, true);	
+#else
 	GPIO_IntConfig(KEY_PORT, KEY1_PIN, false, true, true);	
+#endif
 	GPIO_IntClear(1 << KEY1_PIN); 	
 	NVIC_SetPriority(GPIO_EVEN_IRQn,GPIO_EVEN_INT_LEVEL);  
 	NVIC_EnableIRQ(GPIO_EVEN_IRQn);

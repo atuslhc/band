@@ -1,3 +1,4 @@
+#include "common_vars.h"    //add AFE44x0_SUPPORT
 #include "em_gpio.h"
 #include "em_cmu.h"
 #include "em_usart.h"
@@ -9,15 +10,17 @@
 
 //#include "Signal_proc.h"
 
-#include "common_vars.h"
 #include "device_task.h"
 #include "em_int.h"
 
 #if (AFE44x0_SUPPORT==0)
 uint8_t AMB_uA = 0;     //refer AFE4400.pdf p64 0-10.
+uint16_t  afe_sample_counter;
+int16_t AxieOUT[3];
+int16_t axie[3];
 
 #endif
-#if (AFE44x0_SUPPORT)
+#if (AFE44x0_SUPPORT==1)
 
 extern int itest; //BG013_2
 extern uint32_t utest; //BG013_2
@@ -794,7 +797,9 @@ void AFE_DATA_PROC(void)
 #error not specify adjust algorithm!
 #endif
 #endif
-//====================================
+//=========Read the Accelerometer with NOFIFO mode(len=1) while PPG work.
+    if (systemStatus.blAccelSensorOnline)
+    {
 	ReadMemsFIFO((uint8_t*)&axie[0], (uint8_t*)&axie[1], (uint8_t*)&axie[2], 1);
 	extern uint16_t PPG_IN_1S_WP;
 
@@ -813,6 +818,7 @@ void AFE_DATA_PROC(void)
 		              &MEMS_BUFF[1][0],
 		              &MEMS_BUFF[2][0], MEMS_FIFO_SIZE);
 	}
+    }
 #if BG013MS   //BG013
 	if(1 || AFE_AN_Voltage == Mid_Level) //debug force enter PPG_PROCESSING even not ready.
 #else

@@ -1335,7 +1335,7 @@ void onPostScanFlashStorage()
 	}
 	else
 	{
-		// flash置为低功耗
+		// set flash to power off
 		ClearFlashBusyBit(FLASH_BUSY_BIT_DATA_GATHER);
 		PutFlashToSleep();
 	}
@@ -1347,7 +1347,7 @@ void onPostPreparedSector()
 {
 	CCTRACE("preparing sector done.\n");
 
-	// flash置为低功耗
+	// set flash to power off
 	ClearFlashBusyBit(FLASH_BUSY_BIT_DATA_GATHER);
 	PutFlashToSleep();
 }
@@ -1376,7 +1376,7 @@ void onPostWroteDataToFlash()
 	}
 	else
 	{
-		// flash置为低功耗
+		// set flash to power off
 		ClearFlashBusyBit(FLASH_BUSY_BIT_DATA_GATHER);
 		PutFlashToSleep();
 	}

@@ -71,22 +71,32 @@ void L3GD20H_FIFO_INIT(void)
 	uint8_t iswhere;
 
 
+	L3GD20H_SetOD(L3GD20H_CTRL1_DR_800_HZ);
+	//L3GD20H_SetOD(L3GD20H_CTRL1_DR_12_5_HZ);
+	L3GD20H_SetFullScale(L3GD20H_CTRL4_FS_245DPS); 
 
 	L3GD20H_WriteReg(L3GD20H_O_CTRL2, L3GD20H_CTRL2_EXTREN_DIS);
 
-	L3GD20H_WriteReg(L3GD20H_O_CTRL3, 0x02);
-	///L3GD20H_SetInt2Pin(L3GD20H_CTRL3_INT2_ORUN_EN);
+	L3GD20H_WriteReg(L3GD20H_O_CTRL3, 0x00);
+	L3GD20H_SetInt2Pin(L3GD20H_CTRL3_INT2_ORUN_EN);
+
+
+
 	
-	L3GD20H_SetFullScale(L3GD20H_CTRL4_FS_245DPS); 
-	L3GD20H_WriteReg(L3GD20H_O_LOW_ODR, 0x28);
+	L3GD20H_FIFOModeEnable(L3GD20H_FIFO_Bypass2FIFO_mode); 
 	L3GD20H_WriteReg(L3GD20H_O_CTRL5, L3GD20H_CTRL5_FIFOCTL_EN);
-	L3GD20H_FIFOModeEnable(L3GD20H_FIFO_mode);
 	
-	L3GD20H_SetODR(L3GD20H_CTRL1_DR_800_HZ);
 	///L3GD20H_WriteReg(L3GD20H_O_LOW_ODR, 0x08);
 
 	GPIO_IntClear(1 << L3GD20H_INT1_PIN);
 	GPIO_IntClear(1 << L3GD20H_INT2_PIN);
+
+	L3GD20H_WriteReg(L3GD20H_O_LOW_ODR,
+		L3GD20H_LOW_ODR_DRDY_HL_ACTIVE_HIGH |
+		L3GD20H_LOW_ODR_DATARATE_LOW |
+		L3GD20H_LOW_ODR_I2C_DISABLE_SPI_ONLY);
+
+	L3GD20H_SetODR(ODR_50);
 
 	L3GD20H_SetPOWERMode(L3GD20H_POWER_NORMAL);
 
@@ -114,50 +124,93 @@ void L3GD20H_FIFO_INIT(void)
 #endif
 }
 
-void L3GD20H_Init(void)
+void L3GD20H_Disabled(void)
+{
+    if (systemStatus.blGyroSensorOnline==0x01) //&& 0
+    {
+        L3GD20H_SetPOWERMode(L3GD20H_POWER_DOWN);
+    }
+    systemStatus.blGyroSensorOnline = false;
+
+	GPIO_IntConfig(L3GD20H_INT1_PORT, L3GD20H_INT1_PIN, false, false, false);
+	GPIO_IntClear(1 << L3GD20H_INT1_PIN); 	
+    GPIO_PinModeSet(L3GD20H_INT1_PORT, L3GD20H_INT1_PIN, gpioModeDisabled, 1);
+
+	GPIO_IntConfig(L3GD20H_DRDY_PORT, L3GD20H_DRDY_PIN, false, false, false);	
+	GPIO_IntClear(1 << L3GD20H_DRDY_PIN); 	
+	GPIO_PinModeSet(L3GD20H_DRDY_PORT, L3GD20H_DRDY_PIN, gpioModeDisabled, 1);
+
+	GPIO_PinModeSet(GYRO_CS_PORT, GYRO_CS_PIN, gpioModeDisabled, 1);
+}
+
+int L3GD20H_Init(uint8_t mode)
 {
 
 	uint8_t buf;
-	//L3GD20H_WriteReg(L3GD20H_O_LOW_ODR, L3GD20H_LOW_ODR_SWRESET_RESET);
-    
 	CMU_ClockEnable(cmuClock_GPIO, true);
 	GPIO_PinModeSet(L3GD20H_DEN_PORT, L3GD20H_DEN_PIN, gpioModePushPull, 1);
 	GPIO_PinOutClear(L3GD20H_DEN_PORT,L3GD20H_DEN_PIN );    //connect gnd if not used.
 	GPIO_PinModeSet(GYRO_CS_PORT, GYRO_CS_PIN, gpioModePushPull, 1);
-
+#if 0
+    //config INT1 interrupt if need
 	GPIO_PinModeSet(L3GD20H_INT1_PORT, L3GD20H_INT1_PIN, gpioModeInput, 1);
 	GPIO_IntConfig(L3GD20H_INT1_PORT, L3GD20H_INT1_PIN, false, true, true);
 	GPIO_IntClear(1 << L3GD20H_INT1_PIN); 	
 	NVIC_SetPriority(GPIO_ODD_IRQn,GPIO_ODD_INT_LEVEL);
 	NVIC_EnableIRQ(GPIO_ODD_IRQn);
-	
+	//config DRDY/INT2 interrupt if need
 	GPIO_PinModeSet(L3GD20H_DRDY_PORT, L3GD20H_DRDY_PIN, gpioModeInput, 1);
 	GPIO_IntConfig(L3GD20H_DRDY_PORT, L3GD20H_DRDY_PIN, false, true, true);	
 	GPIO_IntClear(1 << L3GD20H_DRDY_PIN); 	
 	NVIC_SetPriority(GPIO_EVEN_IRQn,GPIO_EVEN_INT_LEVEL);
 	NVIC_EnableIRQ(GPIO_EVEN_IRQn);
-
+#endif
 	L3GD20H_GetWHO_AM_I(&buf);
+    if (buf != L3GD20H_ID)
+    {
+		systemStatus.blGyroSensorOnline = false;
+        return DEVICE_NOTEXIST;
+    }
+    
+    /* the sensor L3GD20H validated, software reset it. */
+    //systemStatus.blGyroSensorOnline = 1;
+		
+    L3GD20H_WriteReg(L3GD20H_O_LOW_ODR, L3GD20H_LOW_ODR_SWRESET_RESET);
+    SysCtlDelay(4000);
+	/// L3GD20H_ReadReg(L3GD20H_O_FIFO_SRC,&buf);
+	L3GD20H_SetPOWERMode(L3GD20H_POWER_DOWN);
 
-	if(buf == L3GD20H_ID)
-	{
-      /* the sensor L3GD20H validated, software reset it. */
-        L3GD20H_WriteReg(L3GD20H_O_LOW_ODR, L3GD20H_LOW_ODR_SWRESET_RESET);
-		systemStatus.blGyroSensorOnline = 1;
-		
-	L3GD20H_ReadReg(L3GD20H_O_FIFO_SRC,&buf);
-		L3GD20H_SetPOWERMode(L3GD20H_POWER_DOWN);
-		L3GD20H_FIFO_INIT();
-	L3GD20H_ReadReg(L3GD20H_O_FIFO_SRC,&buf);
-		
-	}
+    if (mode==0x00)
+    {
+        L3GD20H_Disabled();
+        return DEVICE_SUCCESS;
+    }
+    
+    //config INT1 interrupt if need
+	GPIO_PinModeSet(L3GD20H_INT1_PORT, L3GD20H_INT1_PIN, gpioModeInput, 1);
+	GPIO_IntConfig(L3GD20H_INT1_PORT, L3GD20H_INT1_PIN, false, true, true);
+	GPIO_IntClear(1 << L3GD20H_INT1_PIN); 	
+	NVIC_SetPriority(GPIO_ODD_IRQn,GPIO_ODD_INT_LEVEL);
+	NVIC_EnableIRQ(GPIO_ODD_IRQn);
+	//config DRDY/INT2 interrupt if need
+	GPIO_PinModeSet(L3GD20H_DRDY_PORT, L3GD20H_DRDY_PIN, gpioModeInput, 1);
+	GPIO_IntConfig(L3GD20H_DRDY_PORT, L3GD20H_DRDY_PIN, false, true, true);	
+	GPIO_IntClear(1 << L3GD20H_DRDY_PIN); 	
+	NVIC_SetPriority(GPIO_EVEN_IRQn,GPIO_EVEN_INT_LEVEL);
+	NVIC_EnableIRQ(GPIO_EVEN_IRQn);
+    
+	L3GD20H_FIFO_INIT();
+	/// L3GD20H_ReadReg(L3GD20H_O_FIFO_SRC,&buf);
+    systemStatus.blGyroSensorOnline = 1;
+    
+    return DEVICE_SUCCESS;
 }
 
-//#if (1)
+#if 1
 void L3GD20H_MOTION_MONITOR(uint8_t which_ax)
 {
 	uint8_t iswhere;
-	L3GD20H_SetODR(L3GD20H_CTRL1_DR_800_HZ);
+	L3GD20H_SetOD(L3GD20H_CTRL1_DR_800_HZ);
 	L3GD20H_SetPOWERMode(L3GD20H_POWER_DOWN);
 	L3GD20H_SetFullScale(L3GD20H_CTRL4_FS_245DPS);
 	L3GD20H_SetAxis(L3GD20H_X_ENABLE | L3GD20H_Y_ENABLE | L3GD20H_Z_ENABLE);
@@ -201,9 +254,7 @@ void L3GD20H_MOTION_MONITOR(uint8_t which_ax)
 	L3GD20H_ReadReg(L3GD20H_O_IG_SRC, &iswhere);
 	L3GD20H_Monitor_Model = true;
 }
-//#endif
-
-#if 0
+#else
 void L3GD20H_MOTION_MONITOR(void)
 {
 	L3GD20H_WriteReg(L3GD20H_INT1_CFG, 0x3f);
@@ -230,7 +281,7 @@ void L3GD20H_NO_FIFO_INIT(void)
 	/* Initialization done, enable interrupts globally. */
 	INT_Enable();
 	//===================================
-	L3GD20H_SetODR(L3GD20H_CTRL1_DR_800_HZ);
+	L3GD20H_SetOD(L3GD20H_CTRL1_DR_800_HZ);
 	L3GD20H_SetPOWERMode(L3GD20H_POWER_NORMAL);
 	L3GD20H_SetFullScale(L3GD20H_CTRL4_FS_245DPS);
 	L3GD20H_FIFOModeEnable(L3GD20H_FIFO_Bypass_mode);
@@ -241,82 +292,6 @@ void L3GD20H_NO_FIFO_INIT(void)
 	L3GD20H_Par_Init(PPG_SAM_FREQ);
 	active_level_delta = 0;
 }
-
-/*
-uint32_t MemesEventCount = 0;
-//uint8_t iswhere=0;
-uint32_t save_activity_delta;
-void Mems_Proc(void)
-{
-	ReadL3GD20HFIFO((uint8_t*)&L3GD20H_BUFF[0][0],
-	             (uint8_t*)&L3GD20H_BUFF[1][0],
-	             (uint8_t*)&L3GD20H_BUFF[2][0],
-	             L3GD20H_FIFO_SIZE); // 900us to read
-
-	if(systemSetting.SystemMode == SYSTEM_MODE_ACTIVATED)
-		active_level_delta = XYZFilter_TRACK();
-
-	MemesEventCount++;
-	//MemesEventCount%=100;
-	Mems_TimeCount++;
-
-	if(Mems_TimeCount > L3GD20H_TIME_WINDOW) // 32/50*50=32second
-	{
-		Mems_TimeCount = 0;
-		save_activity_delta = active_level - active_level_bak;
-
-		if(save_activity_delta < L3GD20H_NOISE_TH)
-		{
-			SleepWork();
-		}
-
-		active_level_bak = active_level;
-	}
-}
-
-void Mems_WakeUp(void)
-{
-	if(systemStatus.blHRSensorOn == false)
-	{
-		L3GD20H_FIFO_INIT();
-	}
-
-	isMemsSleeping = false;
-}
-
-
-void SleepWork(void)
-{
-	//LED_ON();
-	L3GD20H_MOTION_MONITOR(which_ax_near_zero);
-	isMemsSleeping = true;
-}
-
-uint32_t MemesErrorCount = 0;
-void isMemsError(void)
-{
-	static char twosecondinterval = 0;
-	static uint32_t MemesEventCountBak = 5;
-
-	if( L3GD20H_Monitor_Model == true)
-		return;
-
-	twosecondinterval++;
-
-	if(twosecondinterval > 3)
-	{
-		if(MemesEventCountBak == MemesEventCount)
-		{
-			L3GD20H_Init();
-			L3GD20H_FIFO_INIT();
-			MemesErrorCount++;
-		}
-
-		MemesEventCountBak = MemesEventCount;
-		twosecondinterval = 0;
-	}
-}
-*/
 
 void L3GD20H_INT1_CALLBACK(void)
 {
@@ -380,6 +355,9 @@ void ReadL3GD20HFIFO(uint8_t* px, uint8_t* py, uint8_t* pz, uint8_t len)
 {
 	unsigned char i;
 
+    if (systemStatus.blGyroSensorOnline==false)
+        return;
+    
 	L3GD20H_ReadReg(L3GD20H_O_FIFO_SRC,&i);
 	
 	L3GD20H_CS_L();
@@ -423,6 +401,23 @@ gyrostatus_t L3GD20H_GetWHO_AM_I(u8_t* val)
 	return(L3GD20H_ReadReg(L3GD20H_O_WHOAMI, val));
 }
 
+gyrostatus_t L3GD20H_SetOD(u8_t ov)
+{
+		u8_t value;
+	
+		if(!L3GD20H_ReadReg(L3GD20H_O_CTRL1, &value))
+			return L3GD20H_ERROR;
+	
+		value &= (~L3GD20H_CTRL1_DR_M);
+		///value |= (ov *0x40);
+		value |= ov;
+	
+		if(!L3GD20H_WriteReg(L3GD20H_O_CTRL1, value))
+			return L3GD20H_ERROR;
+		
+		return L3GD20H_SUCCESS;
+}
+
 /*******************************************************************************
 * Function Name  : L3GD20H_SetODR
 * Description    : Sets L3GD20H Output Data Rate
@@ -432,6 +427,61 @@ gyrostatus_t L3GD20H_GetWHO_AM_I(u8_t* val)
 *******************************************************************************/
 gyrostatus_t L3GD20H_SetODR(u8_t ov)
 {
+	u8_t value,Low_ODR,OD_value;
+
+	switch(ov)
+	{
+		case ODR_12_5:
+			Low_ODR = 1;
+			OD_value = L3GD20H_CTRL1_DR_12_5_HZ;;
+			break;
+		case ODR_25:
+			Low_ODR = 1;
+			OD_value = L3GD20H_CTRL1_DR_25_HZ;
+			break;
+		case ODR_50:
+			Low_ODR = 1;
+			OD_value = L3GD20H_CTRL1_DR_50_HZ;
+			break;
+		case ODR_100:
+			Low_ODR = 0;
+			OD_value = L3GD20H_CTRL1_DR_12_5_HZ;
+			break;
+		case ODR_200:
+			Low_ODR = 0;
+			OD_value = L3GD20H_CTRL1_DR_25_HZ;
+			break;
+		case ODR_400:
+			Low_ODR = 0;
+			OD_value = L3GD20H_CTRL1_DR_50_HZ;
+			break;
+		case ODR_800:
+			Low_ODR = 0;
+			OD_value = L3GD20H_CTRL1_DR_800_HZ;
+			break;
+		default:
+			return L3GD20H_ERROR;
+	}
+
+	if(!L3GD20H_ReadReg(L3GD20H_O_LOW_ODR, &value))
+		return L3GD20H_ERROR;
+
+	value &= (~L3GD20H_LOW_ODR_DATARATE_M);
+	value |= Low_ODR;
+
+	if(!L3GD20H_WriteReg(L3GD20H_O_LOW_ODR, value))
+		return L3GD20H_ERROR;
+	
+	if(!L3GD20H_ReadReg(L3GD20H_O_CTRL1, &value))
+		return L3GD20H_ERROR;
+
+	value &= (~L3GD20H_CTRL1_DR_M);
+	value |= OD_value;
+
+	if(!L3GD20H_WriteReg(L3GD20H_O_CTRL1, value))
+		return L3GD20H_ERROR;
+#if	0
+
 	u8_t value;
 
 	if(!L3GD20H_ReadReg(L3GD20H_O_CTRL1, &value))
@@ -443,7 +493,7 @@ gyrostatus_t L3GD20H_SetODR(u8_t ov)
 
 	if(!L3GD20H_WriteReg(L3GD20H_O_CTRL1, value))
 		return L3GD20H_ERROR;
-
+#endif
 	return L3GD20H_SUCCESS;
 }
 
@@ -558,7 +608,7 @@ gyrostatus_t L3GD20H_SetInt2Pin(L3GD20H_IntPinConf_t pinConf)
 	if(L3GD20H_CTRL3_INT2_ORUN_EN == pinConf)
 		{
 	value = L3GD20H_CTRL3_INT2_ORUN_EN|
-		L3GD20H_CTRL3_INT2_DRDY_EN|
+		///L3GD20H_CTRL3_INT2_DRDY_EN|   //over run mode, not data ready mode(no fifo).
 		L3GD20H_CTRL3_H_LACTIVE_HI|
 		L3GD20H_CTRL3_DRIVE_TYPE_OD;
 		}
@@ -586,6 +636,8 @@ gyrostatus_t L3GD20H_FIFOModeEnable(L3GD20H_FifoMode_t fm)
 			return L3GD20H_ERROR;
 	
 		value &= 0x1f;
+		value |= (fm*0x20); 
+		/*
 	if(fm == L3GD20H_FIFO_Bypass_mode)
 	{
 		value |= (L3GD20H_FIFO_Bypass_mode*0x20);                   //fifo mode configuration
@@ -600,6 +652,7 @@ gyrostatus_t L3GD20H_FIFOModeEnable(L3GD20H_FifoMode_t fm)
 	{
 		value |= (L3GD20H_FIFO_Stream_mode*0x20);                    //fifo mode configuration
 	}
+*/
 	
 	if(!L3GD20H_WriteReg(L3GD20H_O_FIFO_CTRL, value))
 			return L3GD20H_ERROR;

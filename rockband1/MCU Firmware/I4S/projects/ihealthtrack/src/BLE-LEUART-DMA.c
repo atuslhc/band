@@ -27,6 +27,23 @@
 #include "menu.h"
 #include "notification.h"
 
+#if (UVSENSOR_SUPPORT==1)
+#include "Si14x.h"
+#endif
+#if (BAROMETER_SUPPORT==1)
+#include "LPS22HB.h"
+#elif (BAROMETER_SUPPORT==2)
+#include "LPS35HW.h"
+#endif
+#if (MAGNETIC_SUPPORT==1)
+#include "BMM150.h"
+#endif
+#if (GYRO_SUPPORT==1)
+#include "L3GD20H.h"
+#endif
+#if (CAP_SUPPORT==2)
+#include "AD7156.h"
+#endif
 #define DMA_CH_RX    1 //DMA通道0
 #define DMA_CH_TX    2 //DMA通道1
 DMA_CB_TypeDef TX_DMA_CALLBACK ;
@@ -53,8 +70,9 @@ extern uint16_t SkinTouchVal, touchValues;
 
 //volatile bool systemStatus.blBleOnline=false,
 volatile bool BLE_APP_Model = true;
-uint8_t BLE_STATE = BLE_STATE_IDLE;
+BLE_STATE_t BLE_STATE = BLE_STATE_IDLE;
 uint8_t Last_BLE_STATE = BLE_STATE_IDLE;
+gaprole_States_t gapProfileState = GAPROLE_INIT; //ATUSDBG: check gapProfileState.
 
 union _BLE_CHIP BLE_DevChip;
 uint8_t RealDataOnPhone = 0;
@@ -624,18 +642,22 @@ void LEUARTSentByDma(uint8_t comm_type, uint8_t* p , uint8_t len)
 	{
 		//if(LeUartTxCount==0)insert_zero_number=16;// make sure CC254x to wake up
 		if(LeUartTxCount == 0)
-			insert_zero_number = 18; // 2014.08.15
+			insert_zero_number = 18;
 		else
+        {
 			insert_zero_number = 6;
+        }
 	}
 	//else  insert_zero_number=6;
+    if (BLE_DevChip.BLE_Device.CHIPTYPE == BLE_CC2541_ID)
+        insert_zero_number = 10; //FIXME: force leading zero for CC2541 power saving. Need verify.
 
 	memset(LeUartTxBuff, 0, insert_zero_number);
 //	for(int i=0; i<insert_zero_number; i++)
 //		LeUartTxBuff[i]=0;
 
 	LeUartTxBuff[insert_zero_number + 0] = UART_DATA_START;
-	LeUartTxBuff[insert_zero_number + 1] = len + 3 + 2 + 1; //3: prefix from '<',len+6,comm. 2:tail 0x00,0x00, 1:'>'
+	LeUartTxBuff[insert_zero_number + 1] = len + 3 + 2 + 1; //3: prefix from '<',len+6,comm_type. 2:tail 0x00,0x00, 1:'>'
 	LeUartTxBuff[insert_zero_number + 2] = comm_type;
 	memcpy(&LeUartTxBuff[insert_zero_number + 3], p, len);
 
@@ -646,7 +668,7 @@ void LEUARTSentByDma(uint8_t comm_type, uint8_t* p , uint8_t len)
 	ReChargeTimeCount();
 
 	TxDone = false;
-	DMA_ActivateBasic(DMA_CH_TX,            /*DMA通道1的设置       */
+	DMA_ActivateBasic(DMA_CH_TX,            /* DMA1:TX channel */
 	                  true,
 	                  false,
 	                  (void*)(uint32_t) & LEUART0->TXDATA,
@@ -677,10 +699,10 @@ union _FW_INFO
 {
 	struct _INFO
 	{
-		uint16_t fw_type;
-		uint16_t ver_num;
-		uint32_t fw_length;
-		uint16_t fw_crc;
+		uint16_t fw_type; //[0]type,[1]flag
+		uint16_t ver_num; //[2]versionMain, [3]versionMinor
+		uint32_t fw_length; //[4..7]length
+		uint16_t fw_crc; //8..11]
 		uint32_t Rev1;
 		uint16_t Head_CRC;
 	} INFO;
@@ -692,6 +714,12 @@ EFM32_PACK_END()
 //
 #define ACTION_GET	(0)
 #define ACTION_SET	(1)
+#define Set_Accelerometer_ODR	3
+#define Set_Magnetic_ODR	4
+#define Get_Accelerometer_ODR	5
+#define Get_Magnetic_ODR	6
+///	Get_Accelerometer_ODR,
+///	Get_Magnetic_ODR,
 
 #define ACTION_PASSWORD_SIZE	2
 static const uint8_t ACTION_PASSWORD[ACTION_PASSWORD_SIZE] = { 0x20, 0x13 }; //[BG025] char >> uint8_t
@@ -721,7 +749,7 @@ static time_t buffer[4] = {0};
 
 uint16_t currentChunkNo = 0;
 
-void ParseHostData(uint8_t* pr)//分析来自于蓝牙的命令，然后给予响应。通过BLE_CH2给蓝牙发送上去。
+void ParseHostData(uint8_t* pr, uint8_t nLen)//Parse and analyze BLE command, response via BLE_CH2.
 {
 //	static char set_done = 0;
 
@@ -733,11 +761,12 @@ void ParseHostData(uint8_t* pr)//分析来自于蓝牙的命令，然后给予响应。通过BLE_CH2
 	static bool once = false;
 
 	uint8_t comm = pr[0];
+	uint8_t AckComm = 0;
 #if BGXXX==8
 	test1.typeuint8[0] = comm;
 #endif
 	
-	SetFlashUsingTime(30); //Atus: Why? Assume it will use flash, set flash counter.
+	SetFlashUsingTime(30); //FIXME: Why? Assume it will use flash, set flash counter.should put relative flash command
 
 
 #ifdef DEBUG_MODE
@@ -1347,7 +1376,7 @@ FINISH_UPLOAD:
 
 			u8buff[8] = BLE_DevChip.BLE_Device.FW_VER1;
 			u8buff[9] = BLE_DevChip.BLE_Device.FW_VER2;
-			memcpy(&u8buff[10], &BLE_DevChip.BLE_DeviceInfo[4], 6); //mac address
+			memcpy(&u8buff[10], &BLE_DevChip.BLE_DeviceInfo[4], MAC_SIZE); //mac address 6
 
 			u8buff[16] = *(uint8_t*) BOOT_FW_VER_M_Add; //BOOT_FW_VER_M;
 			u8buff[17] = *(uint8_t*) BOOT_FW_VER_S_Add; //BBOOT_FW_VER_S;
@@ -1682,10 +1711,18 @@ FINISH_UPLOAD:
 			if(RealDataOnPhone == 1)
 #endif
 			{
+                /* prepare enable get REALDATA setting */
+                //set the BLE connection interval to fast.
 				vTaskDelay(20);
 				Change_BLE_CONNECT_INTERVAL(BLE_CONNECT_20ms);
 				vTaskDelay(20);
-
+                //clean the RealDataBuf.
+                SendRealDataOverBLE(NULL,0,0, 0, 1);
+#if (REALDATA_TIMER==1)
+                realdata_count = 0;
+                //set timer2 event trigger flag
+                EnableDelayTimer(TIMER_FLAG_REALDATA, true, 200, NULL, NULL);
+#endif
 #if BATTERY_LIFE_OPTIMIZATION
 				systemStatus.blHRSensorTempEnabled = false;
 #endif
@@ -1694,6 +1731,14 @@ FINISH_UPLOAD:
 #endif
 				SensorOffDelay = default_Ble_SensorOffDelay * current_touchsensor_feq;
 			}
+#if (REALDATA_TIMER==1)
+            else
+            {
+                /* prepare disable get REALDATA setting */
+                //clean timer2 event trigger flag
+                DisableDelayTimer(TIMER_FLAG_REALDATA);
+            }
+#endif
 
 			//
 			break;
@@ -2322,15 +2367,31 @@ FINISH_UPLOAD:
 		//添加电池电量信息 2015年6月24日17:59:13
 		case GET_BATTERY_LEVEL:
 		{
+#if (P180F_PATCH==1)
+			u8buff[2] = systemStatus.bBatteryRemaining;
+            u8buff[3] = (int16_t)(systemStatus.fBatteryVolt*100);
+            u8buff[4] = (int16_t)(systemStatus.fBatteryVolt*100)>>8;
+#if (P180F_ADCRAW_PATCH==1)
+extern short Vcc_Buff[Vcc_Buff_Size], Vcc_Buff_Rp; //declare in sys_sharing_source.c
+            for (int i=0 ; i<Vcc_Buff_Size ; i++)
+            {
+                u8buff[5+2*i] = Vcc_Buff[(Vcc_Buff_Rp+i)%Vcc_Buff_Size];
+                u8buff[5+2*i+1] = Vcc_Buff[(Vcc_Buff_Rp+i)%Vcc_Buff_Size]>>8;
+            }
+			SendData2Host(u8buff, 5+2*Vcc_Buff_Size);
+#else
+			SendData2Host(u8buff, 5);
+#endif
+#else
 			u8buff[2] = systemStatus.bBatteryRemaining;
 			SendData2Host(u8buff, 3);
-
+#endif
 			break;
 		}
 
 		case SensorSettings:
 		{
-			if (pr[1] == ACTION_GET)
+			if (nLen>1 && pr[1] == ACTION_GET)
 			{
 				// get
 				u8buff[2] = pr[1];
@@ -2339,24 +2400,32 @@ FINISH_UPLOAD:
 				u8buff[4] = (BYTE) (systemSetting.blUVSensorEnabled ? 0x11 : 0x00);
 				u8buff[5] = (BYTE) (systemSetting.blAccelSensorEnabled ? 0x11 : 0x00);
 				u8buff[6] = (BYTE) (systemSetting.blTouchSensorEnabled ? 0x11 : 0x00);
-
+#if (1) //Add for new sensors extension
+				u8buff[7] = (BYTE) (systemSetting.blPressureSensorEnabled ? 0x11 : 0x00);
+				u8buff[8] = (BYTE) (systemSetting.blGeoMSensorEnabled ? 0x11 : 0x00);
+				u8buff[9] = (BYTE) (systemSetting.blGyroSensorEnabled ? 0x11 : 0x00);
+				u8buff[10] = (BYTE) (systemSetting.blCAPSensorEnabled ? 0x11 : 0x00);
+				u8buff[11] = (BYTE) (systemSetting.blSkinTempSensorEnabled ? 0x11 : 0x00);
+				u8buff[12] = (BYTE) (systemSetting.blAmbTempSensorEnabled ? 0x11 : 0x00);
+				u8buff[13] = (BYTE) (systemSetting.blBluetoothEnabled ? 0x11 : 0x00);
+				u8buff[14] = (BYTE) (systemSetting.blFDEnabled ? 0x11 : 0x00);
+				u8buff[15] = (BYTE) (systemSetting.blSOSEnabled ? 0x11 : 0x00);
+				u8buff[16] = (BYTE) (systemSetting.blOLEDEnabled ? 0x11 : 0x00);
+				u8buff[17] = (BYTE) (systemSetting.blLEDConfig ? 0x11 : 0x00);
+				u8buff[18] = (BYTE) (systemSetting.blUSBConfig ? 0x11 : 0x00);
+				u8buff[19] = (BYTE) (systemSetting.blUARTEConfig ? 0x11 : 0x00);
+                
+				SendData2Host(u8buff, 20);
+#else
 				SendData2Host(u8buff, 10);
+#endif
 			}
-			else if (pr[1] == ACTION_SET)	// set
+			else if (nLen>1 && pr[1] == ACTION_SET)	// set
 			{
-				// skin touch
-				if ((pr[5] & 0xF0) == 0x20) // enable
-				{
-					systemSetting.blTouchSensorEnabled = true;
-				}
-				else if ((pr[5] & 0xF0) == 0x10) // disable
-				{
-					systemSetting.blTouchSensorEnabled = false;//表明需要通过手动来打开sensor。
-				}
 
 //说明：pc tools 这个工具无论是点击turn on 还是 turn off 这里始终pr[2] = 0x22,参考ble文档.
 				// ppg
-				if ((pr[2] & 0xF0) == 0x20) // enable
+				if (nLen>2 && (pr[2] & 0xF0) == 0x20) // enable
 				{
 					//以下代码用于解决手表已经佩戴时，启用ppg无法立即打开，需要摘下在戴上
 					if ((systemSetting.blHRSensorEnabled == false) || (systemStatus.blHRSensorTempEnabled == false))
@@ -2389,7 +2458,7 @@ FINISH_UPLOAD:
 						}
 					}
 				}
-				else if ((pr[2] & 0xF0) == 0x10) // disable
+				else if (nLen>2 && (pr[2] & 0xF0) == 0x10) // disable
 				{
 					systemSetting.blHRSensorEnabled = false;
 #if (AFE44x0_SUPPORT==1)
@@ -2398,25 +2467,250 @@ FINISH_UPLOAD:
 				}
 
 				// uv
-				if ((pr[3] & 0xF0) == 0x20) // enable
+				if (nLen>3 && (pr[3] & 0xF0) == 0x20) // enable
 				{
-					systemSetting.blUVSensorEnabled = true;
+                    if (systemSetting.blUVSensorEnabled==0x00)
+                    {
+                      systemSetting.blUVSensorEnabled = true;
+                      UV_Init(systemSetting.blUVSensorEnabled);
+                    }
 				}
-				else if ((pr[3] & 0xF0) == 0x10) // disable
+				else if (nLen>3 && (pr[3] & 0xF0) == 0x10) // disable UV.
 				{
-					systemSetting.blUVSensorEnabled = false;
+                    if (systemSetting.blUVSensorEnabled==0x01)
+                    {
+                      systemSetting.blUVSensorEnabled = false;
+                      UV_Init(systemSetting.blUVSensorEnabled);
+                    }
 				}
 
 				// accelerometer
-				if ((pr[4] & 0xF0) == 0x20) // enable
+				if (nLen>4 && (pr[4] & 0xF0) == 0x20) // enable
 				{
 					systemSetting.blAccelSensorEnabled = true;
+                    MEMS_Init(systemSetting.blAccelSensorEnabled);
 				}
-				else if ((pr[4] & 0xF0) == 0x10) // disable
+				else if (nLen>4 && (pr[4] & 0xF0) == 0x10) // disable
 				{
 					systemSetting.blAccelSensorEnabled = false;
+                    MEMS_Init(systemSetting.blAccelSensorEnabled);
 				}
 
+				// skin touch
+				if (nLen>5 && (pr[5] & 0xF0) == 0x20) // enable
+				{
+					systemSetting.blTouchSensorEnabled = true;
+				}
+				else if (nLen>5 && (pr[5] & 0xF0) == 0x10) // disable
+				{
+					systemSetting.blTouchSensorEnabled = false; //表明需要通过手动来打开sensor。
+				}
+                
+#if (1) //Add for new sensors extension
+				// pressure
+				if (nLen>6 && (pr[6] & 0xF0) == 0x20) // enable
+				{
+                    if (systemSetting.blPressureSensorEnabled==0x00)
+                    {
+                      systemSetting.blPressureSensorEnabled = true;
+                      LPS22HB_Init(systemSetting.blPressureSensorEnabled);
+                    }
+				}
+				else if (nLen>6 && (pr[6] & 0xF0) == 0x10) //disable
+				{
+                    if (systemSetting.blPressureSensorEnabled==0x01)
+                    {
+                      systemSetting.blPressureSensorEnabled = false;
+                      LPS22HB_Init(systemSetting.blPressureSensorEnabled);
+                    }
+				}
+				// magnetic
+				if (nLen>7 && (pr[7] & 0xF0) == 0x20) // enable
+				{
+                    if (systemSetting.blGeoMSensorEnabled==0x00)
+                    {
+                      systemSetting.blGeoMSensorEnabled = true;
+                      BMM150_Init(systemSetting.blGeoMSensorEnabled);
+                    }
+				}
+				else if (nLen>7 && (pr[7] & 0xF0) == 0x10) //disable
+				{
+                    if (systemSetting.blGeoMSensorEnabled==0x01)
+                    {
+                      systemSetting.blGeoMSensorEnabled = false;
+                      BMM150_Init(systemSetting.blGeoMSensorEnabled);
+                    }
+				}
+				// gyro
+				if (nLen>8 && (pr[8] & 0xF0) == 0x20) // enable
+				{
+                    if (systemSetting.blGyroSensorEnabled==0x00)
+                    {
+                      systemSetting.blGyroSensorEnabled = true;
+                      L3GD20H_Init(systemSetting.blGyroSensorEnabled);
+                    }
+				}
+				else if (nLen>8 && (pr[8] & 0xF0) == 0x10) //disable
+				{
+                    if (systemSetting.blGyroSensorEnabled==0x01)
+                    {
+                      systemSetting.blGyroSensorEnabled = false;
+                      L3GD20H_Init(systemSetting.blGyroSensorEnabled);
+                    }
+				}
+				// CAPSensor
+				if (nLen>9 && (pr[9] & 0xF0) == 0x20) // enable
+				{
+                    if (systemSetting.blCAPSensorEnabled==0x00)
+                    {
+                      systemSetting.blCAPSensorEnabled = true;
+                      AD7156_Init(systemSetting.blCAPSensorEnabled);
+                    }
+				}
+				else if (nLen>9 && (pr[9] & 0xF0) == 0x10) //disable
+				{
+                    if (systemSetting.blCAPSensorEnabled==0x01)
+                    {
+                      systemSetting.blCAPSensorEnabled = false;
+                      AD7156_Init(systemSetting.blCAPSensorEnabled);
+                    }
+				}
+				// SkinTempSensor
+				if (nLen>10 && (pr[10] & 0xF0) == 0x20) // enable
+				{
+                    if (systemSetting.blSkinTempSensorEnabled==0x00)
+                    {
+                      systemSetting.blSkinTempSensorEnabled = true;
+                    }
+				}
+				else if (nLen>10 && (pr[10] & 0xF0) == 0x10) //disable
+				{
+                    if (systemSetting.blSkinTempSensorEnabled==0x01)
+                    {
+                      systemSetting.blSkinTempSensorEnabled = false;
+                    }
+				}
+				// AmbTempSensor
+				if (nLen>11 && (pr[11] & 0xF0) == 0x20) // enable
+				{
+                    if (systemSetting.blAmbTempSensorEnabled==0x00)
+                    {
+                      systemSetting.blAmbTempSensorEnabled = true;
+                    }
+				}
+				else if (nLen>11 && (pr[11] & 0xF0) == 0x10) //disable
+				{
+                    if (systemSetting.blAmbTempSensorEnabled==0x01)
+                    {
+                      systemSetting.blAmbTempSensorEnabled = false;
+                    }
+				}
+				// Bluetooth
+				if (nLen>12 && (pr[12] & 0xF0) == 0x20) // enable
+				{
+                    if (systemSetting.blBluetoothEnabled==0x00)
+                    {
+                      systemSetting.blBluetoothEnabled = true;
+                    }
+				}
+				else if (nLen>12 && (pr[12] & 0xF0) == 0x10) //disable
+				{
+                    if (systemSetting.blBluetoothEnabled==0x01)
+                    {
+                      systemSetting.blBluetoothEnabled = false;
+                    }
+				}
+				// FDEnabled
+				if (nLen>13 && (pr[13] & 0xF0) == 0x20) // enable
+				{
+                    if (systemSetting.blFDEnabled==0x00)
+                    {
+                      systemSetting.blFDEnabled = true;
+                    }
+				}
+				else if (nLen>13 && (pr[13] & 0xF0) == 0x10) //disable
+				{
+                    if (systemSetting.blFDEnabled==0x01)
+                    {
+                      systemSetting.blFDEnabled = false;
+                    }
+				}
+				// SOSEnabled
+				if (nLen>14 && (pr[14] & 0xF0) == 0x20) // enable
+				{
+                    if (systemSetting.blSOSEnabled==0x00)
+                    {
+                      systemSetting.blSOSEnabled = true;
+                    }
+				}
+				else if (nLen>14 && (pr[14] & 0xF0) == 0x10) //disable
+				{
+                    if (systemSetting.blSOSEnabled==0x01)
+                    {
+                      systemSetting.blSOSEnabled = false;
+                    }
+				}
+				// OLEDEnabled
+				if (nLen>15 && (pr[15] & 0xF0) == 0x20) // enable
+				{
+                    if (systemSetting.blOLEDEnabled==0x00)
+                    {
+                      systemSetting.blOLEDEnabled = true;
+                    }
+				}
+				else if (nLen>15 && (pr[15] & 0xF0) == 0x10) //disable
+				{
+                    if (systemSetting.blOLEDEnabled==0x01)
+                    {
+                      systemSetting.blOLEDEnabled = false;
+                    }
+				}
+				// LEDConfig
+				if (nLen>16 && (pr[16] & 0xF0) == 0x20) // enable
+				{
+                    if (systemSetting.blLEDConfig==0x00)
+                    {
+                      systemSetting.blLEDConfig = true;
+                    }
+				}
+				else if (nLen>16 && (pr[16] & 0xF0) == 0x10) //disable
+				{
+                    if (systemSetting.blLEDConfig==0x01)
+                    {
+                      systemSetting.blLEDConfig = false;
+                    }
+				}
+				// USBConfig
+				if (nLen>17 && (pr[17] & 0xF0) == 0x20) // enable
+				{
+                    if (systemSetting.blUSBConfig==0x00)
+                    {
+                      systemSetting.blUSBConfig = true;
+                    }
+				}
+				else if (nLen>17 && (pr[17] & 0xF0) == 0x10) //disable
+				{
+                    if (systemSetting.blUSBConfig==0x01)
+                    {
+                      systemSetting.blUSBConfig = false;
+                    }
+				}
+				// UARTEConfig
+				if (nLen>18 && (pr[18] & 0xF0) == 0x20) // enable
+				{
+                    if (systemSetting.blUARTEConfig==0x00)
+                    {
+                      systemSetting.blUARTEConfig = true;
+                    }
+				}
+				else if (nLen>18 && (pr[18] & 0xF0) == 0x10) //disable
+				{
+                    if (systemSetting.blUARTEConfig==0x01)
+                    {
+                      systemSetting.blUARTEConfig = false;
+                    }
+				}
+#endif                
 				//
 				SaveSystemSettings();
 
@@ -2425,6 +2719,798 @@ FINISH_UPLOAD:
 				u8buff[3] = 0;
 				SendData2Host(u8buff, 4);
 			}
+			else if (nLen>2 && pr[1] == Set_Accelerometer_ODR)	// set Accelerometer ODR
+			{
+				if (systemSetting.blAccelSensorEnabled)
+				LIS3DH_SetODR(pr[2]);	/// LIS3DH_ODR_50Hz
+				}
+			else if (nLen>2 && pr[1] == Set_Magnetic_ODR)	// set Magnetic ODR
+			{
+				if (systemSetting.blGeoMSensorEnabled)		
+        		BMM150_set_data_rate(pr[2]*0x08);	/// BMM150_DR_30HZ
+				}
+
+			else if (nLen>1 && pr[1] == Get_Accelerometer_ODR)	// Get Accelerometer ODR
+			{
+				u8buff[2] = pr[1];
+				LIS3DH_GetODR(&u8buff[3]);
+				SendData2Host(u8buff, 4);			
+			}
+
+			else if (nLen>1 && pr[1] == Get_Magnetic_ODR)	// Get Magnetic ODR
+			{				
+				u8buff[2] = pr[1];
+				BMM150_Get_data_rate(&u8buff[3]);
+				SendData2Host(u8buff, 4);
+			}
+////////////////////////////////////////////////////////////////////////
+/*
+
+SetSensor
+Enabled 
+41 54 08 01 12 nn A7 E7
+Diable 
+41 54 08 01 12 nn A6 E7
+
+GetSensorEnabled 
+41 54 08 01 12 nn 5x E7
+
+nn =
+	HRSensorSetting=0x10,
+	UVSensorSetting =0x11,
+	AccelSensorSetting =0x12,
+	TouchSensorSetting =0x13,
+	PressureSensorSetting =0x14,
+	GeoMSensorSetting =0x15,
+	GyroSensorSetting =0x16,
+	CAPSensorSetting =0x17,
+	SkinTempSensorSetting =0x18,
+	AmbTempSensorSetting =0x19,
+	BluetoothSetting =0x1A,
+	FDSetting =0x1B,
+	SOSSetting =0x1C,
+	OLEDSetting =0x1D,
+	LEDSetting =0x1E,
+	USBSetting =0x1F,
+	UARTESetting =0x20,
+
+*/
+			// Set HRSensorSetting
+			else if (nLen>1 && pr[1] == HRSensorSetting)	
+			{		
+/*
+				if ((pr[2] & 0xF0) == 0xA0) // set
+				{
+					if ((pr[2] & 0x0F) == SetSensorEnabled)	// Enabled
+						{
+						}
+					else if ((pr[2] & 0x0F) == SetSensorDisabl) // disable
+						{
+						} 
+				}
+*/
+// ppg
+				if (nLen>2 && (pr[2] & 0xF0) == 0x20) // enable
+				{
+					//以下代码用于解决手表已经佩戴时，启用ppg无法立即打开，需要摘下在戴上
+					if ((systemSetting.blHRSensorEnabled == false) || (systemStatus.blHRSensorTempEnabled == false))
+					{
+						SensorOffDelay = 0;
+						systemStatus.blSkinTouched = false;
+					}
+
+					//点击touch on后也会到这里来 2015年6月17日9:22:03
+					systemSetting.blHRSensorEnabled = true; //20141209
+
+					if (systemSetting.blTouchSensorEnabled == false)
+					{
+						// 仅 自动开关ppg的功能被关闭才能直接控制ppg开关
+						if ((pr[2] & 0x0F) == 0x02) // on
+						{
+#if BATTERY_LIFE_OPTIMIZATION
+							systemStatus.blHRSensorTempEnabled = false;
+#endif
+#if (AFE44x0_SUPPORT==1)
+							AFE44xx_PowerOn_Init();
+#endif
+							SensorOffDelay = default_Key_SensorOffDelay * current_touchsensor_feq;
+						}
+						else if ((pr[2] & 0x0F) == 0x01) // off
+						{
+#if (AFE44x0_SUPPORT==1)
+							AFE44xx_Shutoff();
+#endif
+						}
+					}
+				}
+				else if (nLen>2 && (pr[2] & 0xF0) == 0x10) // disable
+				{
+					systemSetting.blHRSensorEnabled = false;
+#if (AFE44x0_SUPPORT==1)
+					AFE44xx_Shutoff();
+#endif
+				}
+				else if ((pr[2] & 0xF0) == 0x50) //get
+					{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blHRSensorEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+					}
+			}
+			
+			// Set UVSensorSetting
+			else if (nLen>1 && pr[1] == UVSensorSetting)	
+			{				
+				if ((pr[2] & 0xF0) == 0xA0) // set
+				{
+					if ((pr[2] & 0x0F) == SetSensorEnabled)	// Enabled
+						{
+                    	if (systemSetting.blUVSensorEnabled==0x00)
+                    		{
+                      		systemSetting.blUVSensorEnabled = true;
+							UV_Init(systemSetting.blUVSensorEnabled);
+                    		}
+							AckComm=1;
+						}
+					else if ((pr[2] & 0x0F) == SetSensorDisabl) // disable
+						{
+                    	if (systemSetting.blUVSensorEnabled==0x01)
+                    		{
+                      		systemSetting.blUVSensorEnabled = false;
+							UV_Init(systemSetting.blUVSensorEnabled);
+                    		}
+							AckComm=1;
+						} 
+					
+					if(AckComm)
+						{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blUVSensorEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+						}
+				}
+				else if ((pr[2] & 0xF0) == 0x50) //get
+					{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blUVSensorEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+					}
+			}
+			
+			// Set AccelSensorSetting
+			else if (nLen>1 && pr[1] == AccelSensorSetting)	
+			{				
+				if ((pr[2] & 0xF0) == 0xA0) // set
+				{
+					if ((pr[2] & 0x0F) == SetSensorEnabled)	// Enabled
+						{
+                    	if (systemSetting.blAccelSensorEnabled==0x00)
+                    		{
+                      		systemSetting.blAccelSensorEnabled = true;
+							MEMS_Init(systemSetting.blAccelSensorEnabled);
+                    		}
+							AckComm=1;
+						}
+					else if ((pr[2] & 0x0F) == SetSensorDisabl) // disable
+						{
+                    	if (systemSetting.blAccelSensorEnabled==0x01)
+                    		{
+                      		systemSetting.blAccelSensorEnabled = false;
+							MEMS_Init(systemSetting.blAccelSensorEnabled);
+                    		}
+							AckComm=1;
+						} 
+					
+					if(AckComm)
+						{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blAccelSensorEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+						}
+				}
+				else if ((pr[2] & 0xF0) == 0x50) //get
+					{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blAccelSensorEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+					}
+			}
+
+			// Set TouchSensorSetting
+			else if (nLen>1 && pr[1] == TouchSensorSetting)	
+			{				
+				if ((pr[2] & 0xF0) == 0xA0) // set
+				{
+					if ((pr[2] & 0x0F) == SetSensorEnabled)	// Enabled
+						{
+                    	if (systemSetting.blTouchSensorEnabled==0x00)
+                    		{
+                      		systemSetting.blTouchSensorEnabled = true;
+                    		}
+							AckComm=1;
+						}
+					else if ((pr[2] & 0x0F) == SetSensorDisabl) // disable
+						{
+                    	if (systemSetting.blTouchSensorEnabled==0x01)
+                    		{
+                      		systemSetting.blTouchSensorEnabled = false;
+                    		}
+							AckComm=1;
+						} 
+					
+					if(AckComm)
+						{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blTouchSensorEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+						}
+				}
+				else if ((pr[2] & 0xF0) == 0x50) //get
+					{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blTouchSensorEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+					}
+			}
+
+			// Set PressureSensorSetting
+			else if (nLen>1 && pr[1] == PressureSensorSetting)	
+			{				
+				if ((pr[2] & 0xF0) == 0xA0) // set
+				{
+					if ((pr[2] & 0x0F) == SetSensorEnabled)	// Enabled
+						{
+                    	if (systemSetting.blPressureSensorEnabled==0x00)
+                    		{
+                      		systemSetting.blPressureSensorEnabled = true;
+							LPS22HB_Init(systemSetting.blPressureSensorEnabled);
+                    		}
+							AckComm=1;
+						}
+					else if ((pr[2] & 0x0F) == SetSensorDisabl) // disable
+						{
+                    	if (systemSetting.blPressureSensorEnabled==0x01)
+                    		{
+                      		systemSetting.blPressureSensorEnabled = false;
+							LPS22HB_Init(systemSetting.blPressureSensorEnabled);
+                    		}
+							AckComm=1;
+						} 
+					
+					if(AckComm)
+						{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blPressureSensorEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+						}
+				}
+				else if ((pr[2] & 0xF0) == 0x50) //get
+					{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blPressureSensorEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+					}
+			}
+
+			// Set GeoMSensorSetting
+			else if (nLen>1 && pr[1] == GeoMSensorSetting)	
+			{				
+				if ((pr[2] & 0xF0) == 0xA0) // set
+				{
+					if ((pr[2] & 0x0F) == SetSensorEnabled)	// Enabled
+						{
+                    	if (systemSetting.blGeoMSensorEnabled==0x00)
+                    		{
+                      		systemSetting.blGeoMSensorEnabled = true;
+							BMM150_Init(systemSetting.blGeoMSensorEnabled);
+                    		}
+							AckComm=1;
+						}
+					else if ((pr[2] & 0x0F) == SetSensorDisabl) // disable
+						{
+                    	if (systemSetting.blGeoMSensorEnabled==0x01)
+                    		{
+                      		systemSetting.blGeoMSensorEnabled = false;
+							BMM150_Init(systemSetting.blGeoMSensorEnabled);
+                    		}
+							AckComm=1;
+						} 
+					
+					if(AckComm)
+						{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blGeoMSensorEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+						}
+				}
+				else if ((pr[2] & 0xF0) == 0x50) //get
+					{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blGeoMSensorEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+					}
+			}
+
+			// Set GyroSensorSetting
+			else if (nLen>1 && pr[1] == GyroSensorSetting)	
+			{				
+				if ((pr[2] & 0xF0) == 0xA0) // set
+				{
+					if ((pr[2] & 0x0F) == SetSensorEnabled)	// Enabled
+						{
+                    	if (systemSetting.blGyroSensorEnabled==0x00)
+                    		{
+                      		systemSetting.blGyroSensorEnabled = true;
+							L3GD20H_Init(systemSetting.blGyroSensorEnabled);
+                    		}
+							AckComm=1;
+						}
+					else if ((pr[2] & 0x0F) == SetSensorDisabl) // disable
+						{
+                    	if (systemSetting.blGyroSensorEnabled==0x01)
+                    		{
+                      		systemSetting.blGyroSensorEnabled = false;
+							L3GD20H_Init(systemSetting.blGyroSensorEnabled);
+                    		}
+							AckComm=1;
+						} 
+					
+					if(AckComm)
+						{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blGyroSensorEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+						}
+				}
+				else if ((pr[2] & 0xF0) == 0x50) //get
+					{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blGyroSensorEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+					}
+			}
+
+			// Set CAPSensorSetting
+			else if (nLen>1 && pr[1] == CAPSensorSetting)	
+			{				
+				if ((pr[2] & 0xF0) == 0xA0) // set
+				{
+					if ((pr[2] & 0x0F) == SetSensorEnabled)	// Enabled
+						{
+                    	if (systemSetting.blCAPSensorEnabled==0x00)
+                    		{
+                      		systemSetting.blCAPSensorEnabled = true;
+							AD7156_Init(systemSetting.blCAPSensorEnabled);
+                    		}
+							AckComm=1;
+						}
+					else if ((pr[2] & 0x0F) == SetSensorDisabl) // disable
+						{
+                    	if (systemSetting.blCAPSensorEnabled==0x01)
+                    		{
+                      		systemSetting.blCAPSensorEnabled = false;
+							AD7156_Init(systemSetting.blCAPSensorEnabled);
+                    		}
+							AckComm=1;
+						} 
+					
+					if(AckComm)
+						{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blCAPSensorEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+						}
+				}
+				else if ((pr[2] & 0xF0) == 0x50) //get
+					{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blCAPSensorEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+					}
+			}
+
+			// Set SkinTempSensorSetting
+			else if (nLen>1 && pr[1] == SkinTempSensorSetting)	
+			{				
+				if ((pr[2] & 0xF0) == 0xA0) // set
+				{
+					if ((pr[2] & 0x0F) == SetSensorEnabled)	// Enabled
+						{
+                    	if (systemSetting.blSkinTempSensorEnabled==0x00)
+                    		{
+                      		systemSetting.blSkinTempSensorEnabled = true;
+                    		}
+							AckComm=1;
+						}
+					else if ((pr[2] & 0x0F) == SetSensorDisabl) // disable
+						{
+                    	if (systemSetting.blSkinTempSensorEnabled==0x01)
+                    		{
+                      		systemSetting.blSkinTempSensorEnabled = false;
+                    		}
+							AckComm=1;
+						} 
+					
+					if(AckComm)
+						{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blSkinTempSensorEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+						}
+				}
+				else if ((pr[2] & 0xF0) == 0x50) //get
+					{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blSkinTempSensorEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+					}
+			}
+
+			// Set AmbTempSensorSetting
+			else if (nLen>1 && pr[1] == AmbTempSensorSetting)	
+			{				
+				if ((pr[2] & 0xF0) == 0xA0) // set
+				{
+					if ((pr[2] & 0x0F) == SetSensorEnabled)	// Enabled
+						{
+                    	if (systemSetting.blAmbTempSensorEnabled==0x00)
+                    		{
+                      		systemSetting.blAmbTempSensorEnabled = true;
+                    		}
+							AckComm=1;
+						}
+					else if ((pr[2] & 0x0F) == SetSensorDisabl) // disable
+						{
+                    	if (systemSetting.blAmbTempSensorEnabled==0x01)
+                    		{
+                      		systemSetting.blAmbTempSensorEnabled = false;
+                    		}
+							AckComm=1;
+						} 
+					
+					if(AckComm)
+						{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blAmbTempSensorEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+						}
+				}
+				else if ((pr[2] & 0xF0) == 0x50) //get
+					{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blAmbTempSensorEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+					}
+			}
+
+			// Set BluetoothSetting
+			else if (nLen>1 && pr[1] == BluetoothSetting)	
+			{				
+				if ((pr[2] & 0xF0) == 0xA0) // set
+				{
+					if ((pr[2] & 0x0F) == SetSensorEnabled)	// Enabled
+						{
+                    	if (systemSetting.blBluetoothEnabled==0x00)
+                    		{
+                      		systemSetting.blBluetoothEnabled = true;
+                    		}
+							AckComm=1;
+						}
+					else if ((pr[2] & 0x0F) == SetSensorDisabl) // disable
+						{
+                    	if (systemSetting.blBluetoothEnabled==0x01)
+                    		{
+                      		systemSetting.blBluetoothEnabled = false;
+                    		}
+							AckComm=1;
+						} 
+					
+					if(AckComm)
+						{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blBluetoothEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+						}
+				}
+				else if ((pr[2] & 0xF0) == 0x50) //get
+					{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blBluetoothEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+					}
+			}
+
+			// Set FDSetting
+			else if (nLen>1 && pr[1] == FDSetting)	
+			{				
+				if ((pr[2] & 0xF0) == 0xA0) // set
+				{
+					if ((pr[2] & 0x0F) == SetSensorEnabled)	// Enabled
+						{
+                    	if (systemSetting.blFDEnabled==0x00)
+                    		{
+                      		systemSetting.blFDEnabled = true;
+                    		}
+							AckComm=1;
+						}
+					else if ((pr[2] & 0x0F) == SetSensorDisabl) // disable
+						{
+                    	if (systemSetting.blFDEnabled==0x01)
+                    		{
+                      		systemSetting.blFDEnabled = false;
+                    		}
+							AckComm=1;
+						} 
+					
+					if(AckComm)
+						{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blFDEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+						}
+				}
+				else if ((pr[2] & 0xF0) == 0x50) //get
+					{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blFDEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+					}
+			}
+
+			// Set SOSSetting
+			else if (nLen>1 && pr[1] == SOSSetting)	
+			{				
+				if ((pr[2] & 0xF0) == 0xA0) // set
+				{
+					if ((pr[2] & 0x0F) == SetSensorEnabled)	// Enabled
+						{
+                    	if (systemSetting.blSOSEnabled==0x00)
+                    		{
+                      		systemSetting.blSOSEnabled = true;
+                    		}
+							AckComm=1;
+						}
+					else if ((pr[2] & 0x0F) == SetSensorDisabl) // disable
+						{
+                    	if (systemSetting.blSOSEnabled==0x01)
+                    		{
+                      		systemSetting.blSOSEnabled = false;
+                    		}
+							AckComm=1;
+						} 
+					
+					if(AckComm)
+						{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blSOSEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+						}
+				}
+				else if ((pr[2] & 0xF0) == 0x50) //get
+					{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blSOSEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+					}
+			}
+
+			// Set OLEDSetting
+			else if (nLen>1 && pr[1] == OLEDSetting)	
+			{				
+				if ((pr[2] & 0xF0) == 0xA0) // set
+				{
+					if ((pr[2] & 0x0F) == SetSensorEnabled)	// Enabled
+						{
+                    	if (systemSetting.blOLEDEnabled==0x00)
+                    		{
+                      		systemSetting.blOLEDEnabled = true;
+                    		}
+							AckComm=1;
+						}
+					else if ((pr[2] & 0x0F) == SetSensorDisabl) // disable
+						{
+                    	if (systemSetting.blOLEDEnabled==0x01)
+                    		{
+                      		systemSetting.blOLEDEnabled = false;
+                    		}
+							AckComm=1;
+						} 
+					
+					if(AckComm)
+						{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blOLEDEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+						}
+				}
+				else if ((pr[2] & 0xF0) == 0x50) //get
+					{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blOLEDEnabled ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+					}
+			}
+
+			// Set LEDSetting
+			else if (nLen>1 && pr[1] == LEDSetting)	
+			{				
+				if ((pr[2] & 0xF0) == 0xA0) // set
+				{
+					if ((pr[2] & 0x0F) == SetSensorEnabled)	// Enabled
+						{
+                    	if (systemSetting.blLEDConfig==0x00)
+                    		{
+                      		systemSetting.blLEDConfig = true;
+                    		}
+							AckComm=1;
+						}
+					else if ((pr[2] & 0x0F) == SetSensorDisabl) // disable
+						{
+                    	if (systemSetting.blLEDConfig==0x01)
+                    		{
+                      		systemSetting.blLEDConfig = false;
+                    		}
+							AckComm=1;
+						} 
+					
+					if(AckComm)
+						{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blLEDConfig ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+						}
+				}
+				else if ((pr[2] & 0xF0) == 0x50) //get
+					{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blLEDConfig ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+					}
+			}
+
+			// Set USBSetting
+			else if (nLen>1 && pr[1] == USBSetting)	
+			{				
+				if ((pr[2] & 0xF0) == 0xA0) // set
+				{
+					if ((pr[2] & 0x0F) == SetSensorEnabled)	// Enabled
+						{
+                    	if (systemSetting.blUSBConfig==0x00)
+                    		{
+                      		systemSetting.blUSBConfig = true;
+                    		}
+							AckComm=1;
+						}
+					else if ((pr[2] & 0x0F) == SetSensorDisabl) // disable
+						{
+                    	if (systemSetting.blUSBConfig==0x01)
+                    		{
+                      		systemSetting.blUSBConfig = false;
+                    		}
+							AckComm=1;
+						} 
+					
+					if(AckComm)
+						{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blUSBConfig ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+						}
+				}
+				else if ((pr[2] & 0xF0) == 0x50) //get
+					{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blUSBConfig ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+					}
+			}
+
+			// Set UARTESetting
+			else if (nLen>1 && pr[1] == UARTESetting)	
+			{				
+				if ((pr[2] & 0xF0) == 0xA0) // set
+				{
+					if ((pr[2] & 0x0F) == SetSensorEnabled)	// Enabled
+						{
+                    	if (systemSetting.blUARTEConfig==0x00)
+                    		{
+                      		systemSetting.blUARTEConfig = true;
+                    		}
+							AckComm=1;
+						}
+					else if ((pr[2] & 0x0F) == SetSensorDisabl) // disable
+						{
+                    	if (systemSetting.blUARTEConfig==0x01)
+                    		{
+                      		systemSetting.blUARTEConfig = false;
+                    		}
+							AckComm=1;
+						} 
+					
+					if(AckComm)
+						{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blUARTEConfig ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+						}
+				}
+				else if ((pr[2] & 0xF0) == 0x50) //get
+					{
+						u8buff[2] = pr[1];
+
+						u8buff[3] = (BYTE) (systemSetting.blUARTEConfig ? BLESensorEnabled : BLESensorDisabl);
+                
+						SendData2Host(u8buff, 4);
+					}
+			}
+            else if (nLen>1 && pr[1] >= SensorSettingMax)
+            {
+            }
+			SaveSystemSettings(); //FIXME: should be check need backup or not.
 
 			break;
 		}
@@ -2698,11 +3784,33 @@ FINISH_UPLOAD:
 		}
 #endif
 		case READ_SERIAL_NUMBER:
+        {
+            uint8_t idx;
+            if ((idx = strlen(systemSetting.SN))>= sizeof(systemSetting.SN))
+              idx = sizeof(systemSetting.SN);
+            if (idx > sizeof(u8buff)-2)
+              idx = sizeof(u8buff)-2;
+            memcpy (&u8buff[2], systemSetting.SN, idx);
+            SendData2Host(u8buff, idx+2);
 			break;
-
+        }
 		case WRITE_SERIAL_NUMBER:
+        {
+            uint8_t idx=nLen-1;
+            if (idx <= sizeof(systemSetting.SN))
+            {
+              memset(systemSetting.SN, 0x00, sizeof(systemSetting.SN));
+              memcpy(systemSetting.SN, pr+1, idx);
+              SaveSystemSettings();
+              u8buff[2] = BLE_CMD_SUCCESS;
+            }
+            else
+            {
+              u8buff[2] = BLE_CMD_FAIL;
+            }
+            SendData2Host(u8buff, 3);
 			break;
-
+         }
 		default:
 #if BGXXX==8
 		  test1.typeuint8[1] = test1.typeuint8[1]+1; //count error command.
@@ -3239,6 +4347,7 @@ void ParseBleUartPak(void)
     /* BLE command validation. length(len>0) and complete command pak(found STOP delimiter. */
     if (len<=0 || TempChar!=UART_DATA_STOP)  //[BG038] 
     {
+      systemStatus.bleUartErrPkts++;
       return;
     }
     
@@ -3257,6 +4366,8 @@ void ParseBleUartPak(void)
 			break;
 
 		case UART_CMD_ASK_DevInfo: //
+            //The command should be the first command from BLE after reset.
+            //<07 01 >
 
 			u8buff[0] = BLE_CH9;
 			u8buff[1] = Dev_Name; // i4,i4S
@@ -3272,7 +4383,7 @@ void ParseBleUartPak(void)
 			break;
 
 		case UART_CMD_ANCS: //接下来分析的是ANCS包中的数据。
-			BLE2EFM32_ANCSHandle(&Rec_Ble_Pak[1], len);
+			BLE2EFM32_ANCSHandle(&Rec_Ble_Pak[1], len-1);
 
 			break;
 
@@ -3280,9 +4391,9 @@ void ParseBleUartPak(void)
 
 			break;
 
-		case UART_CMD_DATA_FROM_HOST: // Host data  这就是ble串口文档中所谓的从BLe-》MCu 的透传数据。
+		case UART_CMD_DATA_FROM_HOST: // Host data. The BLE_API.doc command to here.
 
-			ParseHostData(&Rec_Ble_Pak[1]);
+			ParseHostData(&Rec_Ble_Pak[1], len-1);
 
 			break;
 
@@ -3327,7 +4438,13 @@ void ParseBleUartPak(void)
 				case SBLE_STATE_UPDATE:
 					systemStatus.blBleOnline = true;
 					BLE_STATE = Rec_Ble_Pak[2];
-
+                    if (len>3)  //ATUSDBG: check gapProfileState change.
+                    {
+                      gapProfileState = Rec_Ble_Pak[3];
+                      //adjust definition difference by chip.
+                      if (gapProfileState > GAPROLE_ADVERTISING && BLE_DevChip.BLE_Device.CHIPTYPE == BLE_CC2540_ID)
+                          gapProfileState = gapProfileState+1; //shift 1 for GAPROLE_ADVERTISING_NONCONN
+                    }
 					//UnLockScreen(true);
 
 					if(BLE_STATE == BLE_STATE_CONNECTED)
@@ -3336,16 +4453,36 @@ void ParseBleUartPak(void)
 						BLE_Should_Status = BLE_STATE_CONNECTED;
 
 						startFlashLed(true, 3, 2, 1, 1);
+#if (AUTO_REALDATA==1)  //auto enable as set getRealData while connected
+                        RealDataOnPhone = 1;
+                        vTaskDelay(20);
+                        Change_BLE_CONNECT_INTERVAL(BLE_CONNECT_20ms);
+                        vTaskDelay(20);
+                        //clean the RealDataBuf.
+                        SendRealDataOverBLE(NULL,0,0, 0, 1);
+#if (REALDATA_TIMER==1)
+                        realdata_count = 0;
+                        //set timer2 event trigger flag
+                        EnableDelayTimer(TIMER_FLAG_REALDATA, true, 200, NULL, NULL);
+#endif
+                        
+#endif
 					}
 					else
 					{
 						systemStatus.blBluetoothConnected = false;
 						RealDataOnPhone = 0;
+#if (REALDATA_TIMER==1)
+                        realdata_count = 0;
+                        //set timer2 event trigger flag
+                        EnableDelayTimer(TIMER_FLAG_REALDATA, true, 200, NULL, NULL);
+#endif
 
 						if(Last_BLE_STATE == BLE_STATE_CONNECTED)
 						{
 							Check_ADV_Counter = FAST_ADV_TIME;
-							BLE_ADVEN_CON(BLE_ON, BLE_ADVEN_100mS);
+                            //if (BLE_DevChip.BLE_Device.CHIPTYPE == BLE_CC2540_ID) //FIXME: need test
+                              BLE_ADVEN_CON(BLE_ON, BLE_ADVEN_1S);  //BLE_ADVEN_100mS >> 1S for power saving.
 							BLE_Should_Status = BLE_STATE_ADVERTISING;
 						}
 
@@ -3360,7 +4497,7 @@ void ParseBleUartPak(void)
 
 			break;
 
-		default:
+		default: //0,3
 			break;
 	}
 
@@ -3563,10 +4700,48 @@ void BLE_SET_CONNECT_INTERVAL(uint8_t inteval)
 void BLE_BROADCAST_UPDATE(void)
 {
 #if (FALL_DETECT_SUPPORT || SOS_HIT_SUPPORT)
-	static uint8_t data[6] = {0x0, 0xFF, 0xAA, 0xFF, 0xFF, 0xFF};
+	static uint8_t data[6] = {SBLE_BROADCAST_UPDATE, 0xFF, 0xAA, 0xFF, 0xFF, 0xFF};
+#if 1   //add checking data change filter the send out ble if no data updated.
+    char updateflag=0;
+    //FD tag
+    if (SendAlertNotification!=data[1] && (SendAlertNotification==0x01 || SendAlertNotification==0xff))
+    {
+      data[1] = SendAlertNotification;
+      updateflag++;
+    }
+    //charging tag
+    if ((systemStatus.blBatteryCharging? 0x55:0xAA)!=data[2])
+    {
+      data[2] = systemStatus.blBatteryCharging? 0x55:0xAA;
+      updateflag++;
+    }
+    //low battery tag
+	if((lowBatteryLevelAlert==0x01? 0x01:0xFF)!=data[3])
+    {
+      data[3] = lowBatteryLevelAlert==0x01? 0x01:0xFF;
+      updateflag++;
+    }
+    //time reset
+    if (blTimeReset==0x01 && data[4] != 0x01)
+    {
+      data[4] = 0x01;
+      updateflag++;
+    } else if (blTimeReset==0x0AA && data[4]!=0xFF)
+    {
+      data[4] = 0xFF;
+      updateflag++;
+    }
+    //SOS tag
+    if (sosNotification!=data[5] && (sosNotification==0x01 || sosNotification==0xff))
+    {
+      data[5] = sosNotification;
+      updateflag++;
+    }
 
-	data[0] = SBLE_BROADCAST_UPDATE;
-
+    if (updateflag>0)
+      LEUARTSentByDma(UART_CMD_INFOR, data, 6);
+    
+#else    
     //FD tag
 	if(SendAlertNotification == 1)
 		data[1] = 0x01;
@@ -3594,10 +4769,39 @@ void BLE_BROADCAST_UPDATE(void)
 		data[5] = 0xFF;
 
 	LEUARTSentByDma(UART_CMD_INFOR, data, 6);
+#endif
 #else
-	static uint8_t data[4] = {0x0, 0xAA, 0xFF, 0xFF};
+	static uint8_t data[4] = {SBLE_BROADCAST_UPDATE, 0xAA, 0xFF, 0xFF};
 
-	data[0] = SBLE_BROADCAST_UPDATE;
+#if 1  //add checking data change filter the send out ble if no data updated.
+        char updateflag=0;
+    //charging tag
+    if ((systemStatus.blBatteryCharging? 0x55:0xAA)!=data[1])
+    {
+      data[1] = systemStatus.blBatteryCharging? 0x55:0xAA;
+      updateflag++;
+    }
+    //low battery tag
+	if((lowBatteryLevelAlert==0x01? 0x01:0xFF)!=data[2])
+    {
+      data[2] = lowBatteryLevelAlert==0x01? 0x01:0xFF;
+      updateflag++;
+    }
+    //time reset
+    if (blTimeReset==0x01 && data[3] != 0x01)
+    {
+      data[3] = 0x01;
+      updateflag++;
+    } else if (blTimeReset==0x0AA && data[3]!=0xFF)
+    {
+      data[3] = 0xFF;
+      updateflag++;
+    }
+
+    if (updateflag>0)
+      LEUARTSentByDma(UART_CMD_INFOR, data, 4);
+
+#else
 
 	if(systemStatus.blBatteryCharging == true)
 		data[1] = 0x55;
@@ -3615,6 +4819,7 @@ void BLE_BROADCAST_UPDATE(void)
 		data[3] = 0xFF;
 
 	LEUARTSentByDma(UART_CMD_INFOR, data, 4);
+#endif
 #endif
 }
 
@@ -3695,10 +4900,11 @@ void BLE_Open(void)
 	BLE_Should_Status = BLE_STATE_ADVERTISING;
 }
 
+uint8_t BLEErrorCounte = 0;
 void isBLEError(void)
 {
 
-	static uint8_t BLEErrorCounte = 0;
+//	static uint8_t BLEErrorCounte = 0;
 	BLEErrorCounte++;
 
 	if(BLE_Should_Status == BLE_STATE)
@@ -3721,6 +4927,7 @@ void isBLEError(void)
 
 extern uint16_t  afe_sample_counter;    //Atus: uint32_t >> uint16_t
 #ifndef  PPG2Dongle  // for phone
+#if 0
 void SendRealDataOverBLE()
 {
 	uint8_t TEMP[21];
@@ -3792,10 +4999,86 @@ void SendRealDataOverBLE()
 
 	}
 
-
 	//TEST_H();
 }
+#else
+/* modify to support change.*/
+uint8_t RealDataBuf[REALTIME_DATA_BUFFER_SIZE] = {BLE_CH1};
+uint8_t RealDataBufIndex = 1;
+/* Desc: preload the data into the RealDataBuf[]
+* param:
+*   buf: the pointer address store the data.
+*   datalen: the data length which want to copy.
+*   addr: the data will copy from start address.
+*         addr should be 1 to REALTIME_DATA_BUFFER_SIZE-1.
+*           0: means none specify, just append.
+*   sendflag: 0:not send, 1:send.
+*   cleanflag: 0: without clean buffer; 1: clean before return.
+* return:
+*   0: fail; >0 success.
+ */
+int SendRealDataOverBLE(uint8_t *buf, uint8_t datalen, uint8_t addr, int8_t sendflag, int8_t cleanflag)
+{
+    uint8_t copylen = datalen;
+    uint8_t index = addr;
+    uint8_t result = 0;
+	static  uint8_t Wait20msCONNECTED = 0;
 
+    /* copy data to buffer */
+    if (buf!=NULL && datalen>0 && addr<REALTIME_DATA_BUFFER_SIZE)
+    {
+      //check addr type for calculate write buffer size.
+      if (addr>0) //specify data address
+          index = addr;
+      else
+          index = RealDataBufIndex;
+      //check buffer oversize will truncate.
+      if (REALTIME_DATA_BUFFER_SIZE - index < datalen) //check oversize.
+          copylen = REALTIME_DATA_BUFFER_SIZE - index;
+    
+      //copy buf
+      if (copylen>1)
+          memcpy(RealDataBuf+index, buf, copylen);
+      else
+          RealDataBuf[index] = *buf;
+      
+      //adjust RealDataBufIndex
+      if (RealDataBufIndex< (index+copylen))
+          RealDataBufIndex = index+copylen;
+    
+      result = copylen;
+    }
+
+    /* send buffer to BLE if need */
+    if (sendflag && BLE_STATE==BLE_STATE_CONNECTED)
+    {
+      //set Connect Interval to fast
+      if(BLE_CONNECT_20ms != getConnectTime)
+      {
+          Wait20msCONNECTED++;
+
+          if(Wait20msCONNECTED > 16)
+          {
+            Change_BLE_CONNECT_INTERVAL(BLE_CONNECT_20ms);
+            Wait20msCONNECTED = 0;
+          }
+      }
+
+    
+      SendData2Host(RealDataBuf, RealDataBufIndex);
+      result = RealDataBufIndex;
+    }
+    
+    if (cleanflag)
+    {
+        memset(RealDataBuf, 0x00, sizeof(RealDataBuf));
+        RealDataBuf[0]= BLE_CH1;
+        RealDataBufIndex = 1;
+    }
+
+    return result;
+}
+#endif
 #else // for algorithm
 
 void SendRealDataOverBLE()
@@ -3998,7 +5281,7 @@ void Send_1HZ_PacketOverBLE(void)
 #define CHARGE_STATUS         0x04
 #define LOW_POWER_STATUS      0x05
 
-uint8_t perimitSend = 0;
+uint8_t permitSend = 0;
 uint8_t resendCountLowbattery = 0;
 uint8_t resendCountCharging = 0;
 
@@ -4006,14 +5289,13 @@ uint8_t resendCountCharging = 0;
 
 void SendNotificationAlert(void)
 {
-	uint8_t TEMP[21] = {0x0, 0xFF, 0xAA, 0xFF,0xFF};
-	uint8_t index = 0;
+	static uint8_t TEMP[8] = {BLE_CHA, 0xFF, 0xAA, 0xFF, 0xFF, 0xAA, 0xAA};  //fix lost report data while reconnect in event duration.
+	uint8_t index = 1; //0>>1 skip first byte dummy write.
 
-	if(BLE_STATE != BLE_STATE_CONNECTED)
-		return;
-
-	//通道
-	TEMP[index++] = BLE_CHA;
+    /* notification must be in connected, move the connected state check to last
+    before send because we need prepare/update ready and send out while connected in the event duration */
+	//if(BLE_STATE != BLE_STATE_CONNECTED)
+	//	return;
 
 #if 0
 	static uint8_t oldlevel = 0;
@@ -4044,13 +5326,13 @@ void SendNotificationAlert(void)
 		//保留字，无实际意义
 		TEMP[index] = notificationAlertParameters.heartRateLevel;
 		resendTimes.heartrateLevelResend++;
-		perimitSend |= 0x01 << HEART_ALERT_GOT;
+		permitSend |= 0x01 << HEART_ALERT_GOT;
 
 		if(resendTimes.heartrateLevelResend > 2)
 		{
 			oldlevel = notificationAlertParameters.heartRateLevel;
 			resendTimes.heartrateLevelResend = 0;
-			perimitSend &= ~(0x01 << HEART_ALERT_GOT);
+			permitSend &= ~(0x01 << HEART_ALERT_GOT);
 
 		}
 	}
@@ -4064,13 +5346,13 @@ void SendNotificationAlert(void)
 	{
 		TEMP[index] = notificationAlertParameters.stepsCounterStatus;
 		resendTimes.stepCounterStatusResend++;
-		perimitSend |= 0x01 << STEP_ALERT_GOT;
+		permitSend |= 0x01 << STEP_ALERT_GOT;
 
 		if(resendTimes.stepCounterStatusResend > 3)
 		{
 			notificationAlertParameters.stepsCounterStatus = 0;
 			resendTimes.stepCounterStatusResend = 0;
-			perimitSend &= ~(0x01 << STEP_ALERT_GOT);
+			permitSend &= ~(0x01 << STEP_ALERT_GOT);
 		}
 	}
 	else
@@ -4084,13 +5366,13 @@ void SendNotificationAlert(void)
 	{
 		TEMP[index] = notificationAlertParameters.wearStatus;
 		resendTimes.watchWearStatusResend++;
-		perimitSend |= 0x01 << WEAR_ALERT_GOT;
+		permitSend |= 0x01 << WEAR_ALERT_GOT;
 
 		if(resendTimes.watchWearStatusResend > 2)
 		{
 			notificationAlertParameters.wearStatus = 0;
 			resendTimes.watchWearStatusResend = 0;
-			perimitSend &= ~(0x01 << WEAR_ALERT_GOT);
+			permitSend &= ~(0x01 << WEAR_ALERT_GOT);
 		}
 	}
 	else
@@ -4107,12 +5389,12 @@ void SendNotificationAlert(void)
 //	{
 //		TEMP[index] = notificationAlertParameters.callsCounterStatus;
 #if (MODEL_TYPE==1) //HEALTHCARE_TYPE
-	if(SendAlertNotification == 1)
+	if(SendAlertNotification == 0x01)
 	{
 		TEMP[index] = 0x01;//跌倒
 
 //		resendTimes.callsCounterStatusresend++; //跌落检测需要连续发送5分钟,所以用时间来控制要发送多少次
-		perimitSend |= 0x01 << FALL_ALERT_GOT;
+		permitSend |= 0x01 << FALL_ALERT_GOT;
 
 //		if(resendTimes.callsCounterStatusresend > 2)
 //		if(isSendAlertNotification == false)
@@ -4125,15 +5407,15 @@ void SendNotificationAlert(void)
 	else if (SendAlertNotification == 0xff)
 	{
 		TEMP[index] = 0xFF;
-		resendTimes.fallCounterStatusresend++; //当检测到5分钟结束了，在发送一次跌倒报警，并把这个值换成0xFF
+		resendTimes.fallCounterStatusresend++; //will send one while flag switch back till EVENT_FD_DURATION
 
 		if(resendTimes.fallCounterStatusresend > 1)
 		{
 			resendTimes.fallCounterStatusresend = 0;
-			perimitSend &= ~(0x01 << FALL_ALERT_GOT);
+			permitSend &= ~(0x01 << FALL_ALERT_GOT);
 		}
 	}
-	index++;
+	index++;  //index 1 >> 2
 
 //仅仅在充电状态发生变化是发生充电状态notification。发送3次。
 	if(isChargeStatusChange == 0x01)
@@ -4144,38 +5426,38 @@ void SendNotificationAlert(void)
 			TEMP[index] = 0xAA; //没充电。
 
 		resendTimes.chargeStatusResend++;
-		perimitSend |= 0x01 << CHARGE_STATUS;
+		permitSend |= 0x01 << CHARGE_STATUS;
 
 		if(resendTimes.chargeStatusResend > 2)
 		{
 			resendTimes.chargeStatusResend = 0;
-			perimitSend &= ~(0x01 << CHARGE_STATUS);
+			permitSend &= ~(0x01 << CHARGE_STATUS);
 			isChargeStatusChange = 0;
 		}
 	}
-	index++;
+	index++;   //index 2 >> 3
 
 	if(lowBatteryLevelAlert == 0x01)
 	{
 		TEMP[index] = 0x01;
 		resendTimes.lowBatteryStatusResend++;
-		perimitSend |= 0x01 << LOW_POWER_STATUS;
+		permitSend |= 0x01 << LOW_POWER_STATUS;
 
 		if(resendTimes.lowBatteryStatusResend > 2)
 		{
 			lowBatteryLevelAlert = 0;
 			resendTimes.lowBatteryStatusResend = 0;
-			perimitSend &= ~(0x01 << LOW_POWER_STATUS);
+			permitSend &= ~(0x01 << LOW_POWER_STATUS);
 		}
 	}
 	else
 		TEMP[index] = 0xFF;
-	index++;
+	index++;   //index 3 >> 4
 
 	if(sosNotification == 0x01)
 	{
 		TEMP[index] = 0x01;//SOS
-		perimitSend |= 0x01 << SOS_ALERT_GOT;
+		permitSend |= 0x01 << SOS_ALERT_GOT;
 	}
 	else if(sosNotification == 0xFF)
 	{
@@ -4185,23 +5467,23 @@ void SendNotificationAlert(void)
 		if(resendTimes.sosCounterStatusResend > 1)
 		{
 			resendTimes.sosCounterStatusResend = 0;
-			perimitSend &= ~(0x01 << SOS_ALERT_GOT);
+			permitSend &= ~(0x01 << SOS_ALERT_GOT);
 		}
 
 	}
-	index++;
+	index++; //  //index 4 >> 5
 #elif (MODEL_TYPE==2) //CONSUMER_TYPE
 	if(lowBatteryLevelAlert == 0x01)
 	{
 		TEMP[index] = 0x01;
 		resendTimes.lowBatteryStatusResend++;
-		perimitSend |= 0x01 << LOW_POWER_STATUS;
+		permitSend |= 0x01 << LOW_POWER_STATUS;
 
 		if(resendTimes.lowBatteryStatusResend > 3)
 		{
 			lowBatteryLevelAlert = 0;
 			resendTimes.lowBatteryStatusResend = 0;
-			perimitSend &= ~(0x01 << LOW_POWER_STATUS);
+			permitSend &= ~(0x01 << LOW_POWER_STATUS);
 		}
 	}
 	else
@@ -4216,12 +5498,12 @@ void SendNotificationAlert(void)
 			TEMP[index] = 0xAA; //没充电。
 
 		resendTimes.chargeStatusResend++;
-		perimitSend |= 0x01 << CHARGE_STATUS;
+		permitSend |= 0x01 << CHARGE_STATUS;
 
 		if(resendTimes.chargeStatusResend > 3)
 		{
 			resendTimes.chargeStatusResend = 0;
-			perimitSend &= ~(0x01 << CHARGE_STATUS);
+			permitSend &= ~(0x01 << CHARGE_STATUS);
 			isChargeStatusChange = 0;
 		}
 	}
@@ -4231,11 +5513,11 @@ void SendNotificationAlert(void)
 #endif
 	
 	
-	TEMP[index++] = 0xAA;
-	TEMP[index++] = 0xAA;
+	//TEMP[index++] = 0xAA;  //index 5 >> 6   dummy write
+	//TEMP[index++] = 0xAA;  //index 6 >> 7   dummy write
 
-	if((perimitSend & 0xFF) != 0)//只要收到相关通知，都发送
-		SendData2Host(TEMP, index);
+	if(BLE_STATE==BLE_STATE_CONNECTED &&(permitSend & 0xFF) != 0) //connected and perimitSend
+		SendData2Host(TEMP, sizeof(TEMP));
 
 }
 
@@ -4285,18 +5567,8 @@ void CheckFall(void)
 	extern uint8_t oldFallStatus; //[BG033] static change to global and move to mems_track.h
 	uint8_t currentFallStatus = FD_result;
 
-#ifdef DEBUG0
-	//simulate a falling
-	static uint8_t fallCount = 0;
-	fallCount++;
-
-	if(fallCount == 30)
-	{
-		currentFallStatus = 1;
-		fallCount = 0;
-	}
-
-#endif
+    if (isDetectedFall==false && oldFallStatus==currentFallStatus) //No event, bypass
+        return;
 
 	if(oldFallStatus != currentFallStatus)
 	{ // get a falling
@@ -4326,7 +5598,7 @@ void CheckFall(void)
 		{
 			fallDetectedTimeCount = false;
 			fdStartTime = time(NULL);
-#if (BOARD_TYPE==2)
+#if (BOARD_TYPE==2 && LED_TEST==0)
             LEDB_ON();
 #endif
 		}
@@ -4336,34 +5608,36 @@ void CheckFall(void)
 	{
 		fdCurrTime = time(NULL);
 		flashOledanyTime = time(NULL);
-	}
 
-	if(flashOledanyTime - startTimeFlashOled >= 12)
-	{
-		fallFlashOledTimeCount = true; //clean flag for next trigger.
-		blAlertMenu = false;
+        if(flashOledanyTime - startTimeFlashOled >= 12)
+        {
+            fallFlashOledTimeCount = true; //clean flag for next trigger.
+            blAlertMenu = false;
 
 #if BGXXX==0
-		//force jump to Time menu
-		if(IsForcedShowMenu())
-		{
-			UnforceShowMenu();
-
-			JumpToMenu(MENU_TYPE_Time);
-//			fireDisplayEvent(EVT_TYPE_KEY_UNLOCKED, 0);
-
-		}
+            //force jump to Time menu
+            if(IsForcedShowMenu())
+            {
+                UnforceShowMenu();
+                JumpToMenu(MENU_TYPE_Time);
+                //fireDisplayEvent(EVT_TYPE_KEY_UNLOCKED, 0);
+            }
 #endif
-	}
-
-	if(fdCurrTime - fdStartTime >= EVENT_FD_DURATION)
-	{ //over duration, reset to non fd envent.
-		fallDetectedTimeCount = true; //clean timeflag for next.
-		isDetectedFall = false; //clean while 5 minutes, terminate。
-		SendAlertNotification = 0xFF;
-#if (BOARD_TYPE==2)
-        LEDB_OFF();
+        }
+#if (FD_EXPIRE==1)
+        if( (KEY1_LastReleaseTime <= KEY1_LastPressTime )&& ((fdCurrTime - KEY1_LastPressTime) >= EVENT_FD_TURN_OFF_PRESSING) ||
+              ((KEY1_LastReleaseTime > KEY1_LastPressTime) && (KEY1_LastReleaseTime - KEY1_LastPressTime) >= EVENT_FD_TURN_OFF_PRESSING) )
+#else
+        if(fdCurrTime - fdStartTime >= EVENT_FD_DURATION)
 #endif
+        { //over duration, reset to non fd envent.
+            fallDetectedTimeCount = true; //clean timeflag for next.
+            isDetectedFall = false; //clean while 5 minutes, terminate。
+            SendAlertNotification = 0xFF;
+#if (BOARD_TYPE==2 && LED_TEST==0)
+            LEDB_OFF();
+#endif
+        }
 	}
 }
 #endif
@@ -4372,25 +5646,56 @@ void CheckFall(void)
 void CheckSOS(void)
 {
 	extern uint8_t SOS_result;
-	static uint8_t oldSOSStatus = 0x00;//未跌倒。
+	static uint8_t oldSOSStatus = 0x00; //latest SOS count 
 	uint8_t currentSOSStatus = SOS_result;
 	static bool sosDetectedTimeCount = true;
 	static time_t sosStartTime = 0;
+    static time_t prefilterBTime = 0; //for prefilterB check.
 	time_t sosCurrTime = 0;
-
-#ifdef DEBUG0
-	//模拟一次sos
-	static uint8_t tempCount = 0;
-	tempCount++;
-
-	if(tempCount == 30)
-	{
-		currentSOSStatus = 1;
-		tempCount = 0;
-	}
-
+#if (MECH_TEST==1)
+    return;
 #endif
-
+    
+    if (isSOSDetected==false && oldSOSStatus==currentSOSStatus) //No event, bypass
+        return;
+    
+	if(isSOSDetected)
+	{ //the blinking not put at the last of check expire process because we have some filter will 
+        LEDR_TOGGLE();
+    }
+#if (SOS_2S==1)
+          if (KEY1_LastReleaseTime>=KEY1_LastPressTime && (KEY1_LastReleaseTime-KEY1_LastPressTime)<=EVENT_SOS_PREFILTER) //press hold time short than 2s
+          {
+            oldSOSStatus = currentSOSStatus; //bypass the event this time.
+            prefilterBTime = 0; //clean filterB check flag.
+            if (isSOSDetected==false)
+                return;
+          }
+#endif
+    /* filterB: SOS prefilter */
+	if(oldSOSStatus!=currentSOSStatus && prefilterBTime==0)
+    {
+        prefilterBTime = time(NULL); //new event, record time for filterB
+    }
+    
+    if (prefilterBTime!=0)
+    {
+        sosCurrTime = time(NULL);
+        if (sosCurrTime-prefilterBTime<=EVENT_SOS_PREFILTER)
+        {
+            return;
+        }
+        else
+        {
+          if (GetKEY2()==0x00)  //SOSFilterB: check KEY2 pressed.
+          {
+            oldSOSStatus = currentSOSStatus; //bypass the event this time.
+            prefilterBTime = 0; //clean filterB check flag.
+            return;
+          }
+        }
+    }
+    
 	if(oldSOSStatus != currentSOSStatus)
 	{
 		oldSOSStatus = currentSOSStatus;
@@ -4410,16 +5715,24 @@ void CheckSOS(void)
 	if(isSOSDetected)
 	{
 		sosCurrTime = time(NULL);
-	}
-
-	if(sosCurrTime - sosStartTime > EVENT_SOS_DURATION)
-	{
-		sosDetectedTimeCount = true;
-		isSOSDetected = false;
-		sosNotification = 0xFF;
-#if (BOARD_TYPE==2)
-        LEDR_OFF();
+        //LEDR_TOGGLE();
+#if (SOS_EXPIRE==1)  //force expired by SW1 holding > 10 seconds.
+        /* case1: press holding >10, not release yet.
+        case2:  press holding > 10, then released. */
+        if( (KEY1_LastReleaseTime <= KEY1_LastPressTime )&& ((sosCurrTime - KEY1_LastPressTime) >= EVENT_SOS_TURN_OFF_PRESSING) ||
+              ((KEY1_LastReleaseTime > KEY1_LastPressTime) && (KEY1_LastReleaseTime - KEY1_LastPressTime) >= EVENT_SOS_TURN_OFF_PRESSING) )
+#else
+        if(sosCurrTime - sosStartTime > EVENT_SOS_DURATION)
 #endif
+        {
+            sosDetectedTimeCount = true;
+            isSOSDetected = false;
+            sosNotification = 0xFF;
+#if (BOARD_TYPE==2)
+            LEDR_OFF();
+#endif
+
+        }
 	}
 }
 #endif
@@ -4488,3 +5801,15 @@ uint16_t GetTotalChunks(uint16_t currentScanSector, uint16_t currentUploadSector
 		}
 	}
 }
+#if (P180F_PATCH==1)
+/* send a update info to ble with the battery status changed.. */
+void sendBleBatteryInfo(uint8_t capacity, float voltage)
+{
+  uint8_t u8buff[6] = {SBLE_TYPE_BATTERY, DEFAULT_BATTERY_REAMINING_PRESET, 0, 0, 0, 0};
+	u8buff[1] = capacity;
+    /* convert float to int16 with 100 */
+    u8buff[2] = (int16_t)(voltage*100);
+    u8buff[3] = (int16_t)(voltage*100)>>8;
+	LEUARTSentByDma(UART_CMD_INFOR, u8buff, 4);
+}
+#endif

@@ -127,7 +127,7 @@ void initSystemStatus()
 	//
 	systemStatus.blFlashOnline = false;		// ext flash chip
 	systemStatus.blFlashInitialized = true; // flash是否已经初始化。此状态仅在系统第一次启动时更新（做完chip erase之后更新为true）
-	systemStatus.blFlashPowerOn = false; 		// flash是否上电，平时flash处于低功耗模式，需要读写前，均需上电
+	systemStatus.blFlashPowerOn = false; 		// flash power indicator as power off.
 
 	//
 	systemStatus.blStopwatchEnabled = false;
@@ -140,8 +140,11 @@ void initSystemStatus()
 	systemStatus.blBatteryCharging = false;
 
 	//systemStatus.dwBatteryLevel = 0;
+#if (P180F_PATCH==1)
+	systemStatus.bBatteryRemaining = DEFAULT_BATTERY_REAMINING_PRESET; //100%
+#else
 	systemStatus.bBatteryRemaining = 100; //100%
-
+#endif
 	//
 	systemStatus.bAlarmStatus = 0;	// 闹钟状态，0=未触发；1=触发，响铃；2=被用户停止
 	systemStatus.bAlarmDuration = 60;	// 闹钟持续时间，按秒计
@@ -291,7 +294,7 @@ int main(void)
 						addbuf, ///
 						&databuf, 1);
 		}
-	//LPS22HB_Init();
+	//LPS22HB_Init(1);
 	LPS22HB_IIC_Init();
 	I2CReadNByte(LPS22HB_I2C, LPS22HB_IIC_ADDR, I2C_SUBA_ONEBYTE, LPS22HB_WHO_AM_I, &nobuf, 1);
 	if(nobuf == 0xB1)
@@ -299,9 +302,9 @@ int main(void)
 	else
 		LEDR_OFF();
 	
-	MEMS_Init();
-	L3GD20H_Init();
-	BMM150_Init();
+	MEMS_Init(1);
+	L3GD20H_Init(1);
+	BMM150_Init(1);
 	if(systemStatus.blGeoMSensorOnline)
 		LEDG_ON();
 	else

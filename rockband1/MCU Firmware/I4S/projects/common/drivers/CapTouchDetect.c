@@ -22,13 +22,13 @@
 #include "Si14x.h"
 
 /*
-按键的处理:
-   1. 常态 四个触摸和底部感应都是关闭的
-   2. 按KEY 激活 5个按键
-   3. 按KEY 三秒，使能底部感应
-   4. 连续5秒没有按键，同时也没有使能底部感应，关闭所有的触摸，降低功耗
-   5. 如果 底部感应已经使能，连续5秒没有四个触摸键的动作，关闭四个
-   6. 底部感应 脱离时 自动关闭所有的触摸
+Key/Button process:
+   1. Normal state, 4 touch button and bottom inductor are off.
+   2. Press KEY avitve 5 button.
+   3. Press KEY 3 seconds, active bottom inductor.
+   4. Continuous 5 seconds without key acitve and no bottom inductor active, turn off all touch saving power consumption.
+   5. If bottom inductor actived, and continuous 5 seconds with 4 touch button active, turn off 4 touch button.
+   6. Bottom inductor removed, auto turn off all touch button.
 */
 
 /* Capacitive sense configuration */

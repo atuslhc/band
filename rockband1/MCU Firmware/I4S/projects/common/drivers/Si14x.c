@@ -60,7 +60,7 @@ int SI14xNOP(void);
 int SI14x_PauseAll(void);
 int SI14xPsForce(void);
 float collect(uint8_t buf[], uint8_t msb_addr, uint8_t lsb_addr, uint8_t alignment);
-
+void UV_RST(void);
 
 void SI14x_IIC_Init(void)
 {
@@ -885,14 +885,25 @@ void UV_RST(void)
 	SI14x_WriteReg(REG_INT_CFG, 0x00);
 	SI14x_WriteReg(REG_IRQ_STATUS, 0xff);
 
-	SI14x_WriteReg(REG_COMMAND, 1);//执行复位
-	SysCtlDelay(1000);
-	SI14x_WriteReg(REG_HW_KEY, HW_KEY_VAL0);//写入硬件key
+	SI14x_WriteReg(REG_COMMAND, COMMAND_RESET); //reset
+	SysCtlDelay(1000);  //start-up time min=25ms
+	SI14x_WriteReg(REG_HW_KEY, HW_KEY_VAL0); //set Si1132 exter standby mode.
 
 }
 
+void SI14x_Disabled(void)
+{
+  if (systemStatus.blUVSensorOnline==0x01)
+  {
+    //Si114xPauseAll();
+    UV_RST();
+    systemStatus.blUVSensorOnline = false;
+  }
+  GPIO_PinModeSet(UV_INT_PORT, UV_INT_PIN, gpioModeDisabled, 0); /* UV_INT */
 
-void UV_Init(void)
+}
+
+int UV_Init(uint8_t mode)
 {
 	uint8_t nonused;
 
@@ -903,13 +914,22 @@ void UV_Init(void)
 	systemStatus.blUVSensorOnline = false;
 
 	if(nonused != Si1132_PART_ID)//verify chip Si1132 ID
-		return;
+    {
+		return DEVICE_NOTEXIST;
+    }
 
 	systemStatus.blUVSensorOnline = true;
 
 	// Turn off RTC
 	SI14x_WriteReg(REG_MEAS_RATE, 0);
 	SI14x_WriteReg(REG_ALS_RATE, 0);
+    
+    if (mode==0)
+    {
+      SI14x_Disabled();
+      return DEVICE_SUCCESS;
+    }
+    
 
 	UV_RST();//软件复位
 
@@ -920,6 +940,7 @@ void UV_Init(void)
 	//InOutdoorChange(0); //  参数flg = 1，表示在户外；flg= 0；表示在室内
 	InOutdoorChange(1); //  参数flg = 1，表示在户外；flg= 0；表示在室内
 
+    return DEVICE_SUCCESS;
 }
 
 

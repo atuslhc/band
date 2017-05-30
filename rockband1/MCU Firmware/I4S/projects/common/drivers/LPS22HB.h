@@ -28,6 +28,8 @@
 #define LPS22HB_I2C_LOC                I2C_ROUTE_LOCATION_LOC3
 #define LPS22HB_I2C_IRQn               I2C0_IRQn
 
+#define PRES_INT_PORT   gpioPortA
+#define PRES_INT_PIN    14  //PRES_INT:PA14
 
 // I2C Registers
 #define LPS22HB_INTERRUPT_CFG 0x0B
@@ -80,7 +82,8 @@
 
 
 void LPS22HB_IIC_Init(void);
-void LPS22HB_Init(void);
+void LPS22HB_Disabled(void);
+int LPS22HB_Init(uint8_t mode);
 
 void LPS22HB_start_conversion(void);
 void LPS22HB_Read_converter(void);

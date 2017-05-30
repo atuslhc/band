@@ -1,9 +1,9 @@
+#include "common_vars.h"
 #include "em_rtc.h"
 //#include "cmsis_os.h"
 
 #include "bsp.h"
 #include "main.h"
-#include "common_vars.h"
 #include "device_task.h"
 #if (MAGNETIC_SUPPORT==1)
 #include "BMM150.h"
@@ -145,7 +145,12 @@ void GPIO_EVEN_IRQHandler(void)
   if (status & (1 << KEY1_PIN)) 
   	{
 	int32_t msg = KEY1_INT2_Message;
-	xQueueSendFromISR(hEvtQueueDevice, &msg, 0);
+    /* we need exclude the power-off case(both KEY1, KEY2 press) */
+    /* SOS filterA: filter while KEY2 pressed */
+#if (MECH_TEST!=1)
+    if (GetKEY2()==0x01)
+#endif
+      xQueueSendFromISR(hEvtQueueDevice, &msg, 0);
   }
 #endif
 
@@ -158,10 +163,10 @@ void GPIO_EVEN_IRQHandler(void)
     }
 #endif
   
-#if (MAGNETIC_SUPPORT==1 && 0)
+#if (MAGNETIC_SUPPORT==1)
   if (status & (1 << BMM150_DRDY_PIN)) 
     {   
-       int32_t msg = MESSAGE_BMM150_DRDY; //KEY2_INT5_Message; //FIXME: MESSAGE_BMM150_DRDY, Atus should define a new Message.
+       int32_t msg = MESSAGE_BMM150_DRDY;
         xQueueSendFromISR(hEvtQueueDevice, &msg, 0);
     } 
 #endif  
@@ -194,7 +199,10 @@ void GPIO_ODD_IRQHandler(void)
   if (flags&(1<<KEY2_PIN))  	
      {   
 	int32_t msg = KEY2_INT5_Message;
-	xQueueSendFromISR(hEvtQueueDevice, &msg, 0);
+#if (MECH_TEST!=1)
+    if (GetKEY1()==0x01) //filter SW1 also press for POWER OFF
+#endif
+        xQueueSendFromISR(hEvtQueueDevice, &msg, 0);
      }   
 #endif
 

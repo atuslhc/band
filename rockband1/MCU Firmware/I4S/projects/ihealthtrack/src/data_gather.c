@@ -311,7 +311,7 @@ bool checkAndPrepareBuffer2()
 
 	osMailPut(hFlashCommandQueue, fcmd);
 
-#else
+#else  //single buffer
 #if !BATTERY_LIFE_OPTIMIZATION
 
 	saveIndexDataToFlash(&gatherBufferHead, indexDataBuffer);

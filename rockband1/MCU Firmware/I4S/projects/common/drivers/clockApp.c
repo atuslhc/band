@@ -83,7 +83,7 @@ void budSetup(void)
   bupdInit.voutMed = false;
   bupdInit.voutWeak = false;
 
-  #ifdef PowerTesting  // 关闭电容充电，便于功耗测量
+  #if (PowerTesting==1)  // Turn off the capacity charging for power consumption testing.
   bupdInit.inactivePower = emuPower_NoDiode;//emuPower_None;//emuPower_NoDiode;//emuPower_MainBU;//
   #else
   bupdInit.inactivePower = emuPower_MainBU;//

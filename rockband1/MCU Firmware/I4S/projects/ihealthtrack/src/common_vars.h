@@ -45,6 +45,7 @@
 #define CAP_SUPPORT                     1   //add the AD7156 cap sensor.
 #define BLE_SUPPORT                     1
 #define BATTERY_SUPPORT                 1
+#define EXT_FLASH_SUPPORT               1
 #elif (BOARD_TYPE==2)
 #define AFE44x0_SUPPORT                 0
 #define OLED_SUPPORT                    0
@@ -60,6 +61,7 @@
 #define BLE_SUPPORT                     1
 #define BATTERY_SUPPORT                 2
 #define BAT_ADC_CONFIG                  2  //1 //1:R9=10M and reference internal 2.5V. 2:R9=5.6M and reference internal 1.25V.
+#define EXT_FLASH_SUPPORT               1
 #endif
 
 #elif (MODEL_TYPE==2) //CONSUMER_TYPE
@@ -88,6 +90,7 @@
 #define CAP_SUPPORT                     1   //add the AD7156 cap sensor.
 #define BLE_SUPPORT                     1
 #define BATTERY_SUPPORT                 1
+#define EXT_FLASH_SUPPORT               1
 #elif (BOARD_TYPE==2)
 #define AFE44x0_SUPPORT                 0
 #define OLED_SUPPORT                    0
@@ -102,6 +105,7 @@
 #define CAP_SUPPORT                     2   //add the AD7156 cap sensor.
 #define BLE_SUPPORT                     1
 #define BATTERY_SUPPORT                 2
+#define EXT_FLASH_SUPPORT               1
 #endif
 #else
 #error "Not specify product type MODEL_TYPE!!!"
@@ -112,17 +116,25 @@
 #define BATTERY_REMAINING_OUT_OF_BATTERY	13
 #define BATTERY_REMAINING_LOW_BATTERY		23
 #define BATTERY_LEVEL_TOLERANCE 			3
+#define DEFAULT_BATTERY_REAMINING_PRESET    100
 #elif (BATTERY_SUPPORT==2)
 #define BATTERY_REMAINING_OUT_OF_BATTERY	5
 #define BATTERY_REMAINING_LOW_BATTERY		10
 #define BATTERY_LEVEL_TOLERANCE 			3
+#if (P180F_PATCH==1)
+#define DEFAULT_BATTERY_REAMINING_PRESET    100
+#endif
 #else
 #define BATTERY_REMAINING_OUT_OF_BATTERY	13
 #define BATTERY_REMAINING_LOW_BATTERY		23
 #define BATTERY_LEVEL_TOLERANCE 			3
+#define DEFAULT_BATTERY_REAMINING_PRESET    100
 #endif
 
-
+#if (P180F_ADCRAW_PATCH==1)
+#define Vcc_Buff_Size 4     //move from sys_sharing_source.c for cross BLE-LEUART-DMA.c
+#endif
+   
 //#include "cmsis_os.h"
 #define BG039   1       //turn on the WDOG setting with MODEL_TYPE 1
 
@@ -344,6 +356,11 @@ typedef enum _SENSOR_TYPE
 	SENSOR_TYPE_SKIN_THERMOMETER,
 	SENSOR_TYPE_UV,
 	SENSOR_TYPE_SKIN_TOUCH,
+    SENSOR_TYPE_GYRO,               //new add sensor type
+    SENSOR_TYPE_MAGNETIC,
+    SENSOR_TYPE_BAROMETER,
+    SENSOR_TYPE_CAPACITANCE,
+    SENSOR_TYPE_PRESSURE,
 } SENSOR_TYPE;
 
 /* event types: event send to displayTask, base on the type do action. */
@@ -514,6 +531,11 @@ typedef enum
 	UNIT_METRIC = 1,
 } ENUM_UNIT_SYSTEM;
 
+typedef enum
+{
+  POS_WRIST_LEFT = 0,
+  POS_WRIST_RIGHT,
+} ENUM_DEVTAGPOS;
 typedef struct _USER_PROFILE
 {
 	BYTE height;		// cm
@@ -522,6 +544,8 @@ typedef struct _USER_PROFILE
 	UINT16 birthYear;
 	ENUM_GENDER gender; 	// 0:woman 1:man
 	ENUM_UNIT_SYSTEM unit;	// 0:UNIT_ENGLISH, 1:UNIT_METRIC
+    BYTE devTagPos;     //0: left hand, 1:right hand
+    
 } USER_PROFILE;
 
 typedef enum
@@ -581,7 +605,7 @@ typedef struct _FLASH_DEBUGLOG_INDICATOR
 
 // system settings, stored in flash.
 #define SYSTEM_SETTING_FLAG_NOT_INIT	(0xFFFFFFFF)
-#define SYSTEM_SETTING_FLAG_NORMAL	(0x12345678)
+#define SYSTEM_SETTING_FLAG_NORMAL	(0x00000018) //(0x12345678)
 
 // goals
 #define MAX_USER_GOALS	(8)
@@ -607,13 +631,15 @@ typedef enum
 
 #define DEVICE_COLOR_BLACK     0x20
 #define DEVICE_COLOR_RED       0x40
+#define SN_LENGTH           16
 
 
 #pragma pack(push, 4)
 
 typedef struct _SYSTEM_SETTING
 {
-	UINT32 checkTag;		//The flag check the flash data validation. If SYSTEM_SETTING_FLAG_NOT_INIT is not initialized yet.
+    char  SN[SN_LENGTH];    //The serial number.
+    UINT32 checkTag;		//The flag check the flash data validation. If SYSTEM_SETTING_FLAG_NOT_INIT is not initialized yet.
 
 	bool bl24HourMode;		//hour(24/12) mode, not used now.
 	//	DATE_TIME sysDateTime;
@@ -630,8 +656,20 @@ typedef struct _SYSTEM_SETTING
 	bool blAccelSensorEnabled;
 	bool blAmbTempSensorEnabled;
 	bool blSkinTempSensorEnabled;
+    // add new sensor flag.
+    bool blGyroSensorEnabled;
+    bool blGeoMSensorEnabled;
+    bool blPressureSensorEnabled;
+    bool blCAPSensorEnabled;
 	//
 	bool blBluetoothEnabled;
+    bool blFDEnabled;   //control the Fall Detect enable/disable and report
+    bool blSOSEnabled; //control the SOS alert report.
+    bool blOLEDEnabled;
+    UINT8 blLEDConfig;
+    UINT8 blUSBConfig;
+    UINT8 blUARTEConfig;
+    
 
 	/* User information (profile, goals) */
 	USER_PROFILE userProfile;
@@ -687,6 +725,7 @@ typedef struct _SYSTEM_SETTING
 #define TOUCHCAPVAL systemSetting.TOUCH_CAPVAL
 
 #define NOTIFY_SENDER_BUFFER_SIZE 20
+#define REALTIME_DATA_BUFFER_SIZE 21 //40 
 
 // =================================================================
 //#pragma pack(push, 1)
@@ -701,7 +740,7 @@ typedef struct _SYSTEM_STATUS
 
 	bool blFlashInitialized; //flash initialized is means been scanned, and ready for access.
 				  // The system start run will update it. (FLASH_CMD_INIT done, change to true) 
-	bool blFlashPowerOn; // flash power on?, flash in low power mode normally, in the read/write need power on.
+	bool blFlashPowerOn; // flash power indicator. ext flash in power off normally, need power on while read/write.
 
 	bool blDataGatheringInitialized; // The flag use in first time startup or restart data gathering.
 	bool blEnableDataGathering;
@@ -719,6 +758,7 @@ typedef struct _SYSTEM_STATUS
 	bool blAmbTempSensorOnline;
 	bool blSkinTempSensorOnline;
 	bool blUVSensorOnline;
+    bool blCAPSensorOnline;     //v0.15 add.
 #if (BAROMETER_SUPPORT==1)
     bool blPressureSensorOnline; //[BG037] BAROMETER add.
 #endif
@@ -761,6 +801,9 @@ typedef struct _SYSTEM_STATUS
 	bool blBatteryCharging;		// Charging status.
 
 	uint8_t bBatteryRemaining;	// The  percentage of battery remain.
+#if (P180F_PATCH==1)
+    float fBatteryVolt;     //The voltage of battery from adc converting.
+#endif
 
 	bool blBatteryDraining;		// [state] Drain battery mode. (Turn on vibration continuous).
 
@@ -795,6 +838,7 @@ typedef struct _SYSTEM_STATUS
 #if DEBUGLOG
 	FLASH_DEBUGLOG_INDICATOR flashDebugLogIndicator;
 #endif
+    uint8_t bleUartErrPkts; //Atus add for debug CC2541.
 } SYSTEM_STATUS;
 
 //#pragma pack(pop)
@@ -971,8 +1015,15 @@ extern SemaphoreHandle_t hI2CSemaphore;
 #define TWO_MINUTES_SECONDS   120
 #define FIVE_MINUTES_SECONDS  300
 
-#define EVENT_FD_DURATION       FIVE_MINUTES_SECONDS //TWO_MINUTES_SECONDS
-#define EVENT_SOS_DURATION      FIVE_MINUTES_SECONDS //TWO_MINUTES_SECONDS
+#define EVENT_FD_DURATION       60//FIVE_MINUTES_SECONDS //TWO_MINUTES_SECONDS
+#define EVENT_SOS_DURATION      60//FIVE_MINUTES_SECONDS //TWO_MINUTES_SECONDS
+#define EVENT_SOS_PREFILTER     2 //TWO SECONDS
+#if (SOS_EXPIRE==1)
+#define EVENT_SOS_TURN_OFF_PRESSING   10 //TEN SECONDS
+#endif
+#if (FD_EXPIRE==1)
+#define EVENT_FD_TURN_OFF_PRESSING    10 //TEN SECONDS
+#endif
 
 typedef struct _SP_VALUE
 {
@@ -1026,6 +1077,17 @@ extern uint8_t isChargeStatusChange;
 extern uint8_t blTimeReset;
 extern uint8_t lowBatteryLevelAlert;
 
+typedef enum
+{
+    PARAM_NULL_PTR = -127,
+    DEVICE_NOTONLINE = -4,
+    SELF_TEST_FAIL = -3,
+    PARAM_OUT_OF_RANGE = -2,
+    DEVICE_NOTEXIST = -1,
+    DEVICE_ERROR	=	0,
+	DEVICE_SUCCESS	=	1,
+} DEVICE_STATUS_T;
+
 #if BGXXX
 extern int itest; //subMenu.c L2171
 extern uint32_t utest; //subMenu.c L2172
@@ -1044,5 +1106,6 @@ typedef union _UNION_VAR {
 
 extern UNION_VAR test1, test2, test3;
 #endif
-
+extern uint8_t realdata_count;
+extern uint16_t readbuf16[5];
 #endif

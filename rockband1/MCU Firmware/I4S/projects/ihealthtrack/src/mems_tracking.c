@@ -304,10 +304,10 @@ uint32_t MEMS_TRACKING(int16_t *x, int16_t *y, int16_t *z, uint8_t len)
 #endif
   }
 #if FALL_DETECT_SUPPORT		//[BG012] add compiler flag.
-//  if (FD_result < 255) //[BG008] add. [BG008-4] remove 255 check.
+  if (systemSetting.blFDEnabled)
     FD_result += Fall_Detect(axis_rms, len); //[BG008] add call FD, [BG008-3] &axis_rms[axis_rms_index] >> axis_rms
-//  else
-//    Fall_Detect(axis_rms, len); //[BG008] add call FD, [BG008-3] &axis_rms[axis_rms_index] >> axis_rms
+  else
+    Fall_Detect(axis_rms, len);
 #endif
   axis_rms_index += len;
   if(axis_rms_index >= XYZ_BUFF_SIZE) //4sec turn around.

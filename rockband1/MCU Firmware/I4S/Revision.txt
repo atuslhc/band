@@ -1,3 +1,49 @@
+2017.4.25 [version 0.20]
+* Add the SBLE_TYPE_BATTERY command for MCU->BLE update data, P180F_PATCH=1 with MCU and BLE.
+* Add the voltage parameter for GET_BATTERY_LEVEL command.
+* Add the ADC raw data in GET_BATTERY_LEVEL command for US requirement.
+
+  
+2017.3.17 [version 0.19]
+* Adjust the CAP threshold High for EVT0 board.
+LEDG indicator on change to off for EVT0 normal state.
+merge gapProfileState decode depend on CC2541,CC2540
+merge the SensorSetting extend setting API 
+Change LED_PIN remapping from LEDR_PIN to LEDG_PIN as LEDs function definition.
+create compiler flag CAP_CH=2 for devBoard, and CAP_CH=1 for EVT0 board, and EVT1.
+Modify systemSettings structure add SN in first 16 bytes, and ResetParaSettings() still keep systemSetting.SN (V0.17)
+Patch the BLE API command READ_SERIAL_NUMBER(0x1e), WRITE_SERIAL_NUMBER(0x1f) action for read/write SN. (V0.18)
+Create AUTO_REALDATA=1 tag for CS force enable(connected enable) for test. just in debugmode(V0.18)
+Modify BLE_BROADCAST_UPDATE() add a data checking to filter MCU->BLE update if data no changed.(V0.18)
+** The filter SOS data set array index mistake, should be 5 not 1(FD). Fixed and told Uma. 2017/03/31.
+Fix the AA60:AA61 alert notification data not consist with last connected report in the event duration.
+Fix the BLE getDevieInfo miss still not getBleDeviceInfo(). The check conditon 7 >> 6.
+Fix SendNotificationAlert() reconnect will miss data(add static) and connected after event trigger without get notification. (V0.19)
+
+
+2017.3.16 [version 0.17]
+* BLE extend the gapProfileState in SBLE_STATE_UPDATE command to debug the state in nRF bound.
+* Rewrite the SendRealDataOverBLE() to flexble support the RealData for sensors get and put raw data.
+Note: The version just fix code to notify the  capative sensor raw data with 5 times/sec for diagnostic only.
+      The capture raw data and send realdata hook under the magnetic and magnetic ODR from 30Hz change to 15Hz.
+      We would change to Timer trigger to independant event.
+* Add the TIMER_FLAG_REALDATA event in TIMER_FLAG for Timer2 service. [done the above note.]
+* change the SW1 and SW2 function for temporary test(SW1: LEDs OFF, SW2: toggle enable/disable gyro sensor), and the SendReadlDataOverBLE() change to cap sensor data.
+* change version to 0.17, but not check-in, just compress share to USA.
+
+2017.3.6 [version 0.16]
+* Extend BLE API SensorSettings[0x12] with Set_Accelerometer_ODR(3),Set_Magnetic_ODR(4),Get_Accelerometer_ODR(5),Get_Magnetic_ODR(6)
+* BLE API SensorSettings[0x12] can Set enable/disable all sensors setting.
+
+2017.3.2 [version 0.15]
+Fix GYRO int2/DRDY interrupt not up.
+Patch SensorSettings function: Add blGyroSensorEnabled,blGeoMSensorEnabled,blPressureSensorEnabled,
+blCAPSensorEnabled,blFDEnabled,blSOSEnabled,blOLEDEnabled,blLEDConfig,blUSBConfig,blUARTEConfig
+Patch: BLE pad zero prefix bytes fix length=18 for CC2541 POWER_SAVING mode.
+Patch: MCU ADC Battery change send a BLE command:GET_BATTERY_LEVEL refresh BLE battery profile data.
+Add a SensorSettings group with SW2 can toggle enable/disable for debugging temporary.
+
+
 2017.1.26[version 0.14]
 Add FD alert LEDB indicator.
 Change OutOfBatteryProcess() action disable sensors but bypass (close BLE and GoStopMCU EM4), run until dryout.

@@ -51,7 +51,7 @@ bool I2C0_used = false;
 
 union _CHIP DevChip;
 
-#define USERPAGE    0x0FE00000 /**< Address of the user page, 1k space */
+#define USERPAGE    0x0FE00000 /**< Address of the user page, 2k space */
 
 
 uint8_t  SYSCLOCK = 14; //sysclk
@@ -103,9 +103,11 @@ void ResetParaSettings(void)
 {
   	/* clean the buffer before programming */
   	memset(&systemSetting, 0x00, sizeof(systemSetting));
-  
+    /* copy the SN data */
+   	memcpy(&systemSetting.SN, (void*) USERPAGE, sizeof(systemSetting.SN));
+
 	systemSetting.checkTag = SYSTEM_SETTING_FLAG_NORMAL;
-        systemSetting.bl24HourMode = false; //[BG026] not used now.
+    systemSetting.bl24HourMode = false; //[BG026] not used now.
 
 	/* Function Setting */
 	// alarm
@@ -125,14 +127,42 @@ void ResetParaSettings(void)
 	systemSetting.BacklightOn_Delay = 5;
 
 	/* Sensors */
+#if (MFG_MODE==1)
 	systemSetting.blHRSensorEnabled = true;
 	systemSetting.blUVSensorEnabled = true;
 	systemSetting.blAccelSensorEnabled = true;
 	systemSetting.blAmbTempSensorEnabled = true;
 	systemSetting.blSkinTempSensorEnabled = true;
+	systemSetting.blGyroSensorEnabled = true;
+	systemSetting.blGeoMSensorEnabled = true;
+	systemSetting.blPressureSensorEnabled = true;
+	systemSetting.blCAPSensorEnabled = true;
+#else
+	systemSetting.blHRSensorEnabled = false; //true;
+	systemSetting.blUVSensorEnabled = false; //true;
+	systemSetting.blAccelSensorEnabled = true;
+	systemSetting.blAmbTempSensorEnabled = false; //true;
+	systemSetting.blSkinTempSensorEnabled = false; //true;
+	systemSetting.blGyroSensorEnabled = false; //true;
+	systemSetting.blGeoMSensorEnabled = false; true;
+	systemSetting.blPressureSensorEnabled = false; //true;
+	systemSetting.blCAPSensorEnabled = true;
+#endif
 
 	systemSetting.blBluetoothEnabled = true;
-
+#if (OLDE_SUPPORT==1)
+	systemSetting.blOLEDEnabled = true;
+#else
+	systemSetting.blOLEDEnabled = false;    
+#endif
+    
+	systemSetting.blFDEnabled = true;
+	systemSetting.blSOSEnabled = true;
+	systemSetting.blLEDConfig = 0x01;
+	systemSetting.blUSBConfig = 0x01;
+	systemSetting.blUARTEConfig = 0x01;
+    
+    
 	/* User information (profile, goals) */
 	systemSetting.userProfile.height = 175;
 	systemSetting.userProfile.weight = 70;
@@ -140,6 +170,7 @@ void ResetParaSettings(void)
 	systemSetting.userProfile.birthYear = 1980;
 	systemSetting.userProfile.gender = MALE;
 	systemSetting.userProfile.unit = UNIT_METRIC;
+	systemSetting.userProfile.devTagPos = POS_WRIST_LEFT;
 
 	/* Goals */
 	systemSetting.userGoals[GOAL_SLEEP] = DEFAULT_GOAL_SLEEP;
@@ -334,7 +365,9 @@ void LoadSystemSettings(void)
 	//
 	systemSetting.SystemRstTimes++; //set the system reboot counter.
 
-	//
+	//v0.15 add force blBluetoothEnabled always 1 for system startup.
+    if (systemSetting.blBluetoothEnabled==0)
+        systemSetting.blBluetoothEnabled = true;
 //	systemSetting.SystemMode = SYSTEM_MODE_ACTIVATED;//20150103
 	SaveSystemSettings();
 
@@ -380,7 +413,7 @@ void UpdateBaseLine(void)
 int SaveSystemSettings()
 {
 	msc_Return_TypeDef ret;
-
+    
 	/* Initialize the MSC for writing */
 	MSC_Init();
 

@@ -21,7 +21,10 @@ typedef struct _BACKUP_DATA
 //extern osMessageQId hMsgInterrupt;
 extern QueueHandle_t hEvtQueueDevice;
 extern int8_t lastLongPressedisBLE;
-
+#if (SOS_2S==1)
+extern time_t KEY1_LastPressTime, KEY1_LastReleaseTime;
+extern time_t KEY2_LastPressTime, KEY2_LastReleaseTime;
+#endif
 void initDeviceTask();
 BaseType_t createDeviceTask();
 

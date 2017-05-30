@@ -85,12 +85,16 @@ void HardFault_Handler(void)
 	 */
 	errlocated.mspTop = __get_MSP();
 	errlocated.pspTop = __get_PSP();
-
 	__asm("TST   LR, #4"); //把LR中的值和4比较，然后更新状态寄存器
+#if 0
 	__asm("ITE   EQ");		//下面2条指令是条件执行
 	__asm("MRSEQ R0, MSP");//如果相等则把MSP数据放到R0
 	__asm("MRSNE R0, PSP");//如果不相等则把PSP数据放到R0
-
+#else  //IAR before ARM 7.40.1
+    __asm("ITE EQ \n"
+	      "MRSEQ R0, MSP \n"
+	      "MRSNE R0, PSP");
+#endif
 
 	__asm("B HardFault_HandlerC");
 }

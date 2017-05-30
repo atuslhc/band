@@ -215,3 +215,6 @@ UNION_VAR test1={0};	//for submenu debug used.
 UNION_VAR test2={0};
 UNION_VAR test3={0};
 #endif
+
+uint8_t realdata_count = 0;
+uint16_t readbuf16[5];

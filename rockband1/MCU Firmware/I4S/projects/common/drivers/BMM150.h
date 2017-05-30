@@ -311,8 +311,7 @@ delay_func(delay_in_msec)
 #define BMM150_POWER_CONTROL_POWER_CONTROL_BIT__POS         (0)
 #define BMM150_POWER_CONTROL_POWER_CONTROL_BIT__LEN         (1)
 #define BMM150_POWER_CONTROL_POWER_CONTROL_BIT__MSK         (0x01)
-#define BMM150_POWER_CONTROL_POWER_CONTROL_BIT__REG         \
-(BMM150_POWER_CONTROL)
+#define BMM150_POWER_CONTROL_POWER_CONTROL_BIT__REG         (BMM150_POWER_CONTROL)
 /********************************************/
 /**\name BIT MASK, LENGTH AND POSITION OF SELF TEST REGISTERS   */
 /********************************************/
@@ -461,10 +460,13 @@ delay_func(delay_in_msec)
 
 /** Error code definitions**/
 #define E_BMM150_NULL_PTR           ((s8)-127)
+#define BMM150_NOTONLINE            ((s8)-4)
 #define BMM150_ERROR				((u8)0)///((s8)-1)
 #define E_BMM150_OUT_OF_RANGE       ((s8)-2)
+#define BMM150_NOTEXIST             ((s8)-1)
 #define BMM150_NULL                 ((u8)0)
 #define E_BMM150_UNDEFINED_MODE     (0)
+#define BMM150_SUCCESS              (1)
 
 
 /********************************************/
@@ -827,7 +829,7 @@ struct BMM150_t {
  *
  *
 */
-BMM150_RETURN_FUNCTION_TYPE BMM150_Init(void);
+BMM150_RETURN_FUNCTION_TYPE BMM150_Init(uint8_t mode);
 /********************************************/
 /**\name DATA READ FUNCTIONS  */
 /********************************************/
@@ -941,6 +943,8 @@ BMM150_RETURN_FUNCTION_TYPE BMM150_set_data_rate(u8 v_data_rate_u8);
  *	@retval -1 -> Error
  *
 */
+BMM150_RETURN_FUNCTION_TYPE BMM150_Get_data_rate(u8 *v_data_rate_u8);
+
 BMM150_RETURN_FUNCTION_TYPE BMM150_set_functional_state(
 u8 v_functional_state_u8);
 /********************************************/

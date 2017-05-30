@@ -166,6 +166,17 @@ typedef enum
 	L3GD20H_NO_CLICK                        =   0x00
 } L3GD20H_Click_Response;
 
+typedef enum
+{
+    ODR_12_5,
+    ODR_25,
+    ODR_50,
+    ODR_100,
+    ODR_200,
+    ODR_400,
+    ODR_800
+} L3GD20H_ODR_t;
+
 //Register Definition
 #define L3GD20H_ID				0xD7  // device identification register
 //*****************************************************************************
@@ -258,32 +269,32 @@ typedef enum
 #define L3GD20H_CTRL3_INT1_IG_M 0x80        // Interrupt enable on INT1 pin
 #define L3GD20H_CTRL3_INT1_IG_DIS 0x00
 #define L3GD20H_CTRL3_INT1_IG_EN 0x80
-#define L3GD20H_CTRL3_INT1_BOOT_M 0x40        // Boot status available on INT1 pin.
+#define L3GD20H_CTRL3_INT1_BOOT_M 0x40      // Boot status available on INT1 pin.
 #define L3GD20H_CTRL3_INT1_BOOT_DIS 0x00
 #define L3GD20H_CTRL3_INT1_BOOT_EN 0x40
-#define L3GD20H_CTRL3_H_LACTIVE_M 0x20        // Interrupt active configuration
+#define L3GD20H_CTRL3_H_LACTIVE_M 0x20      // Interrupt active configuration
                                             // on INT; default value: 0 (0:
                                             // high; 1:low)
 #define L3GD20H_CTRL3_H_LACTIVE_HI 0x00
 #define L3GD20H_CTRL3_H_LACTIVE_LOW 0x20
-#define L3GD20H_CTRL3_DRIVE_TYPE_M 0x10        // Push- Pull / Open drain; default
+#define L3GD20H_CTRL3_DRIVE_TYPE_M 0x10     // Push- Pull / Open drain; default
                                             // value: 0 (0: push-pull; 1: open
                                             // drain)
 #define L3GD20H_CTRL3_DRIVE_TYPE_PP 0x00
 #define L3GD20H_CTRL3_DRIVE_TYPE_OD 0x10
-#define L3GD20H_CTRL3_INT2_DRDY_M 0x08        // Date Ready on DRDY/INT2 pin;
+#define L3GD20H_CTRL3_INT2_DRDY_M 0x08      // Date Ready on DRDY/INT2 pin;
                                             // default value: 0
 #define L3GD20H_CTRL3_INT2_DRDY_DIS 0x00
 #define L3GD20H_CTRL3_INT2_DRDY_EN 0x08
-#define L3GD20H_CTRL3_INT2_FTH_M 0x04        // FIFO Threshold interrupt on
+#define L3GD20H_CTRL3_INT2_FTH_M 0x04       // FIFO Threshold interrupt on
                                             // DRDY/INT2 pin; default value: 0
 #define L3GD20H_CTRL3_INT2_FTH_DIS 0x00
 #define L3GD20H_CTRL3_INT2_FTH_EN 0x04
-#define L3GD20H_CTRL3_INT2_ORUN_M 0x02        // FIFO Overrun interrupt on
+#define L3GD20H_CTRL3_INT2_ORUN_M 0x02      // FIFO Overrun interrupt on
                                             // DRDY/INT2 pin; default value: 0
 #define L3GD20H_CTRL3_INT2_ORUN_DIS 0x00
 #define L3GD20H_CTRL3_INT2_ORUN_EN  0x02
-#define L3GD20H_CTRL3_INT2_EMPTY_M  0x01        // FIFO Empty interrupt on
+#define L3GD20H_CTRL3_INT2_EMPTY_M  0x01    // FIFO Empty interrupt on
                                             // DRDY/INT2 pin; default value: 0
 #define L3GD20H_CTRL3_INT2_EMPTY_DIS 0x00
 #define L3GD20H_CTRL3_INT2_EMPTY_EN  0x01
@@ -295,7 +306,7 @@ typedef enum
 // register.
 //
 //*****************************************************************************
-#define L3GD20H_CTRL4_BDU_M         0x80   // Block data update; default
+#define L3GD20H_CTRL4_BDU_M         0x80    // Block data update; default
                                             // value: 0 (0: continuous update;
                                             // 1: output registers not updated
                                             // until MSB and LSB reading)
@@ -381,7 +392,7 @@ typedef enum
 //
 //*****************************************************************************
 #define L3GD20H_FIFO_CTRL_THRESH_M  0x1F    // FIFO Threshold setting
-#define L3GD20H_FIFO_CTRL_MODE_M    0xE // FIFO mode setting
+#define L3GD20H_FIFO_CTRL_MODE_M    0xE     // FIFO mode setting
 #define L3GD20H_FIFO_CTRL_MODE_S    5
 #define L3GD20H_FIFO_CTRL_THRESH_S  0
 
@@ -559,8 +570,10 @@ typedef enum
 extern int16_t L3GD20H_BUFF[3][L3GD20H_BUFF_SIZE];
 
 /* Exported functions --------------------------------------------------------*/
-void L3GD20H_Init(void);
+void L3GD20H_Disabled(void);
+int L3GD20H_Init(uint8_t mode);
 //Sensor Configuration Functions
+gyrostatus_t L3GD20H_SetOD(uint8_t ov);
 gyrostatus_t L3GD20H_SetODR(uint8_t ov);
 gyrostatus_t L3GD20H_SetPOWERMode(L3GD20H_Mode_t md);
 gyrostatus_t L3GD20H_SetAxis(L3GD20H_Axis_t axis);
@@ -616,5 +629,3 @@ gyrostatus_t L3GD20H_Get6DPosition(u8_t* val);
 extern void ReadL3GD20HFIFO(uint8_t* px, uint8_t* py, uint8_t* pz, uint8_t len);
 
 #endif
-
-

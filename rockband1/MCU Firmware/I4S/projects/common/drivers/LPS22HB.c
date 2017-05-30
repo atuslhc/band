@@ -169,16 +169,33 @@ int LPS22HBBlockRead(uint8_t address, uint8_t length, uint8_t* values)
 
 void LPS22HB_RST(void)
 {
+	uint8_t t8_l=0, t8_h=0; 
 
-	//SysCtlDelay(1000);
-	//LPS22HB_WriteReg(REG_IRQ_STATUS, 0xff);
+    LPS22HB_ReadReg(LPS22HB_CTRL_REG1, &t8_l);
+    LPS22HB_ReadReg(LPS22HB_CTRL_REG2, &t8_h);
+    
+	LPS22HB_WriteReg(LPS22HB_CTRL_REG2, 0x04);
+    LPS22HB_ReadReg(LPS22HB_CTRL_REG2, &t8_h);
 
-	//SysCtlDelay(1000);
+	SysCtlDelay(1000);
+    LPS22HB_ReadReg(LPS22HB_CTRL_REG2, &t8_h);
+    
+    LPS22HB_ReadReg(LPS22HB_CTRL_REG1, &t8_h);
 
 }
 
+void LPS22HB_Disabled(void)
+{
+    if (systemStatus.blPressureSensorOnline==0x01)
+    {
+      LPS22HB_RST();
+      systemStatus.blPressureSensorOnline = false;
+    }
+    GPIO_PinModeSet(PRES_INT_PORT, PRES_INT_PIN, gpioModeDisabled, 0); /* PRES_INT */
 
-void LPS22HB_Init(void)
+}
+
+int LPS22HB_Init(uint8_t mode)
 {
 	uint8_t nonused;
 
@@ -189,14 +206,18 @@ void LPS22HB_Init(void)
 	systemStatus.blPressureSensorOnline = false;
 
 	if(nonused != LPS22HB_PART_ID)// Device id 0xB1
-		return;
+		return DEVICE_NOTEXIST;
 
 	systemStatus.blPressureSensorOnline = true;
 
-
 	LPS22HB_RST();//
+    
+    if (mode==0)
+    {
+      LPS22HB_Disabled();
+    }
 
-
+    return DEVICE_SUCCESS;
 }
 
 
@@ -213,7 +234,7 @@ uint8_t GeLPS22HB_Temperature(void)
 	//Atus: [BG023-2] should check read fail condition.
 	if (ret != i2cTransferDone) //[BG023-2] add.
 	{
-	 	return 0;//bUltraViolet; //return last value.
+	 	return 0; //return last value.
 	}
 
 	ret = (t8_h * 256 + t8_l) / Tsens;

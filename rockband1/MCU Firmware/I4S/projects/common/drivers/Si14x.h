@@ -19,7 +19,7 @@
 #define INDOOR  0
 #define OUTDOOR  1
 
-#define Si1132_PART_ID            0x32  //
+#define Si1132_PART_ID            0x32  //Si1132 chip identifier
 
 
 // I2C Registers
@@ -34,19 +34,25 @@
 #define REG_HW_KEY                0x07
 #define REG_MEAS_RATE             0x08
 #define REG_ALS_RATE              0x09
-#define REG_PS_RATE               0x0A
-#define REG_ALS_LO_TH_LSB         0x0B
-#define REG_ALS_LO_TH_MSB         0x0C
-#define REG_ALS_HI_TH_LSB         0x0D
-#define REG_ALS_HI_TH_MSB         0x0E
-#define REG_PS_LED21              0x0F
-#define REG_PS_LED3               0x10
-#define REG_PS1_TH_LSB            0x11
-#define REG_PS1_TH_MSB            0x12
+#define REG_MEAS_RATE_LSB         0x08
+#define REG_MEAS_RATE_MSB         0x09
+#define REG_PS_RATE               0x0A  //reserved
+#define REG_ALS_LO_TH_LSB         0x0B  //reserved
+#define REG_ALS_LO_TH_MSB         0x0C  //reserved
+#define REG_ALS_HI_TH_LSB         0x0D  //reserved
+#define REG_ALS_HI_TH_MSB         0x0E  //reserved
+#define REG_PS_LED21              0x0F  //reserved
+#define REG_PS_LED3               0x10  //reserved
+#define REG_PS1_TH_LSB            0x11  //reserved
+#define REG_PS1_TH_MSB            0x12  //reserved
 #define REG_PS2_TH_LSB            0x13
 #define REG_PS2_TH_MSB            0x14
 #define REG_PS3_TH_LSB            0x15
 #define REG_PS3_TH_MSB            0x16
+#define REG_UCOEF0                0x13
+#define REG_UCOEF1                0x14
+#define REG_UCOEF2                0x15 
+#define REG_UCOEF3                0x16 
 #define REG_PARAM_WR              0x17
 #define REG_COMMAND               0x18
 #define REG_RESPONSE              0x20
@@ -55,25 +61,23 @@
 #define REG_ALS_VIS_DATA1         0x23
 #define REG_ALS_IR_DATA0          0x24
 #define REG_ALS_IR_DATA1          0x25
-#define REG_PS1_DATA0             0x26
-#define REG_PS1_DATA1             0x27
-#define REG_PS2_DATA0             0x28
-#define REG_PS2_DATA1             0x29
-#define REG_PS3_DATA0             0x2A
-#define REG_PS3_DATA1             0x2B
+#define REG_PS1_DATA0             0x26  //reserved
+#define REG_PS1_DATA1             0x27  //reserved
+#define REG_PS2_DATA0             0x28  //reserved
+#define REG_PS2_DATA1             0x29  //reserved
+#define REG_PS3_DATA0             0x2A  //reserved
+#define REG_PS3_DATA1             0x2B  //reserved
 #define REG_AUX_DATA0             0x2C
 #define REG_AUX_DATA1             0x2D
 #define REG_PARAM_OUT             0x2E
 #define REG_PARAM_RD              0x2E
 #define REG_CHIP_STAT             0x30
 
-#define REG_UCOEF0                0x13  
-#define REG_UCOEF1                0x14
-#define REG_UCOEF2                0x15  
-#define REG_UCOEF3                0x16  
+#define REG_ANA_IN_KEY0           0x3B
+#define REG_ANA_IN_KEY1           0x3C
+#define REG_ANA_IN_KEY2           0x3D
+#define REG_ANA_IN_KEY3           0x3E
 
-#define REG_MEAS_RATE_LSB         0x08
-#define REG_MEAS_RATE_MSB         0x09
 
 // Parameter Offsets
 #define PARAM_I2C_ADDR            0x00
@@ -287,6 +291,15 @@
 // REG_HW_KEY
 #define HW_KEY_VAL0               0x17
 
+// REG_COMMAND
+#define COMMAND_NOP               0x00  //Force a zero into the RESPONSE register
+#define COMMAND_RESET             0x01
+#define COMMAND_BUSADDR           0x02  //modify I2C address
+#define COMMAND_GET_CAL           0x12  //reports calibration data to I2C registers 0x22-0x2D
+#define COMMAND_FORCE             0x06  //Force a single ALS measurement
+#define COMMAND_ALS_PAUSE         0x0A  //Pauses autonomous ALS
+#define COMMAND_ALS_AUTO          0x0E  //Starts/Restarts an autonomous ALS loop
+
 // Sleep Control
 // PARAM_SLEEP_CTRL 
 #define SLEEP_DISABLED            0x01
@@ -351,11 +364,14 @@ typedef struct
 //int SI14xPsForce(void);
 int Si114xAlsForce(void);
 
-void UV_Init(void);
+void SI14x_Disabled(void);
+int UV_Init(uint8_t mode);
 
 uint8_t GetUVindex(void);
 uint16_t GetAmbLight(void);
 void InOutdoorChange(uint8_t flg);
 int Si114xPauseAll(void );
+void UV_RST(void);
+
 
 #endif

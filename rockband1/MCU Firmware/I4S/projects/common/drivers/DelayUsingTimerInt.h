@@ -19,6 +19,9 @@ typedef enum
 	TIMER_FLAG_BLE           	,
 //	TIMER_FLAG_WIFI				,
 //	TIMER_FLAG_USBClose    		,
+#if (REALDATA_TIMER==1)
+    TIMER_FLAG_REALDATA         ,  //add for cap sensor realdata
+#endif
     TIMER_FLAG_pressure         ,  //
 	TIMER_FLAG_LEDFlashing 		,
     MAX_TIMER_FLAGS

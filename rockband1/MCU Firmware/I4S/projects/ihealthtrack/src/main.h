@@ -49,7 +49,7 @@
   #elif (BOARD_TYPE==2)
     #define Dev_Name 2
     #define APP_FW_VER_M  0
-    #define APP_FW_VER_S  14
+    #define APP_FW_VER_S  20
   #endif
  #else
  #error "Please specify VENDOR_TYPE!"
@@ -229,7 +229,7 @@ extern uint8_t NoTOUCHPressCount;
 #define LEDG_PIN   (3)
 #define LEDB_PIN   (2)
 #define LEDAll_PIN   (7)
-#define LED_PIN    LEDR_PIN     //redirect mapping, backward compatible.
+#define LED_PIN    LEDG_PIN     //redirect mapping, backward compatible.
 #endif
 #if (BOARD_TYPE==0 || BOARD_TYPE==1)
 #define LED_ON()        GPIO_PinOutSet(LED_GPIOPORT, LED_PIN) //high active
@@ -365,7 +365,6 @@ extern uint8_t NoTOUCHPressCount;
 #define AFE_ADC_DRDY_PORT    (gpioPortA)
 #define AFE_ADC_DRDY_PIN    (5)
 
-
 #define BOTTOM_POWER_ON()    GPIO_PinOutSet(AFE_POWER_CON_PORT,AFE_POWER_CON_PIN)
 #define BOTTOM_POWER_OFF()    GPIO_PinOutClear(AFE_POWER_CON_PORT,AFE_POWER_CON_PIN)
 #endif
@@ -466,11 +465,12 @@ extern uint8_t NoTOUCHPressCount;
 #if (BOARD_TYPE==0 || BOARD_TYPE==2)
 #define FLASH_PW_PORT  (gpioPortD)
 #define FLASH_PW_PIN    (5)    //PD5
+#define FLASH_PW_PORT2  (gpioPortD)
 #define FLASH_PW_PIN2    (3)  //  20141225
 #elif (BOARD_TYPE==1)
 #define FLASH_PW_PORT  (gpioPortE)
 #define FLASH_PW_PIN    (13)    //PE13
-#define FLASH_PW2_PORT  (gpioPortA)
+#define FLASH_PW_PORT2  (gpioPortA)
 #define FLASH_PW_PIN2    (15)  //PA15
 #endif
 
@@ -480,8 +480,10 @@ extern uint8_t NoTOUCHPressCount;
 #define FLASH_SPI_CSPIN     (15)
 
 
-#define FLASH_PW_ON()     GPIO_PinOutSet(FLASH_PW_PORT,FLASH_PW_PIN)
-#define FLASH_PW_OFF()    GPIO_PinOutClear(FLASH_PW_PORT,FLASH_PW_PIN)
+#define FLASH_PW_ON()     GPIO_PinOutSet(FLASH_PW_PORT,FLASH_PW_PIN); \
+                          GPIO_PinOutSet(FLASH_PW_PORT2,FLASH_PW_PIN2)   //add turn on both to avoid current lost.
+#define FLASH_PW_OFF()    GPIO_PinOutClear(FLASH_PW_PORT,FLASH_PW_PIN); \
+                          GPIO_PinOutClear(FLASH_PW_PORT2,FLASH_PW_PIN2) //add turn off both to avoid current lost.
 
 
 #define  FLASH_CS_L()     GPIO_PinOutClear(FLASH_SPI_CS_GPIOPORT,FLASH_SPI_CSPIN)

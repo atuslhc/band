@@ -1,6 +1,7 @@
 #ifndef _ble_H
 #define _ble_H
 
+#include "common_vars.h"
 
 #define BLE_ON  1
 #define BLE_OFF 0
@@ -11,6 +12,22 @@ typedef enum _BLE_STATE
   BLE_STATE_ADVERTISING = 0x01,
   BLE_STATE_CONNECTED = 0x02,
 } BLE_STATE_t;
+
+/**
+ * GAP Peripheral Role States.
+ */
+typedef enum    //Copy from SensorTag peripheral.h
+{
+  GAPROLE_INIT = 0,                       //!< Waiting to be started
+  GAPROLE_STARTED,                        //!< Started but not advertising
+  GAPROLE_ADVERTISING,                    //!< Currently Advertising
+  GAPROLE_ADVERTISING_NONCONN,            //!< Currently using non-connectable Advertising (CC2541 add)
+  GAPROLE_WAITING,                        //!< Device is started but not advertising, is in waiting period before advertising again
+  GAPROLE_WAITING_AFTER_TIMEOUT,          //!< Device just timed out from a connection but is not yet advertising, is in waiting period before advertising again
+  GAPROLE_CONNECTED,                      //!< In a connection
+  GAPROLE_CONNECTED_ADV,                  //!< In a connection + advertising
+  GAPROLE_ERROR                           //!< Error occurred - invalid state
+} gaprole_States_t;
 
 //==================
 typedef enum _BLE_CONNECT_INTERVAL
@@ -100,6 +117,7 @@ typedef enum _BLE_SUBCMD
   SBLE_CONNECT_INTERVAL,    //0x04 ble update the ble_connect_interval value.UART_CONNECT_NOTIFY
   SBLE_ANCS_CONTROL,        //0x05 ble ANCS message control. UART_TYPE_ANCS
   SBLE_BROADCAST_UPDATE,    //0x06 ble broadcast user data update. UART_BROADCAST_UPDATE
+  SBLE_TYPE_BATTERY,        //0x07 mcu update battery info.
 } BLE_SUBCMD_t;
 
 #define UART_LEN_FOU			0x04
@@ -133,6 +151,7 @@ typedef enum _CH_Type
 	BLE_CH3=3,	//use in HR data.Send_1HZ_PacketOverBLE() [UUID:180D,Char:2A37]
 	BLE_CH4=4,	//reserved for battery, not use yet.
 	BLE_CH5=5,  //use in Upload Data.(just data only.) [UUID:AA50,Char:AA51]
+    BLE_CH8=8,  //use for readatrribute service (BATT)
 	BLE_CH9=9,  //get device information. UART_CMD_ASK_DevInfo
 	BLE_CHA=10  //HR send and tunnel. SendNotificationAlert() [UUID:AA60,Char:AA61]
 } CH_Type_t;
@@ -200,21 +219,31 @@ typedef enum _BLE_CMD
 	
 } BLE_CMD;
 
+typedef enum _BLE_CHIP_ID { //refer cc254x-UserGuide p59
+    BLE_CC2530_ID = 0xA5,
+    BLE_CC2531_ID = 0xB5,
+    BLE_CC2533_ID = 0x95,
+    BLE_CC2540_ID = 0x8D,
+    BLE_CC2541_ID = 0x41,
+} BLE_CHIP_ID;
+
 union _BLE_CHIP
 {
 	struct _BLE_DEVICE
 	{
-		uint8_t  MCUTYPE;  //  0x41
-		uint8_t  MEMCAP;   // 0x08 = 256K
+        uint8_t  CHIPTYPE;  //  CC2540: 0x8D, CC2541:0x41  refer CC254x-UG p59
+		uint8_t  MEMCAP;   // bit6-4: 100:256KB,
 		uint8_t  FW_VER1; // 1
 		uint8_t  FW_VER2; // 0
-		uint32_t unique0;  // MAC address , the first 4bytes
-		uint16_t unique1;  // the second 2 bytes , 6 bytes in total
+        
+		uint8_t  unique0[4];  //uint32_t unique0;  // MAC address , the first 4bytes
+		uint8_t  unique1[2];  //uint16_t unique1;  // the second 2 bytes , 6 bytes in total
 		uint8_t  WORKSTA; // 0= ble bootload ,1 = ble app
 		uint8_t  Rev;
 	} BLE_Device;
 	uint8_t BLE_DeviceInfo[12];
 };
+#define MAC_SIZE          6
 
 //ÐÂÌí¼ÓµÄ
 typedef struct _SECTOR_NODE
@@ -224,13 +253,58 @@ typedef struct _SECTOR_NODE
 } SECTOR_NODE;
 
 extern volatile bool  BLE_ONLINE;
-extern uint8_t BLE_STATE;
+extern BLE_STATE_t BLE_STATE;
+extern gaprole_States_t gapProfileState;  //The BLE engine variable for debug.
 extern union _BLE_CHIP BLE_DevChip;
+extern uint8_t RealDataOnPhone;
+
+extern uint8_t RealDataBuf[REALTIME_DATA_BUFFER_SIZE];
+extern uint8_t RealDataBufIndex;
 
 #define BLE_UART_Closing 0
 #define BLE_UART_Opening 1
 
+#define BLESensorEnabled	0x11
+#define BLESensorDisabl		0x00
+
+#define SetSensorEnabled	0x07
+#define SetSensorDisabl		0x06
+
+typedef enum _BLE_SensorSetting
+{
+	HRSensorSetting =0x10,
+	UVSensorSetting =0x11,
+	AccelSensorSetting =0x12,
+	TouchSensorSetting =0x13,
+	PressureSensorSetting =0x14,
+	GeoMSensorSetting =0x15,
+	GyroSensorSetting =0x16,
+	CAPSensorSetting =0x17,
+	SkinTempSensorSetting =0x18,
+	AmbTempSensorSetting =0x19,
+	BluetoothSetting =0x1A,
+	FDSetting =0x1B,
+	SOSSetting =0x1C,
+	OLEDSetting =0x1D,
+	LEDSetting =0x1E,
+	USBSetting =0x1F,
+	UARTESetting =0x20,
+	SensorSettingMax,
+} BLE_SensorSetting;
+
+typedef enum _BLE_CMD_STATUS
+{
+  BLE_CMD_SUCCESS = 0x00,
+  BLE_CMD_FAIL = 0x01,
+  BLE_CMD_FAIL_PARAM = 0x02,
+  BLE_CMD_FAIL_PERMISSION = 0x03,
+  BLE_CMD_FAIL_NOT_SUPPORT = 0x04,
+} BLE_CMD_STATUS;
+
 extern volatile bool BleLeUartSta;
+
+void LEUARTSentByDma(uint8_t comm_type, uint8_t* p , uint8_t len);
+void ParseHostData(uint8_t* pr, uint8_t nLen);
 
 void BLE_INIT(void);
 void BLE_RESET(void);
@@ -240,11 +314,12 @@ void BLE_Update_End(uint16_t checksum);
 void BLE_ADVEN_CON(uint8_t onoff, uint8_t inteval);
 
 void BLE_SET_CONNECT_INTERVAL(uint8_t inteval);
+void Change_BLE_CONNECT_INTERVAL(uint8_t val);
 
 void SendData2Host(uint8_t* p, uint8_t len);
 void getBleDeviceInfo(void);
-
-void SendRealDataOverBLE();
+//void SendRealDataOverBLE(void);
+int SendRealDataOverBLE(uint8_t *buf, uint8_t datalen, uint8_t addr, int8_t sendflag, int8_t cleanflag);
 
 void ParseBleUartPak(void);
 void BLE_Close(void);
@@ -269,6 +344,7 @@ void CheckFall(void);
 #if SOS_HIT_SUPPORT
 void CheckSOS(void);
 #endif
+void sendBleBatteryInfo(uint8_t capacity, float voltage);
 #endif
 
 

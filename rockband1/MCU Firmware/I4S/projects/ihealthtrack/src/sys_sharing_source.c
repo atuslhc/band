@@ -1,13 +1,14 @@
 #include <stdarg.h>
 
+#include "common_vars.h"
 #include "main.h"
 #include "em_gpio.h"
 #include "em_cmu.h"
 #include "em_usart.h"
 #include "em_adc.h"
 #include "em_rtc.h"
+#include "stdlib.h"
 
-#include "common_vars.h"
 #include "device_task.h"
 #include "flash_task.h"
 #include "display_task.h"
@@ -15,11 +16,12 @@
 #include "crc.h"
 #include "cortex-m_faults.h"
 #include "em_int.h"
+#include "ble.h"
 
 #include "Si14x.h"
 #if (BAROMETER_SUPPORT==1)
 #include "LPS22HB.h"
-#elif
+#elif (BAROMETER_SUPPORT==2)
 #include "LPS35HW.h"
 #endif
 
@@ -370,19 +372,27 @@ void ADC_INIT(void)
 
 }
 
-#define Vcc_Buff_Size 4
+//#define Vcc_Buff_Size 4   //move to common_vars.h for P180F_ADCRAW_PATCH.
 short Vcc_Buff[Vcc_Buff_Size], Vcc_Buff_Rp = 0;
 
 void Battery_ADC_Init(void)
 {
-	// 从电池曲线方程反推出来的 满电量 值 = 2607
 	ADC_INIT();
 
 	for(int i = 0; i < Vcc_Buff_Size; i++)
+      Vcc_Buff[i] = 0;
+#if 0   //patch check 0 while Battery_ADC_Read() average, just set 0.
+	/* base on the battery capacity graph, get the full cap voltage and revert the ADC data,
+       The data init to average the ADC read value */
 #if (BATTERY_SUPPORT==1)
 		Vcc_Buff[i] = 2607; //2978; // 2.4/3.3 * 4096. The battery capacity curve get full cap 2607
 #elif (BATTERY_SUPPORT==2)
+#if (BAT_ADC_CONFIG==1)
 		Vcc_Buff[i] = 2457; // CR2477,2032 full 3.0V.
+#elif (BAT_ADC_CONFIG==2)
+		Vcc_Buff[i] = 3530; // CR2477,2032 full 3.0V.
+#endif
+#endif
 #endif
 
 	ADC_InitSingle(ADC0, &BAT_ADC_INIT);
@@ -391,7 +401,14 @@ void Battery_ADC_Init(void)
 void Battery_ADC_Read(void)
 {
 	float BAT_VCC;
-
+    int i;
+#if (P180F_PATCH==1)
+    static uint8_t lastbBatteryRemaining = DEFAULT_BATTERY_REAMINING_PRESET;
+    uint8_t ubuff[6] = {SBLE_TYPE_BATTERY, DEFAULT_BATTERY_REAMINING_PRESET, 0, 0,0,0};
+#else
+    uint8_t lastbBatteryRemaining = systemStatus.bBatteryRemaining;
+    uint8_t ubuff[4] = {BLE_CH2, GET_BATTERY_LEVEL, 0,0};
+#endif
 	while (ADC0->STATUS & ADC_STATUS_SINGLEACT);
 
 	short val = (short)ADC_DataSingleGet(ADC0);
@@ -403,13 +420,16 @@ void Battery_ADC_Read(void)
 	Vcc_Buff_Rp %= Vcc_Buff_Size;  //Atus: should be put into above increment block.
 	BAT_VCC = 0;
 
-	for(int i = 0; i < Vcc_Buff_Size; i++)
+	for(i=0; i<Vcc_Buff_Size && Vcc_Buff[i]!=0; i++)
+    {
 		BAT_VCC += Vcc_Buff[i];
+    }
 
-	BAT_VCC = BAT_VCC / Vcc_Buff_Size;
+    if (i==0)
+        return;
+    else
+      BAT_VCC = BAT_VCC / i; //Vcc_Buff_Size;
 
-        //itest = val; 
-        //ftest = BAT_VCC;
 #if (BATTERY_SUPPORT==1)
 	BAT_VCC = 2 * BAT_VCC * 3.3 / 4096; //reference Vdd, why use 3.3V?
 	//================================
@@ -436,8 +456,11 @@ void Battery_ADC_Read(void)
 #endif
 	//FIXME:================================remaining not implement yet
 	// percent = 2.2V-3.15 // Accroding the capacity graphic just simplify a linear equation for test API only.
+#if (P180F_PATCH==1)
+    systemStatus.fBatteryVolt = BAT_VCC;
+#endif    
 	float temp = 1.364 * BAT_VCC - 3.15;
-
+    
 	if(temp < 0) temp = 0.01;
 
 	temp = temp * 100;
@@ -450,8 +473,28 @@ void Battery_ADC_Read(void)
 	else
 		systemStatus.bBatteryRemaining = (uint8_t)temp;
 
-//    systemStatus.bBatteryRemaining = 100;
-
+    /* send a signal to BLE update the information while change */
+#if (BOARD_TYPE==2)
+#if (P180F_PATCH==1)
+    if (abs(lastbBatteryRemaining - systemStatus.bBatteryRemaining)>=BATTERY_LEVEL_TOLERANCE) //FIXME: 
+    {
+        //sendBleBatteryInfo(systemStatus.bBatteryRemaining, BAT_VCC);
+        ubuff[1] = systemStatus.bBatteryRemaining;
+    /* convert float to int16 with 100 */
+        ubuff[2] = (int16_t)(BAT_VCC*100);
+        ubuff[3] = (int16_t)(BAT_VCC*100)>>8;
+       	LEUARTSentByDma(UART_CMD_INFOR, ubuff, 4); //2
+        lastbBatteryRemaining = systemStatus.bBatteryRemaining;
+    }
+#else
+    if (lastbBatteryRemaining != systemStatus.bBatteryRemaining) //FIXME: 
+    {
+        //ParseHostData(&ubuff[1],1);
+        ubuff[2] = systemStatus.bBatteryRemaining;
+    	LEUARTSentByDma(UART_CMD_2HOST, &ubuff[0], 3);
+    }
+#endif
+#endif
 #endif
 
 }
@@ -500,7 +543,7 @@ typedef struct
 
 #pragma pack(pop)
 
-bool isLedFlashing = false;					// 当前是否有 led flashing 动作
+bool isLedFlashing = false;					// led flashing currently
 bool blLedFlashSettingsBackuped = false;	// indicate the backupLedFlashSettings used.
 LED_FLASH_SETTINGS currentLedFlashSettings;
 LED_FLASH_SETTINGS backupLedFlashSettings;
@@ -759,7 +802,10 @@ void CHECK_PER_Xsecond(void)
 #if (VIBRATION_SUPPORT==1)
 		CheckVibrateStatus();
 #endif
-		isMemsError();
+#if (ACCELEROMETER_SUPPORT==1)
+        if (systemSetting.blAccelSensorEnabled)
+            isMemsError();
+#endif
 		CheckFlashStatus();
 
 		if(isMemsSleeping == true)
@@ -810,15 +856,15 @@ void Check_UV_Sensor(bool inoutdoor)
 	static uint8_t UV_Warning_Count = 0;
 	uint8_t readindex; //[BG023-2] add to filter abnormal value.
 
-#if BATTERY_LIFE_OPTIMIZATION
-	systemSetting.blUVSensorEnabled = false;
-#endif
+//#if BATTERY_LIFE_OPTIMIZATION  //replace by SensorSettings
+//	systemSetting.blUVSensorEnabled = false;
+//#endif
 
-	if(systemSetting.blUVSensorEnabled == false)
-	{
-		AmbientLight = 500;
-		return;
-	}
+//	if(systemSetting.blUVSensorEnabled == false)
+//	{
+//		AmbientLight = 500;
+//		return;
+//	}
 
 	if(inoutdoor == INDOOR)
 	{
@@ -1064,7 +1110,7 @@ void CHECK_BATTERY(void)
 		}
 	}
 #else
-    if (0)  //Atus: temporary for without charger
+    if (0)  //Atus: temporary for junction the else-without charger function while apply macro. 
     {
     }
 #endif
@@ -1235,7 +1281,9 @@ void CHECK_BATTERY(void)
 			//
 			if (bNewBatteryLevel == OUT_OF_BATTERY)
 			{
-				if((systemStatus.blBatteryCharging == true))//防止MCU刚从低功耗醒来又进去低功耗，后面的参数保证在完全没有电后，再充电时不会掉到低功耗。
+              //prevent MCU just wakeup from OUT_OF_BATTERY condition, re-enter again while battery level not changed yet.
+              // The below parameters make sure dry out charging not enter the OUT_OF_BATTERY.
+              if((systemStatus.blBatteryCharging == true))
 					return;
 
 				batteryDrainout = true;

@@ -1,0 +1,26 @@
+Expression	Value	Location	Type	
+systemSetting	<struct>	0x20003008	SYSTEM_SETTING	
+systemSetting.SystemMode	0x00	0x2000307C	UINT8	
+systemSetting.SystemRstTimes	0	0x20003074	UINT16	
+systemStatus	<struct>	0x20002CF0	SYSTEM_STATUS	
+systemStatus.bBatteryRemaining	0	0x20002D74	uint8_t	
+BLE_DevChip	<union>	0x20003530	union _BLE_CHIP	
+BLEErrorCounte	0x00	0x20003793	uint8_t	
+BLE_Should_Status	0x00	0x20003780	uint8_t	
+BLE_STATE	0x00	0x2000377B	BLE_STATE_t	
+gapProfileState	GAPROLE_INIT	0x2000377D	gaprole_States_t	
+Check_Connect_Counter	0	0x2000378C	uint8_t	
+Current_Connect_Interval	0x04	0x20000488	uint8_t	
+systemStatus.blBleOnline	0	0x20002D6C	bool	
+systemStatus.bleUartErrPkts	0	0x20002DEC	uint8_t	
+En_HR_Read	0	0x2000377F	bool	
+test1.typeuint32	0x00000000	0x2000365C	uint32_t	
+test2.typeuint32	Error (col 1): Unknown or ambiguous symbol. test2			
+displayTaskHeartBeat	0	0x2000366C	int	
+isSOSDetected
+sosNotification	0x00	0x200037AE	uint8_t	
+isDetectedFall
+SendAlertNotification	0x00	0x200037AB	uint8_t	
+permitSend	'\0' (0x00)	0x20003795	uint8_t	
+KEY1_LastReleaseTime
+KEY1_LastPressTime

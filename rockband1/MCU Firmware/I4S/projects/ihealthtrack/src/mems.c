@@ -70,7 +70,30 @@ void MEMS_Par_Init(uint8_t freq)
 #endif
 }
 
-void MEMS_Init(void)
+void MEMS_Disabled(void)
+{
+    if (systemStatus.blAccelSensorOnline==0x01) //&& 0
+    {
+        LIS3DH_SetMode(LIS3DH_POWER_DOWN);
+    }
+    systemStatus.blAccelSensorOnline = false;
+
+	INT_Disable();
+
+	GPIO_IntConfig(MEMS_INT1_PORT, MEMS_INT1_PIN, false, false , false); //fallingEdge
+	GPIO_IntClear(1 << MEMS_INT1_PIN);
+	GPIO_PinModeSet(MEMS_INT1_PORT, MEMS_INT1_PIN, gpioModeDisabled, 1);
+    
+	GPIO_IntConfig(MEMS_INT2_PORT, MEMS_INT2_PIN, false, false , false); //fallingEdge
+	GPIO_IntClear(1 << MEMS_INT2_PIN);
+	GPIO_PinModeSet(MEMS_INT2_PORT, MEMS_INT2_PIN, gpioModeDisabled, 1);
+
+	INT_Enable();
+
+	GPIO_PinModeSet(MEMS_CS_PORT, MEMS_CS_PIN, gpioModeDisabled, 1);
+}
+
+int MEMS_Init(uint8_t mode)
 {
 	USART_InitSync_TypeDef usartInit = USART_INITSYNC_DEFAULT;
 
@@ -99,11 +122,23 @@ void MEMS_Init(void)
 
 	LIS3DH_GetWHO_AM_I(&mems_test_val);
 
-	if(mems_test_val == 0x33)
+	if(mems_test_val != LIS3DH_PART_ID) //0x33
+    {
+		systemStatus.blAccelSensorOnline = false;
+        return DEVICE_NOTEXIST;
+    }
+    
+    if (mode==0)
+    {
+        MEMS_Disabled();
+		systemStatus.blAccelSensorOnline = false;
+    }
+	else
 	{
 		systemStatus.blAccelSensorOnline = 1;
 		LIS3DH_SetMode(LIS3DH_POWER_DOWN);
 	}
+    return DEVICE_SUCCESS;
 }
 
 #if 1
@@ -243,13 +278,18 @@ uint32_t MemesEventCount = 0;
 uint32_t save_activity_delta;
 void Mems_Proc(void)
 {
+    if (systemStatus.blAccelSensorOnline==0x0) //if not online, action should be filter.
+      return;
+#if (BGXXX==10)
+    test2.typeuint32++;
+#endif
 	ReadMemsFIFO((uint8_t*)&MEMS_BUFF[0][0],
 	             (uint8_t*)&MEMS_BUFF[1][0],
 	             (uint8_t*)&MEMS_BUFF[2][0],
 	             MEMS_FIFO_SIZE); // 900us to read
 
 	if(systemSetting.SystemMode == SYSTEM_MODE_ACTIVATED)
-		active_level_delta = XYZFilter_TRACK();
+		active_level_delta = XYZFilter_TRACK();  //call to mems_tracking
 
 	MemesEventCount++;
 	//MemesEventCount%=100;
@@ -271,6 +311,9 @@ void Mems_Proc(void)
 
 void Mems_WakeUp(void)
 {
+    if (systemStatus.blAccelSensorOnline==0x0)
+      return;
+    
 	if(systemStatus.blHRSensorOn == false)
 	{
 		MEMS_FIFO_INIT();
@@ -287,11 +330,11 @@ void SleepWork(void)
 	isMemsSleeping = true;
 }
 
-uint32_t MemesErrorCount = 0;
+uint32_t MemesErrorCount = 0; //record how many times detect the accelerometer miss event.
 void isMemsError(void)
 {
 	static char twosecondinterval = 0;
-	static uint32_t MemesEventCountBak = 5;
+	static uint32_t MemesEventCountBak = 5; //why not 0?
 
 	if( MEMS_Monitor_Model == true)
 		return;
@@ -302,7 +345,7 @@ void isMemsError(void)
 	{
 		if(MemesEventCountBak == MemesEventCount)
 		{
-			MEMS_Init();
+			MEMS_Init(systemSetting.blAccelSensorEnabled);
 			MEMS_FIFO_INIT();
 			MemesErrorCount++;
 		}
@@ -331,7 +374,7 @@ void MEMS_CLOSE(void)
 	LIS3DH_SetMode(LIS3DH_POWER_DOWN);
 }
 
-// 2015年6月16日16:49:02 添加，便于在save power modes下?行相?操作
+// 2015/6/16 16:49:02 added, to operate under save power modes
 void MEMS_OPEN(void)
 {
 	LIS3DH_SetMode(LIS3DH_NORMAL);
@@ -356,6 +399,10 @@ void ReadMemsRawData(uint8_t* p)
 void ReadMemsFIFO(uint8_t* px, uint8_t* py, uint8_t* pz, uint8_t len)
 {
 	unsigned char i;
+    
+    //Add the Online check to avoid external access while disable or fail.
+    if (systemStatus.blAccelSensorOnline==0)
+      return;
 	MEMS_CS_L();
 	USART_Tx(MEMS_SPI, 0x80 + 0x40 + LIS3DH_OUT_X_L);
 	USART_Rx(MEMS_SPI);
@@ -430,6 +477,32 @@ status_t LIS3DH_SetODR(LIS3DH_ODR_t ov)
 	return MEMS_SUCCESS;
 }
 
+status_t LIS3DH_GetODR(u8_t * ov)
+{
+	u8_t value;
+
+	if(!LIS3DH_ReadReg(LIS3DH_CTRL_REG1, &value))
+		return MEMS_ERROR;
+
+	value &= 0xf0;
+	*ov = value >> LIS3DH_ODR_BIT;
+
+ /*
+ ODR3 ODR2 ODR1 ODR0 Power mode selection
+0 0 0 0 Power down mode
+0 0 0 1 Normal / low power mode (1 Hz)
+0 0 1 0 Normal / low power mode (10 Hz)
+0 0 1 1 Normal / low power mode (25 Hz)
+0 1 0 0 Normal / low power mode (50 Hz)
+0 1 0 1 Normal / low power mode (100 Hz)
+0 1 1 0 Normal / low power mode (200 Hz)
+0 1 1 1 Normal / low power mode (400 Hz)
+1 0 0 0 Low power mode (1.6 KHz)
+1 0 0 1 Normal (1.25 kHz) / low power mode (5 KHz)
+ *
+ */
+	return MEMS_SUCCESS;
+}
 /*******************************************************************************
 * Function Name  : LIS3DH_SetMode
 * Description    : Sets LIS3DH Operating Mode

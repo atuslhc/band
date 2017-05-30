@@ -166,27 +166,63 @@ void AD7156_Reset(void)
 {
 	//SysCtlDelay(1000);
 	AD7156_WriteReg(AD7156_RESET, 0x1);
-	SysCtlDelay(3000);  // 2ms at least.append 1ms for safe.
+	SysCtlDelay(6000);  // 2ms at least.append 1ms for safe.
 }
 
 
-void AD7156_Init(void)
+int AD7156_Init(uint8_t mode)
 {
-	uint8_t data;
+	uint8_t status;
 
 	AD7156_IIC_Init();
 
-	AD7156_ReadReg(AD7156_CHIP_ID, &data); 
+	AD7156_ReadReg(AD7156_CHIP_ID, &status); 
 
-//	systemStatus.blCAPSensorOnline = false;
+	systemStatus.blCAPSensorOnline = false;
 
-	if(data != AD7156_PART_ID)// Device id
-		return;
+	if(status != AD7156_PART_ID)// Device id
+		return DEVICE_NOTEXIST;
 
-//	systemStatus.blCAPSensorOnline = true;
+    if (mode==0x00)
+    {
+	AD7156_SetPowerMode(AD7156_CONFIG_MD_PDown);
+        return DEVICE_SUCCESS;
+    }
 
+	systemStatus.blCAPSensorOnline = true;
+
+	AD7156_ReadReg(AD7156_CONFIG, &status);
+
+	///if(status & AD7156_FIXED_THRESHOLD)
+	///	return;
 
 	AD7156_Reset();//
+
+	
+	AD7156_SetPowerMode(AD7156_CONFIG_MD_Continuous);
+	AD7156_SetThrMode(AD7156_THR_MODE_NEGATIVE,Enable);
+#if	(CAP_CH==1) // ch1
+#if 1
+	AD7156_WriteReg(AD7156_CH1_THR_H, 0x3B); //devboard:49, pd:3B, 3F
+	AD7156_WriteReg(AD7156_CH1_SETUP, 0x0B); //0x0B
+#else
+	AD7156_WriteReg(AD7156_CH1_THR_H, 0x58); //devboard:49, pd:3B
+	AD7156_WriteReg(AD7156_CH1_SETUP, 0x4B); //0x0B   
+#endif
+	AD7156_ChannelEn(AD7156_CHANNEL1,Enable);
+	///AD7156_SetRange(AD7156_CHANNEL1,AD7156_CDC_RANGE_2_PF);
+	AD7156_ChannelEn(AD7156_CHANNEL2,Disable);
+	///AD7156_SetPowerMode(AD7156_CONFIG_MD_Single);
+	///AD7156_SetThreshold(AD7156_CH1_THR_H,0x4800);
+#else	//ch2
+	 
+	AD7156_WriteReg(AD7156_CH2_THR_H, 0x70);
+	AD7156_ChannelEn(AD7156_CHANNEL2,Enable);
+	AD7156_WriteReg(AD7156_CH2_SETUP, 0x0B); 
+	AD7156_ChannelEn(AD7156_CHANNEL1,Disable);
+#endif
+	
+        return DEVICE_SUCCESS;
 }
 
 
@@ -224,7 +260,7 @@ void AD7156_SetPowerMode(uint8_t pwrMode)
  *
  * @return None.
 *******************************************************************************/
-void AD7156_ChannelState(uint8_t channel, uint8_t enableConv)
+void AD7156_ChannelEn(uint8_t channel, uint8_t enableConv)
 {
     unsigned char oldConfigReg = 0;
     unsigned char newConfigReg = 0;
@@ -365,6 +401,7 @@ void AD7156_SetThreshold(unsigned char channel, float pFthr)
 
     thrRegAddress = (channel == 1) ? AD7156_CH1_THR_H :
                                      AD7156_CH2_THR_H;
+#if 0
     range = AD7156_GetRange(channel);
     rawThr = (unsigned short)((pFthr * 0xA000 / range) + 0x3000);
     if(rawThr > 0xD000)
@@ -375,6 +412,9 @@ void AD7156_SetThreshold(unsigned char channel, float pFthr)
     {
         rawThr = 0x3000;
     }
+#else
+    rawThr = (unsigned short) pFthr;
+#endif
     AD7156_BlockWrite(thrRegAddress, 2, (uint8_t*) &rawThr);
 }
 
@@ -541,6 +581,21 @@ float AD7156_WaitReadChCapacitance(unsigned char channel)
     pFdata = (((rawCh) - 0x3000) * chRange) / 0xA000;
 
     return pFdata;
+}
+
+uint8_t GetAD7156_OUT(unsigned char channel)
+{
+    unsigned char  status     = 0;
+    unsigned char channelMask  = 0;
+    
+    channelMask = (channel == 1) ? AD7156_STATUS_OUT1 : AD7156_STATUS_OUT2;
+	AD7156_ReadReg(AD7156_STATUS, &status);
+	///AD7156_SetPowerMode(AD7156_CONFIG_MD_Single);
+	if(status & channelMask)
+		return 1;
+
+	return 0;
+
 }
 
 #endif

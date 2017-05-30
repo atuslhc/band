@@ -219,7 +219,7 @@ typedef enum
 
 //Register Definition
 #define LIS3DH_WHO_AM_I				0x0F  // device identification register
-
+#define LIS3DH_PART_ID              0x33  // device identification value.
 // CONTROL REGISTER 1
 #define LIS3DH_CTRL_REG1				0x20
 #define LIS3DH_ODR_BIT				        BIT(4)
@@ -465,6 +465,7 @@ typedef enum
 /* Exported functions --------------------------------------------------------*/
 //Sensor Configuration Functions
 status_t LIS3DH_SetODR(LIS3DH_ODR_t ov);
+status_t LIS3DH_GetODR(u8_t * ov);
 status_t LIS3DH_SetMode(LIS3DH_Mode_t md);
 status_t LIS3DH_SetAxis(LIS3DH_Axis_t axis);
 status_t LIS3DH_SetFullScale(LIS3DH_Fullscale_t fs);
@@ -531,8 +532,8 @@ extern uint32_t save_activity_delta;
 extern int16_t MEMS_BUFF[][MEMS_BUFF_SIZE];
 extern union _MEMS_TRACKING_INFO  MEMS_TRACKING_INFO;
 
-
-void MEMS_Init(void);
+void MEMS_Disabled(void);
+int MEMS_Init(uint8_t mode);
 int MEMS_READ(I2C_TypeDef* i2c,
               uint8_t addr,
               TEMPSENS_Register_TypeDef reg,

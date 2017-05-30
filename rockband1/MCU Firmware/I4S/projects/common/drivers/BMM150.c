@@ -17,6 +17,11 @@
 
 #if (MAGNETIC_SUPPORT==1)
 
+#define Magnetic_BUFF_SIZE 32
+
+uint8_t Magnetic_BUFF[Magnetic_BUFF_SIZE][BMM150_DATA_FRAME_SIZE];
+uint8_t Magnetic_BUFF_Count=0;
+
 static struct BMM150_t *p_BMM150;
 
 BMM150_RETURN_FUNCTION_TYPE BMM150_read_register(u8 v_addr_u8,
@@ -149,6 +154,46 @@ BMM150_RETURN_FUNCTION_TYPE BMM150_set_presetmode(u8 v_presetmode_u8)
 	return com_rslt;
 }
 
+void BMM150_debug(void)
+{
+    uint8_t ui=0x4B, u8_data;
+
+    BMM150_read_register(0x4B, &u8_data);
+    if ((u8_data&0x01)==0x00)
+    {
+        BMM150_write_register(BMM150_POWER_CONTROL,0x01);
+        SysCtlDelay(3000);  // 2ms at least.
+    }   
+    for (ui=0x40 ; ui<0x52 ; ui++)
+    {
+        BMM150_read_register(ui, &u8_data);
+        u8_data = 0x00;
+    }
+}
+
+void BMM150_Disabled(void)
+{
+  if (systemStatus.blGeoMSensorOnline==0x01) //&& 0
+  {
+    //reset chip to sleep.
+	BMM150_write_register(BMM150_POWER_CONTROL,0x82);
+    SysCtlDelay(4000);  // 2ms at least.
+    BMM150_set_power_mode(BMM150_OFF);
+  }
+  systemStatus.blGeoMSensorOnline = false;
+#if 0
+  GPIO_IntConfig(BMM150_INT_PORT, BMM150_INT_PIN, false, true, false);
+  GPIO_IntClear(1 << BMM150_INT_PIN); 	
+  GPIO_PinModeSet(BMM150_INT_PORT, BMM150_INT_PIN, gpioModeDisabled, 1);
+
+  GPIO_IntConfig(BMM150_INT_PORT, BMM150_DRDY_PIN, false, true, false);	
+  GPIO_IntClear(1 << BMM150_DRDY_PIN); 	
+  GPIO_PinModeSet(BMM150_INT_PORT, BMM150_DRDY_PIN, gpioModeDisabled, 1);
+
+  GPIO_PinModeSet(BMM150_CS_PORT, BMM150_CS_PIN, gpioModeDisabled, 1);
+#endif
+}
+
 /*!
  *	@brief This function is used for initialize
  *	bus read and bus write functions
@@ -170,7 +215,7 @@ BMM150_RETURN_FUNCTION_TYPE BMM150_set_presetmode(u8 v_presetmode_u8)
  *
  *
 */
-BMM150_RETURN_FUNCTION_TYPE BMM150_Init(void)
+BMM150_RETURN_FUNCTION_TYPE BMM150_Init(uint8_t mode)
 {
 	/* variable used to return the bus communication result*/
 	BMM150_RETURN_FUNCTION_TYPE com_rslt = BMM150_ERROR;
@@ -185,8 +230,26 @@ BMM150_RETURN_FUNCTION_TYPE BMM150_Init(void)
 	uint8_t p_BMM150_id ;
 	CMU_ClockEnable(cmuClock_GPIO, true);
 	GPIO_PinModeSet(BMM150_CS_PORT, BMM150_CS_PIN, gpioModePushPull, 1);
-
-#if 0 /// int tset
+#if 0
+	/*Read CHIP_ID and REv. info */
+	com_rslt = 	BMM150_read_register(BMM150_ID_Reg,&p_BMM150_id);
+	if(p_BMM150_id == BMM150_ID)
+	{
+		systemStatus.blGeoMSensorOnline = 1;
+		////SetPOWERMode(POWER_DOWN);
+	}
+	else
+    {
+		systemStatus.blGeoMSensorOnline = 0;
+        return BMM150_NOTEXIST;
+    }
+    if (mode==0)
+    {
+      BMM150_Disabled();
+      return BMM150_SUCCESS;
+    }
+#endif    
+#if 1 /// int tset
 	GPIO_PinModeSet(BMM150_INT_PORT, BMM150_INT_PIN, gpioModeInput, 1);
 	GPIO_IntConfig(BMM150_INT_PORT, BMM150_INT_PIN, false, true, true);
 	GPIO_IntClear(1 << BMM150_INT_PIN); 	
@@ -200,34 +263,52 @@ BMM150_RETURN_FUNCTION_TYPE BMM150_Init(void)
 	NVIC_EnableIRQ(GPIO_EVEN_IRQn);
 #endif
 
+    BMM150_write_register(BMM150_POWER_CONTROL, 0x00); //into suspend
+    BMM150_write_register(BMM150_POWER_CONTROL, 0x82); //reset
+    SysCtlDelay(6000);
+    BMM150_write_register(BMM150_CONTROL, BMM150_SLEEP_MODE);
+    
 	/* set device from suspend into sleep mode */
 	////com_rslt = BMM150_set_power_mode(BMM150_ON);
 	BMM150_write_register(BMM150_POWER_CONTROL,0x01);
+    SysCtlDelay(7000);  // 2ms at least.
+    //BMM150_debug();
+    //
 	BMM150_write_register(BMM150_CONTROL,0x00);
+    com_rslt = BMM150_set_functional_state(BMM150_NORMAL_MODE);
 
 
 	/* wait two millisecond for bmc to settle */
 	////p_BMM150->delay_msec(BMM150_DELAY_SETTLING_TIME);
 
-
+#if 1
 	/*Read CHIP_ID and REv. info */
 	com_rslt = 	BMM150_read_register(BMM150_ID_Reg,&p_BMM150_id);
-	
-
 	if(p_BMM150_id == BMM150_ID)
 	{
 		systemStatus.blGeoMSensorOnline = 1;
 		////SetPOWERMode(POWER_DOWN);
 	}
 	else
+    {
 		systemStatus.blGeoMSensorOnline = 0;
+        return BMM150_NOTEXIST;
+    }
 
+    if (mode==0)
+    {
+      BMM150_Disabled();
+    }
+#endif
 
 	/* Function to initialise trim values */
 	///com_rslt += BMM150_init_trim_registers();
 	/* set the preset mode as regular*/
 	com_rslt += BMM150_set_presetmode(BMM150_PRESETMODE_REGULAR);
 	/// BMM150_write_register(BMM150_INT_CONTROL,0x80);	/// int tset
+	BMM150_set_data_rate(BMM150_DR_15HZ);  //BMM150_DR_30HZ
+
+	BMM150_write_register(BMM150_SENS_CONTROL,0x83);
 	return com_rslt;
 }
 /*!
@@ -325,12 +406,17 @@ u8 v_functional_state_u8)
  *	@retval -1 -> Error
  *
 */
-struct BMM150_mag_data_s16_t BMM150_mag_data;
+///struct BMM150_mag_data_s16_t BMM150_mag_data;
 
 BMM150_RETURN_FUNCTION_TYPE BMM150_read_mag_data_XYZ(void)
 {
 	/* variable used to return the bus communication result*/
 	BMM150_RETURN_FUNCTION_TYPE com_rslt = BMM150_ERROR;
+    
+    if (systemStatus.blGeoMSensorOnline==false)
+    {
+      return BMM150_NOTONLINE;
+    }
 	/* Array holding the mag XYZ and R data
 	v_data_u8[0] - X LSB
 	v_data_u8[1] - X MSB
@@ -352,29 +438,21 @@ BMM150_RETURN_FUNCTION_TYPE BMM150_read_mag_data_XYZ(void)
 
 	{
 		
-		BMM150_read_register(BMM150_DATA_R_LSB,&DRDYbit);
-		BMM150_mag_data.data_ready = DRDYbit&0x01;
-
-		if(BMM150_mag_data.data_ready)
         {
 		
           for(loop=0;loop<8;loop++)
-            BMM150_read_register((BMM150_DATA_X_LSB+loop),&v_data_u8[loop]);
+            ///BMM150_read_register((BMM150_DATA_X_LSB+loop),&v_data_u8[loop]);
+            BMM150_read_register((BMM150_DATA_X_LSB+loop),&Magnetic_BUFF[Magnetic_BUFF_Count][loop]);
+		  
+			Magnetic_BUFF_Count++;
+			
+			if(Magnetic_BUFF_SIZE == Magnetic_BUFF_Count)
+				{
+				/// Magnetic_BUFF full
+				Magnetic_BUFF_Count=0;
+				}
 
-          BMM150_mag_data.datax = 
-            ((v_data_u8[BMM150_XLSB_DATA]+v_data_u8[BMM150_XMSB_DATA]*0x100)>>3); //<<8
-		
-          BMM150_mag_data.datay = 
-            ((v_data_u8[BMM150_YLSB_DATA]+v_data_u8[BMM150_YMSB_DATA]*0x100)>>3); //<<8
-		
-          BMM150_mag_data.dataz = 
-            ((v_data_u8[BMM150_ZLSB_DATA]+v_data_u8[BMM150_ZMSB_DATA]*0x100)>>1); //<<8
-
-          // two's complement
-          BMM150_mag_data.resistance = 
-            ((v_data_u8[BMM150_RLSB_DATA]+v_data_u8[BMM150_RMSB_DATA]*0x100)>>2);  //<<8
-
-			return 1;
+			return BMM150_SUCCESS;
         }
 	
 	}
@@ -409,9 +487,11 @@ BMM150_RETURN_FUNCTION_TYPE BMM150_set_data_rate(u8 v_data_rate_u8)
 	BMM150_RETURN_FUNCTION_TYPE com_rslt = BMM150_ERROR;
 	u8 v_data_u8 = BMM150_INIT_VALUE;
 	/* check the p_BMM150 pointer is NULL*/
-	if (p_BMM150 == BMM150_NULL) {
-		return  E_BMM150_NULL_PTR;
-		} else {
+	///if (p_BMM150 == BMM150_NULL) {
+	///	return  E_BMM150_NULL_PTR;
+	///	} else 
+		{
+	
 		/* set the data rate */
 
 		com_rslt = BMM150_read_register(
@@ -424,6 +504,33 @@ BMM150_RETURN_FUNCTION_TYPE BMM150_set_data_rate(u8 v_data_rate_u8)
 			BMM150_CONTROL_DATA_RATE__REG,v_data_u8);
 
 	}
+	return com_rslt;
+}
+
+BMM150_RETURN_FUNCTION_TYPE BMM150_Get_data_rate(u8 *v_data_rate_u8)
+{
+	BMM150_RETURN_FUNCTION_TYPE com_rslt = BMM150_ERROR;
+	u8 v_data_u8 = BMM150_INIT_VALUE;
+		com_rslt = BMM150_read_register(
+			BMM150_CONTROL_DATA_RATE__REG,&v_data_u8);
+		
+		v_data_u8 &= (BMM150_CONTROL_DATA_RATE__MSK);		
+		*v_data_rate_u8 = v_data_u8 >> 3;
+		
+ /*	in the register 0x4C bit 3 to 5
+ *
+ *  @param  v_data_rate_u8 : The value of data rate
+ *  value     |       Description
+ * -----------|-----------------------
+ *   0x00     |  BMM150_DATA_RATE_10HZ
+ *   0x01     |  BMM150_DATA_RATE_02HZ
+ *   0x02     |  BMM150_DATA_RATE_06HZ
+ *   0x03     |  BMM150_DATA_RATE_08HZ
+ *   0x04     |  BMM150_DATA_RATE_15HZ
+ *   0x05     |  BMM150_DATA_RATE_20HZ
+ *   0x06     |  BMM150_DATA_RATE_25HZ
+ *   0x07     |  BMM150_DATA_RATE_30HZ
+ */
 	return com_rslt;
 }
 /*!

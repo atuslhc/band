@@ -93,16 +93,30 @@
 #define AD7156_CONFIG_EN_CH1           (1 << 4)
 #define AD7156_CONFIG_EN_CH2           (1 << 3)
 #define AD7156_CONFIG_MD(x)            ((x) & 0x7)
+#define AD7156_CONFIG_MD_Idle			0x0
+#define AD7156_CONFIG_MD_Continuous		0x1
+#define AD7156_CONFIG_MD_Single			0x2
+#define AD7156_CONFIG_MD_PDown			0x3
 
 /* AD7156_CONFIG_THR_FIXED options */
-#define AD7156_ADAPTIVE_THRESHOLD       0
-#define AD7156_FIXED_THRESHOLD          1
+#define AD7156_ADAPTIVE_THRESHOLD       (0 << 7) // 0
+#define AD7156_FIXED_THRESHOLD          (1 << 7) // 1
 
 /* AD7156_CONFIG_THR_MD(x) options */
-#define AD7156_THR_MODE_NEGATIVE        0
-#define AD7156_THR_MODE_POSITIVE        1
-#define AD7156_THR_MODE_IN_WINDOW       2
-#define AD7156_THR_MODE_OU_WINDOW       3
+#define AD7156_THR_MODE_NEGATIVE        (0 << 5) // 0
+#define AD7156_THR_MODE_POSITIVE        (1 << 5) // 1
+#define AD7156_THR_MODE_IN_WINDOW       (2 << 5) // 2
+#define AD7156_THR_MODE_OU_WINDOW       (3 << 5) // 3
+
+/* AD7156_CONFIG_EnCh1 options */
+#define AD7156_EnCh1_Disable        (0 << 4) // 0
+#define AD7156_EnCh1_Enable        (1 << 4) // 1
+/* AD7156_CONFIG_EnCh2 options */
+#define AD7156_EnCh2_Disable        (0 << 3) // 0
+#define AD7156_EnCh2_Enable        (1 << 3) // 1
+
+#define Disable        0
+#define Enable        1
 
 /* AD7156_CONFIG_MD(x) options */
 #define AD7156_CONV_MODE_IDLE            0
@@ -130,14 +144,14 @@
 
 /* =============function declare===================== */
 void AD7156_IIC_Init(void);
-void AD7156_Init(void);
+int AD7156_Init(uint8_t mode);
 void AD7156_Reset(void);
 int AD7156_ReadReg(uint8_t Reg, uint8_t* data);
 int AD7156_BlockRead(uint8_t address, uint8_t length, uint8_t* values);
 int AD7156_WriteReg(uint8_t WriteAddr, uint8_t Data);
 int AD7156_BlockWrite(uint8_t  address, uint8_t  length, uint8_t  const* values);
 void AD7156_SetPowerMode(uint8_t pwrMode);
-void AD7156_ChannelState(uint8_t ch, uint8_t enableConv);
+void AD7156_ChannelEn(uint8_t ch, uint8_t enableConv);
 void AD7156_SetRange(uint8_t ch, uint8_t range);
 float AD7156_GetRange(uint8_t ch);
 void AD7156_SetThrMode(uint8_t thrMode, uint8_t thrFixed);
@@ -150,5 +164,7 @@ uint16_t GetAD7156_Ch2(void);
 unsigned short AD7156_WaitReadChData(unsigned char channel);
 float AD7156_ReadChCapacitance(unsigned char channel);
 float AD7156_WaitReadChCapacitance(unsigned char channel);
+
+uint8_t GetAD7156_OUT(unsigned char channel);
 
 #endif

@@ -13,8 +13,8 @@
 
 #include "sleep.h"
 
-#include "main.h"
 #include "common_vars.h"
+#include "main.h"
 #include "device_task.h"
 #include "display_task.h"
 #include "flash_task.h"
@@ -26,6 +26,9 @@
 #include "mcp9804.h"
 #include "Si14x.h"
 #include "ble.h"
+#if (ACCELEROMETER_SUPPORT==1)
+#include "mems.h"
+#endif
 #if (BAROMETER_SUPPORT==1)
 #include "LPS22HB.h"
 #elif (BAROMETER_SUPPORT==2)
@@ -411,18 +414,18 @@ void onSystemStartup()
 #endif
 
 #if (UVSENSOR_SUPPORT==1)
-	UV_Init();
+	UV_Init(systemSetting.blUVSensorEnabled);
 #endif
 
-#if (BAROMETER_SUPPORT==1)
-    LPS22HB_Init();
-#elif (BAROMETER_SUPPORT==2)
-    LPS35HW_Init();
-#endif
+//#if (BAROMETER_SUPPORT==1)  //move to DeviceTask()
+//    LPS22HB_Init(systemSetting.blPressureSensorEnabled);
+//#elif (BAROMETER_SUPPORT==2)
+//    LPS35HW_Init(systemSetting.blPressureSensorEnabled);
+//#endif
     
-#if (CAP_SUPPORT==2)
-    AD7156_Init();
-#endif
+//#if (CAP_SUPPORT==2)  //move to DeviceTask()
+//    AD7156_Init();
+//#endif
     
 	
 #if BATTERY_LIFE_OPTIMIZATION
@@ -521,6 +524,12 @@ void onSystemModeChanged(SYSTEM_MODE oldMode, SYSTEM_MODE newMode)
 			systemSetting.blAmbTempSensorEnabled = false;
 			systemSetting.blSkinTempSensorEnabled = false;
 			systemSetting.blUVSensorEnabled = false;
+			systemSetting.blAccelSensorEnabled = false;
+			systemSetting.blGyroSensorEnabled = false;
+			systemSetting.blGeoMSensorEnabled = false;
+			systemSetting.blPressureSensorEnabled = false;
+			systemSetting.blCAPSensorEnabled = false;
+			//systemSetting.blBluetoothEnabled = false;
 
 			break;
 		}
@@ -541,6 +550,13 @@ void onSystemModeChanged(SYSTEM_MODE oldMode, SYSTEM_MODE newMode)
 			systemSetting.blAmbTempSensorEnabled = true;
 			systemSetting.blSkinTempSensorEnabled = true;
 			systemSetting.blUVSensorEnabled = true;
+			systemSetting.blAccelSensorEnabled = true;
+			systemSetting.blGyroSensorEnabled = true;
+			systemSetting.blGeoMSensorEnabled = true;
+			systemSetting.blPressureSensorEnabled = true;
+			systemSetting.blBluetoothEnabled = true;
+			systemSetting.blCAPSensorEnabled = true;
+			
 
 			//
 			StartDataGathering();
@@ -910,11 +926,11 @@ void onRealtimeClockTick()
 	pSystemTime = GetRTCCalendar();
 
 	// -------------------------------------------------------------
-	// 进入长时定时器
+	// Maintain the long timer counter function.
 	LongTimerFunc();
 
 	// -------------------------------------------------------------
-	// 发送到显示任务
+	// Send the EVT_TYPE_RTC event to hEvtQueueDisplay base on Devicetask with TICK_Message driven.
 //	USER_EVENT* tickEvent = (USER_EVENT*) osMailCAlloc(hDispEventQueue, 0);
 //	tickEvent->type = EVT_TYPE_RTC;
 //
@@ -942,7 +958,7 @@ void onRealtimeClockTick()
 
 
 	// -------------------------------------------------------------
-	// 检查 find me
+	// Check Find me expire
 	if (systemStatus.blFindingMe)
 	{
 		systemStatus.iFindingMeCount--;
@@ -1084,7 +1100,7 @@ void onBleHeartBeatCheck(void* data)
 			// reset device
 			RESET_MCU();
 
-			while(1) ;
+			while(1);
 		}
 		else if (systemStatus.iBleHeartBeatCounter >= 2)
 		{
@@ -1094,8 +1110,8 @@ void onBleHeartBeatCheck(void* data)
 		}
 		else if (systemStatus.iBleHeartBeatCounter >= 1)
 		{
-			// systemStatus.iBleHeartBeatCounter会在任意ble通讯时重置
-			// 如果没有重置，则自行发送获取ble信息
+			// systemStatus.iBleHeartBeatCounter try to getBleDeviceInfo()
+			// if still can not get response will reset BLE as above.
 			getBleDeviceInfo();
 		}
 
@@ -1108,6 +1124,11 @@ void onBleHeartBeatCheck(void* data)
 int displayTaskHeartBeat = 0;
 int flashTaskHeartBeat = 0;
 time_t lastKeyTouchTime = 0;
+uint8_t KEY1_count=0, KEY2_count=0;
+#if (SOS_2S==1)
+time_t KEY1_LastPressTime=0, KEY1_LastReleaseTime=0;
+time_t KEY2_LastPressTime=0, KEY2_LastReleaseTime=0;
+#endif
 
 void DeviceTask(void* argument)
 {
@@ -1128,7 +1149,7 @@ void DeviceTask(void* argument)
 	//
 	initLETIMER();
 #if (ACCELEROMETER_SUPPORT==1)
-	MEMS_Init();
+	MEMS_Init(systemSetting.blAccelSensorEnabled);
 	MEMS_CLOSE();
 #endif
 
@@ -1145,19 +1166,19 @@ void DeviceTask(void* argument)
 
     /* baro/pressure sensor */
 #if (BAROMETER_SUPPORT==1)
-    LPS22HB_Init();
+    LPS22HB_Init(systemSetting.blPressureSensorEnabled);
 #elif (BAROMETER_SUPPORT==2)
-    LPS35HW_Init();
+    LPS35HW_Init(systemSetting.blPressureSensorEnabled);
 #endif    
 
     /* magnetic sensor */
 #if (MAGNETIC_SUPPORT==1)
-    BMM150_Init();
+    BMM150_Init(systemSetting.blGeoMSensorEnabled);
 #endif
     
     /* gyro sensor */
 #if (GYRO_SUPPORT==1)
-    L3GD20H_Init();
+    L3GD20H_Init(systemSetting.blGyroSensorEnabled);
 #endif
     
 	Battery_ADC_Init();
@@ -1176,6 +1197,8 @@ void DeviceTask(void* argument)
 
 #if (CAP_SUPPORT==1)
 	CAPLESENSE_Init();
+#elif (CAP_SUPPORT==2)
+    AD7156_Init(systemSetting.blCAPSensorEnabled);
 #endif
  	//vTaskDelay(50);
 #if (BLE_SUPPORT==1)
@@ -1281,7 +1304,7 @@ void DeviceTask(void* argument)
 
 				if((systemStatus.blBleOnline == true) && (once == true))
 				{
-					for(k = 0; k < 6; k++)
+					for(k = 0; k < MAC_SIZE; k++)
 					{
 						if(BLE_DevChip.BLE_DeviceInfo[4 + k] != 0)
 						{
@@ -1290,7 +1313,7 @@ void DeviceTask(void* argument)
 						}
 					}
 
-					if(k == 7)
+					if(k == MAC_SIZE)
 					{
 						//说明mac地址没有获得，发送命令重新获取一次。
 						getBleDeviceInfo();
@@ -1540,12 +1563,37 @@ void DeviceTask(void* argument)
 
 						break;
 					}
-                case TIMER_FLAG_pressure:  //FIXME: should be divide two event for one by one.
+                    case TIMER_FLAG_pressure:  //FIXME: should be divide two event for one by one.
 #if (BAROMETER_SUPPORT==1)
 						LPS22HB_Read_converter();
 #endif
 #if (MAGNETIC_SUPPORT==1)
-						BMM150_read_mag_data_XYZ();
+						////BMM150_read_mag_data_XYZ(); //move to interrupt
+#endif
+#if (CAP_SUPPORT==2)
+                        if(systemSetting.blCAPSensorEnabled == true)
+                        {
+#if (CAP_CH==1)
+#if (BGXXX==11)
+                          test1.typeuint32 = GetAD7156_Ch1();
+#endif
+                          if(GetAD7156_OUT(AD7156_CHANNEL1))
+#else
+#if (BGXXX==11)
+                          test1.typeuint32 = GetAD7156_Ch2();
+#endif
+                          if(GetAD7156_OUT(AD7156_CHANNEL2))
+#endif
+                          {
+#if (LED_TEST==0)
+                            LEDB_ON();
+#endif
+                          }else{
+#if (LED_TEST==0)
+                            LEDB_OFF();
+#endif
+                          }
+                        }
 #endif
 						break;
 					
@@ -1554,46 +1602,301 @@ void DeviceTask(void* argument)
 					case TIMER_FLAG_BLE:
 						BLE_DATA_UPLOADING_PROC();
 						break;
+#if (REALDATA_TIMER==1)
+                    case TIMER_FLAG_REALDATA:
+                        if (RealDataOnPhone)
+                        {
+#if (CAP_CH==1)
+                          readbuf16[realdata_count]=GetAD7156_Ch1();
+#else
+                          readbuf16[realdata_count]=GetAD7156_Ch2(); //GetAD7156_Ch1();
+#endif
+                          SendRealDataOverBLE((uint8_t *)&readbuf16[realdata_count],2,0, 0, 0);
+                          realdata_count++;
+                          if (realdata_count==5)
+                          {
+                            realdata_count=0;
+                            SendRealDataOverBLE(NULL, 0, 0, 1, 1);
+                          }
+                        }
+                        break;
+#endif
 				}
 
 				break;
 			}
 
 			case MEMS_INT1_Message: //22
+#if (BGXXX==10)
+                if (systemSetting.blAccelSensorEnabled==0)
+                    test1.typeuint32++;
+#endif
 				if (systemStatus.blHRSensorOn == false)
 				{
 					Mems_Proc();
 				}
-
 				break;
 			case MEMS_INT2_Message:
-
+#if (BGXXX==10)
+                if (systemSetting.blAccelSensorEnabled==0)
+                    test1.typeuint32++;
+#endif
 				Mems_WakeUp();
 
 				break;
 				
 #if (BOARD_TYPE==2)
 			case KEY1_INT2_Message:	//push button1 event
+                if (GetKEY1()==0x00) //low active, pressing
+                  KEY1_count++;
+#if (MECH_TEST==1)
+                if (GetKEY1()==0x01)
+                  LEDR_OFF();
+                else
+                  LEDR_ON();
+#endif
 #if 0   //for BLE driver debug.
 				LEDR_ON();
                 getBleDeviceInfo();	
                 LEDR_OFF();
 #endif
-#if (SOS_HIT_SUPPORT && BOARD_TYPE==2)
-                SOS_result++;
+#if (LED_TEST==1)
+                uint8_t keymode;
+                keymode = KEY1_count%3;
+                if (keymode==0x01)
+                {
+                    LEDR_ON();
+                    LEDG_OFF();
+                    LEDB_OFF();
+                }else if (keymode==2)
+                {
+                    LEDR_OFF();
+                    LEDG_ON();
+                    LEDB_OFF();
+                }else 
+                {
+                    LEDR_OFF();
+                    LEDG_OFF();
+                    LEDB_ON();
+                }
+#else 
+#if (SOS_HIT_SUPPORT && BOARD_TYPE==2 && MECH_TEST==0x00)
+#if (SOS_2S==1)
+                if (GetKEY1()==0x01) //low active, key release
+                    KEY1_LastReleaseTime = time(NULL);
+                else //low active, key press
+                {
+                    KEY1_LastPressTime = time(NULL);
+                    if (systemSetting.blSOSEnabled==0x01)
+                      SOS_result++;
+                }
+#else
+                if (systemSetting.blSOSEnabled==0x01)
+                    SOS_result++;
+#endif
+#endif
 #endif
 				break;
 				
 			case KEY2_INT5_Message: //push button2 event.
-                LEDR_OFF();
+              if (GetKEY2()==0x00)
+              {
+                KEY2_count++;
+#if (P180F_PATCH==1 && MECH_TEST==0 && 0) //for BLE driver test
+                sendBleBatteryInfo(systemStatus.bBatteryRemaining, systemStatus.fBatteryVolt);
+                //sendBleBatteryInfo(80, (float) 2.75);
+#endif
+              }
+#if (MECH_TEST==1)
+              if (GetKEY2()==0x01)
                 LEDG_OFF();
-                LEDB_OFF();
+              else
+                LEDG_ON();
+#endif
+#if (SOS_2S==1)
+              if (GetKEY2()==0x01) //low active, key release
+                  KEY2_LastReleaseTime = time(NULL);
+              else //low active, key press
+                  KEY2_LastPressTime = time(NULL);
+#endif
+#if (0)
+              {
+                //uint8_t ubuff[4] = {BLE_CH2, GET_BATTERY_LEVEL, 0,0};
+                //ubuff[2] = 50; //systemStatus.bBatteryRemaining;
+                uint8_t ubuff[4] = {BLE_CH8, GET_BATTERY_LEVEL, 0,0};
+                ubuff[1] = 50; //systemStatus.bBatteryRemaining;
+                
+                LEUARTSentByDma(UART_CMD_2HOST, &ubuff[0], 3);
+
+              }
+#endif
+#if (0)   //for BLE driver debug.
+				LEDR_ON();
+                getBleDeviceInfo();
+                LEDR_OFF();
+#endif
+#if (0)  //for develope debug for all sensor control.
+                    if (KEY2_count&0x01)
+                    {
+                      systemSetting.blUVSensorEnabled = false;
+                      systemSetting.blPressureSensorEnabled = false;
+                      systemSetting.blGeoMSensorEnabled = false;
+                      systemSetting.blGyroSensorEnabled = false;
+                      systemSetting.blAccelSensorEnabled = false;
+                      systemSetting.blSOSEnabled = false;
+                      systemSetting.blFDEnabled = false;
+                      systemSetting.blCAPSensorEnabled = false;
+                    }
+                    else
+                    {
+                      systemSetting.blUVSensorEnabled = true;
+                      systemSetting.blPressureSensorEnabled = true;
+                      systemSetting.blGeoMSensorEnabled = true;
+                      systemSetting.blGyroSensorEnabled = true;
+                      systemSetting.blAccelSensorEnabled = true;
+                      systemSetting.blSOSEnabled = true;
+                      systemSetting.blFDEnabled = true;
+                      systemSetting.blCAPSensorEnabled = true;
+                    }
+#endif
+#if (0)  //for develope debug for UV sensor control.
+                    if (systemSetting.blUVSensorEnabled==0x01)
+                    {
+                      systemSetting.blUVSensorEnabled = false;
+                      UV_Init(systemSetting.blUVSensorEnabled);
+                    }
+                    else
+                    {
+                      systemSetting.blUVSensorEnabled = true;
+                      UV_Init(systemSetting.blUVSensorEnabled);
+                    }
+                    SaveSystemSettings();
+#endif
+#if (0)  //for develope debug for Pressure sensor control
+                    if (systemSetting.blPressureSensorEnabled==0x01)
+                    {
+                      systemSetting.blPressureSensorEnabled = false;
+                      LPS22HB_Init(systemSetting.blPressureSensorEnabled);
+                    }
+                    else
+                    {
+                      systemSetting.blPressureSensorEnabled = true;
+                      LPS22HB_Init(systemSetting.blPressureSensorEnabled);
+                    }
+                    SaveSystemSettings();
+#endif
+
+#if (0)  //for develope debug for GeoMagnetic sensor control
+                    if (systemSetting.blGeoMSensorEnabled==0x01)
+                    {
+                      systemSetting.blGeoMSensorEnabled = false;
+                      BMM150_Init(systemSetting.blGeoMSensorEnabled);
+                    }
+                    else
+                    {
+                      systemSetting.blGeoMSensorEnabled = true;
+                      BMM150_Init(systemSetting.blGeoMSensorEnabled);
+                    }
+                    SaveSystemSettings();
+#endif
+#if (0)  //for develope debug for Gyro sensor control
+                    if (systemSetting.blGyroSensorEnabled==0x01)
+                    {
+                      systemSetting.blGyroSensorEnabled = false;
+                      L3GD20H_Init(systemSetting.blGyroSensorEnabled);
+                    }
+                    else
+                    {
+                      systemSetting.blGyroSensorEnabled = true;
+                      L3GD20H_Init(systemSetting.blGyroSensorEnabled);
+                    }
+                    SaveSystemSettings();
+#endif
+#if (0)  //for develope debug for Accel sensor control
+                    if (systemSetting.blAccelSensorEnabled==0x01)
+                    {
+                      systemSetting.blAccelSensorEnabled = false;
+                      MEMS_Init(systemSetting.blAccelSensorEnabled);
+                    }
+                    else
+                    {
+                      systemSetting.blAccelSensorEnabled = true;
+                      MEMS_Init(systemSetting.blAccelSensorEnabled);
+                    }
+                    SaveSystemSettings();
+#endif
+#if (0)  //for develope debug for SOS alert control
+                    if (systemSetting.blSOSEnabled==0x01)
+                    {
+                      systemSetting.blSOSEnabled = false;
+                    }
+                    else
+                    {
+                      systemSetting.blSOSEnabled = true;
+                    }
+                    SaveSystemSettings();
+#endif
+#if (0)  //for develope debug for FD alert control
+                    if (systemSetting.blFDEnabled==0x01)
+                    {
+                      systemSetting.blFDEnabled = false;
+                    }
+                    else
+                    {
+                      systemSetting.blFDEnabled = true;
+                    }
+                    SaveSystemSettings();
+#endif
+#if (0)  //for develope debug for Cap Sensor control
+                    if (systemSetting.blCAPSensorEnabled==0x01)
+                    {
+                      systemSetting.blCAPSensorEnabled = false;
+                      AD7156_Init(systemSetting.blCAPSensorEnabled);
+                    }
+                    else
+                    {
+                      systemSetting.blCAPSensorEnabled = true;
+                      AD7156_Init(systemSetting.blCAPSensorEnabled);
+                    }
+                    SaveSystemSettings();
+#endif
+#if (0) //for develope debug and QA check Cap data.
+#if (REALDATA_TIMER==1)   //capative sensor get realdata.
+                    if (RealDataOnPhone==0)
+                    {
+                      RealDataOnPhone = 1;
+                      //set the BLE connection interval to fast.
+                      vTaskDelay(20);
+                      Change_BLE_CONNECT_INTERVAL(BLE_CONNECT_20ms);
+                      vTaskDelay(20);
+                      //clean the RealDataBuf.
+                      SendRealDataOverBLE(NULL,0,0, 0, 1);
+                      realdata_count = 0;
+                      //set timer2 event trigger flag
+                      EnableDelayTimer(TIMER_FLAG_REALDATA, true, 200, NULL, NULL);
+#if BATTERY_LIFE_OPTIMIZATION
+                      systemStatus.blHRSensorTempEnabled = false;
+#endif
+#if (AFE44x0_SUPPORT==1)
+                      AFE44xx_PowerOn_Init();
+#endif
+                      SensorOffDelay = default_Ble_SensorOffDelay * current_touchsensor_feq;
+                    }
+                    else
+                    {
+                      RealDataOnPhone = 0;
+                      //clean timer2 event trigger flag
+                      DisableDelayTimer(TIMER_FLAG_REALDATA);
+                    }
+#endif
+#endif
 				break;
 #endif
 
 #if (GYRO_SUPPORT==1)
 			case MESSAGE_GYRO_DRDY:
 			{
+              if (systemStatus.blGyroSensorOnline)
                 ReadL3GD20HFIFO((uint8_t*)&L3GD20H_BUFF[0][0],
 	             (uint8_t*)&L3GD20H_BUFF[1][0],
 	             (uint8_t*)&L3GD20H_BUFF[2][0],
@@ -1603,6 +1906,7 @@ void DeviceTask(void* argument)
 
             case MESSAGE_GYRO_INT:
 			{
+              if (systemStatus.blGyroSensorOnline)
                 ReadL3GD20HFIFO((uint8_t*)&L3GD20H_BUFF[0][0],
 	             (uint8_t*)&L3GD20H_BUFF[1][0],
 	             (uint8_t*)&L3GD20H_BUFF[2][0],
@@ -1905,16 +2209,17 @@ void DeviceTask(void* argument)
 
 				break;
 			}
-            
+#if (MAGNETIC_SUPPORT==1)
         case MESSAGE_BMM150_DRDY:  //FIXME: patch while need.
             {
-                LEDR_OFF();
-                LEDG_OFF();
-                LEDB_OFF();
-                
+				if (systemSetting.blGeoMSensorEnabled)	
+				BMM150_read_mag_data_XYZ();
+                //LEDR_OFF();
+                //LEDG_OFF();
+                //LEDB_OFF();
                 break;
             }
-
+#endif
 			default:
 				break;
 		}
