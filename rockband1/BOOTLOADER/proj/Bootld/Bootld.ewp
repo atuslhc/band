@@ -2084,6 +2084,7 @@
           <state>EFM32WG395F256</state>
           <state>ewarm</state>
           <state>BOARD_TYPE=2</state>
+          <state>DEVINFO_EXT=1</state>
         </option>
         <option>
           <name>CCPreprocFile</name>

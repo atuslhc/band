@@ -5,11 +5,12 @@
 #define BLE_FRAME_SIZE     128  //The MCU to BLE upgrade data frame size.
 #define RX_BUF_SIZE        64 //UART接收数据BUF
 #define TX_BUF_SIZE        64
-#define ESC                0x33
 
 //这是数据的内容，即开始、长度、命令类型、命令数据。 命令的格式< length,cmd,content >
 #define UART_DATA_START			0x3c//'<'
 #define UART_DATA_STOP			0x3e//'>'
+#define SOH_ESCAPE_CHAR         0x1b
+#define SOH_ESCAPE_CHAR_MASK    0x33
 #define UART_ID_START			0x00
 #define UART_ID_LEN			    0x01
 #define UART_ID_CMD			    0x02
@@ -21,6 +22,8 @@
 #define BLE_UART_Closing 0
 #define BLE_UART_Opening 1
 
+#define BOOT_STATE      0
+#define APP_STATE       1
 
 union _BLE_CHIP{
   struct _BLE_DEVICE{
@@ -28,15 +31,21 @@ union _BLE_CHIP{
   	uint8_t  MEMCAP;   // 0x08 = 256K//我读到的0x4c
   	uint8_t  FW_VER1; // 1
     uint8_t  FW_VER2; // 0//我读到的2
+#if (DEVINFO_EXT==1)
+    uint8_t  FW_VER3;
+    uint8_t  unique0[4];
+    uint8_t  unique1[2];
+#else
     uint32_t unique0;  // MAC address , the first 4bytes  //我读到的AF2B230D
-    uint16_t unique1;  // the second 2 bytes , 6 bytes in total //我读到的0x9059          
+    uint16_t unique1;  // the second 2 bytes , 6 bytes in total //我读到的0x9059 
+#endif
 	uint8_t  WORKSTA; // 0= ble bootload ,1 = ble app ////我读到的0x01
 	uint8_t  Rev;////我读到的0x00
   }BLE_Device;
-  uint8_t BLE_DeviceInfo[12];
+  uint8_t BLE_DeviceInfo[13];
 };
 
-extern uint8_t bleInfo[12];
+//extern uint8_t bleInfo[12];
 extern uint8_t bleStatusFlag;
 extern volatile bool  BLE_ONLINE;
 //extern uint8_t BLE_STATE;

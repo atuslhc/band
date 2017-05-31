@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=-461155277
+Checksum=-766635581
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -44,15 +44,14 @@ Fmt1=FLASH_INFO-blocks	4	0
 Fmt2=FLASH_INFO-flashSize	4	0
 Fmt3=FLASH_INFO-sectorSize	4	0
 Fmt4=FLASH_INFO-sectors	4	0
-Fmt5=struct _BLE_DEVICE-unique0	4	0
-Fmt6=struct _BLE_DEVICE-unique1	4	0
-Fmt7=struct _FLASH_ID-manufacturerID	4	0
-Fmt8=struct _FLASH_ID-memoryType	4	0
-Fmt9=struct _INFO-Head_CRC	4	0
-Fmt10=struct _INFO-Rev1	4	0
-Fmt11=struct _INFO-fw_crc	4	0
-Fmt12=struct _INFO-fw_length	4	0
-Fmt13=struct _INFO-ver_num	4	0
+Fmt5=struct _FLASH_ID-manufacturerID	4	0
+Fmt6=struct _FLASH_ID-memoryType	4	0
+Fmt7=struct _INFO-Head_CRC	4	0
+Fmt8=struct _INFO-Rev1	4	0
+Fmt9=struct _INFO-fw_crc	4	0
+Fmt10=struct _INFO-fw_length	4	0
+Fmt11=struct _INFO-fw_type	4	0
+Fmt12=struct _INFO-ver_num	4	0
 [array_types]
 Fmt0=BYTE[4]	4	0
 Fmt1=char[64]	4	0
@@ -137,7 +136,8 @@ mode=0
 [Breakpoints2]
 Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\main.c}.485.3" 0 0 1 "" 0 "" 0
 Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\main.c}.472.3" 0 0 1 "" 0 "" 0
-Count=2
+Bp2=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\main.c}.1096.2" 0 0 1 "" 0 "" 0
+Count=3
 [Aliases]
 A0=_ "C:\Users\T420\Desktop\BLE+EFM32的FWupdate（0424）\emlib\src\em_letimer.c" "C:\Users\T420\Desktop\BLE+EFM32的FWupdate（0425）\emlib\src\em_letimer.c"
 A1=_ "C:\Users\T420\Desktop\BLE+EFM32的FWupdate（0505）\proj\usbhid\MyMain.c" "E:\公司项目工程文件\bootloader(升级3种类型)\proj\usbhid\MyMain.c"

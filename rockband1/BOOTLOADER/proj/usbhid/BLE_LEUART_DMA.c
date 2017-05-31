@@ -26,7 +26,7 @@
 //uint8_t BLE_STATE = BLE_STATE_IDLE;
 
 volatile bool BLE_ONLINE = false, BLE_APP_Model = true;
-union _BLE_CHIP BLE_DevChip;//器件信息
+union _BLE_CHIP BLE_DevChip; //get BLE chip info.
 uint8_t insert_zero_number = 16;
 
 DMA_CB_TypeDef TX_DAM_CALLBACK ;//回调结构体定义
@@ -289,13 +289,14 @@ void LEUART0_IRQHandler(void)
 				{
 					if((g_ucUartFrame[FRAME_CMD_POSITION] == 0x01) && (g_ucUartFrame[FRAME_CMD_POSITION + 1] == 0x01)) // the Ble is locate at app and boot state
 					{
-						if((g_ucUartFrame[g_ucUartFrame[FRAME_LEN_POSITION] - 2] == 0x00) && (g_ucUartFrame[g_ucUartFrame[FRAME_LEN_POSITION] - 3] == 0x00) &&  (g_ucUartFrame[g_ucUartFrame[FRAME_LEN_POSITION] - 4] == 0x00))
+						if((g_ucUartFrame[g_ucUartFrame[FRAME_LEN_POSITION] - 2] == 0x00) && (g_ucUartFrame[g_ucUartFrame[FRAME_LEN_POSITION] - 3] == 0x00) &&  (g_ucUartFrame[g_ucUartFrame[FRAME_LEN_POSITION] - 4] == BOOT_STATE))
 						{
 							//boot   when there are three 0 byte in bottom of the frame before the last byte.e,g:"00 00 00 3E"
 							memcpy(BLE_DevChip.BLE_DeviceInfo, &g_ucUartFrame[UART_ID_DATA + 1], sizeof(BLE_DevChip.BLE_DeviceInfo));
 							bleStatusFlag = 2;
+                            BLE_DevChip.BLE_Device.WORKSTA == BOOT_STATE;
 						}
-						else if(g_ucUartFrame[g_ucUartFrame[FRAME_LEN_POSITION] - 2] == 0x01)
+						else if(g_ucUartFrame[g_ucUartFrame[FRAME_LEN_POSITION] - 2] == APP_STATE)
 						{
 							//app
 							k = 0;
@@ -304,10 +305,14 @@ void LEUART0_IRQHandler(void)
 							{
 								tempESC[k] = g_ucUartFrame[j];
 
-								if((g_ucUartFrame[j] == 0x1B))
+								if((g_ucUartFrame[j] == SOH_ESCAPE_CHAR))
 								{
-									tempESC[k] = g_ucUartFrame[j + 1] ^ ESC;
-									j += 1;
+                                    char tempchar = g_ucUartFrame[j + 1] ^ SOH_ESCAPE_CHAR_MASK;
+                                    if (tempchar==SOH_ESCAPE_CHAR || tempchar==UART_DATA_START || tempchar==UART_DATA_STOP)
+                                    {
+                                        tempESC[k] = tempchar;
+                                        j += 1;
+                                    }
 								}
 
 								k++;
@@ -315,6 +320,7 @@ void LEUART0_IRQHandler(void)
 
 							memcpy(BLE_DevChip.BLE_DeviceInfo, &tempESC[UART_ID_DATA - 1], sizeof(BLE_DevChip.BLE_DeviceInfo));
 							bleStatusFlag = 1;
+                            BLE_DevChip.BLE_Device.WORKSTA == APP_STATE; 
 						}
 					}
 					else if(g_ucUartFrame[FRAME_CMD_POSITION] == 0x05)

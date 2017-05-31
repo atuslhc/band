@@ -58,7 +58,7 @@
 #define LEDR_PIN        (1)
 #define LEDB_PIN        (2)
 #define LEDG_PIN        (3)
-#define LED_PIN         LEDR_PIN    //redirect mapping, backward compatible.
+#define LED_PIN         LEDB_PIN    //redirect mapping, backward compatible.
 #endif
 #if (BOARD_TYPE==0 || BOARD_TYPE==1)
 #define LED_ON()        GPIO_PinOutSet(LED_GPIOPORT,LED_PIN )

@@ -135,8 +135,8 @@ bool JudgeFlashBusy();
 #define WRITE_BLE_FLASH         3
 #define SEND_STOP_CMMD          4
 #define ERROR                   5
-#define APP_STATE               1
-#define BOOT_STATE              0
+//#define APP_STATE               1
+//#define BOOT_STATE              0
 
 #define UNDEFINE_STATUS         10
 
@@ -457,7 +457,7 @@ void DealError(void)
     /* calculate the APP crc checksum. MCUAPP_ADDR .. endFlash - 8 */
 	flashCrcApp = CRC_calc((uint8_t*)MCUAPP_ADDR, (uint8_t*)(DevChip.Device.memFlash * 1024 - 8)); //notice: range from 0x9800~last 8 bytes.
 
-#if defined(SHOWLED)
+#if defined(SHOWLED) && 0  //
     for (i=0 ; i< 20 ; i++)
     {
       LED_TOGGLE();
@@ -904,9 +904,6 @@ void BleFwUpdate(void)
 					else
 					{
 						resetCount++;
-						//BLE_RST_L();
-						//SysCtlDelay(8000 * SYSCLOCK);
-						//BLE_RST_H();
                         BLE_RESET();
 
 						SysCtlDelay(800000);

@@ -14,7 +14,7 @@
 #define BOOT_VER_S       32
 #elif (BOARD_TYPE==2)
 #define BOOT_VER_M       0
-#define BOOT_VER_S       13
+#define BOOT_VER_S       15
 #else
 #error "Please specify BOARD_TYPE in Options/CCPreprocessor!"
 #endif

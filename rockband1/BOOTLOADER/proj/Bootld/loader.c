@@ -53,7 +53,7 @@ void initGPIO(void)
 	GPIO_PinModeSet(LED_GPIOPORT, LEDG_PIN, gpioModePushPull, 1); //set LED gpio mode.
 	GPIO_PinModeSet(LED_GPIOPORT, LED_PIN, gpioModePushPull, 0); //set LED gpio mode.
 #endif
-    SysCtlDelay(5000);
+    SysCtlDelay(0x5000); //5000 >> 30000 for LED can visible at turn on.
     LED_OFF();
 //	GPIO_IntConfig(KEY_GPIOPORT, KEY_PIN, false, true, true);
     
@@ -353,8 +353,8 @@ int main(void)
     //Why disable watchdog while transfer to loader.
 	WDOG_Enable(false);
 
-#if (BOARD_TYPE==2  && defined(SHOWLED))
-    LEDG_ON();  //for debug only.
+#if (BOARD_TYPE==2  && defined(SHOWLED)) //try debug loader can run bootloader to off LEDG.
+    LEDB_ON();  //for debug only.
 #endif
 	SysCtlDelay(50); //delay for disable watchdog?
 
