@@ -44,8 +44,8 @@
 #if (CAP_SUPPORT==2)
 #include "AD7156.h"
 #endif
-#define DMA_CH_RX    1 //DMA通道0
-#define DMA_CH_TX    2 //DMA通道1
+#define DMA_CH_RX    1 //DMA channel 0
+#define DMA_CH_TX    2 //DMA channel 1
 DMA_CB_TypeDef TX_DMA_CALLBACK ;
 //DMA_CB_TypeDef RX_DMA_CALLBACK ;
 
@@ -101,6 +101,11 @@ uint8_t getConnectTime = 0;
 uint16_t LeUartWorkTimeCount = 0, LeUartTxCount = 0; //
 uint16_t BLE_BUSY_COUNT = 0;
 
+#if (FALL_DETECT_SUPPORT || SOS_HIT_SUPPORT)
+uint8_t mfgdata[6] = {SBLE_BROADCAST_UPDATE, 0xFF, 0xAA, 0xFF, 0xFF, 0xFF};
+#else
+uint8_t mfgdata[4] = {SBLE_BROADCAST_UPDATE, 0xAA, 0xFF, 0xFF};
+#endif
 
 volatile bool TxDone = true;
 
@@ -4484,6 +4489,8 @@ void ParseBleUartPak(void)
                             //if (BLE_DevChip.BLE_Device.CHIPTYPE == BLE_CC2540_ID) //FIXME: need test
                               BLE_ADVEN_CON(BLE_ON, BLE_ADVEN_1S);  //BLE_ADVEN_100mS >> 1S for power saving.
 							BLE_Should_Status = BLE_STATE_ADVERTISING;
+                            //fix the BLE_BROADCAST_UPDATE() send in BLE_STATE_CONNECTED, will block the SendNotificationAlert() in CC254x
+                            LEUARTSentByDma(UART_CMD_INFOR, mfgdata, sizeof(mfgdata)); //update the latest mfgdata
 						}
 
 					}
@@ -4699,128 +4706,79 @@ void BLE_SET_CONNECT_INTERVAL(uint8_t inteval)
 
 void BLE_BROADCAST_UPDATE(void)
 {
+    char updateflag=0; //add checking mfgdata change filter the send out ble if no mfgdata updated.
 #if (FALL_DETECT_SUPPORT || SOS_HIT_SUPPORT)
-	static uint8_t data[6] = {SBLE_BROADCAST_UPDATE, 0xFF, 0xAA, 0xFF, 0xFF, 0xFF};
-#if 1   //add checking data change filter the send out ble if no data updated.
-    char updateflag=0;
+
     //FD tag
-    if (SendAlertNotification!=data[1] && (SendAlertNotification==0x01 || SendAlertNotification==0xff))
+    if (SendAlertNotification!=mfgdata[1] && (SendAlertNotification==0x01 || SendAlertNotification==0xff))
     {
-      data[1] = SendAlertNotification;
+      mfgdata[1] = SendAlertNotification;
       updateflag++;
     }
     //charging tag
-    if ((systemStatus.blBatteryCharging? 0x55:0xAA)!=data[2])
+    if ((systemStatus.blBatteryCharging? 0x55:0xAA)!=mfgdata[2])
     {
-      data[2] = systemStatus.blBatteryCharging? 0x55:0xAA;
+      mfgdata[2] = systemStatus.blBatteryCharging? 0x55:0xAA;
       updateflag++;
     }
     //low battery tag
-	if((lowBatteryLevelAlert==0x01? 0x01:0xFF)!=data[3])
+	if((lowBatteryLevelAlert==0x01? 0x01:0xFF)!=mfgdata[3])
     {
-      data[3] = lowBatteryLevelAlert==0x01? 0x01:0xFF;
+      mfgdata[3] = lowBatteryLevelAlert==0x01? 0x01:0xFF;
       updateflag++;
     }
     //time reset
-    if (blTimeReset==0x01 && data[4] != 0x01)
+    if (blTimeReset==0x01 && mfgdata[4] != 0x01)
     {
-      data[4] = 0x01;
+      mfgdata[4] = 0x01;
       updateflag++;
-    } else if (blTimeReset==0x0AA && data[4]!=0xFF)
+    } else if (blTimeReset==0x0AA && mfgdata[4]!=0xFF)
     {
-      data[4] = 0xFF;
+      mfgdata[4] = 0xFF;
       updateflag++;
     }
     //SOS tag
-    if (sosNotification!=data[5] && (sosNotification==0x01 || sosNotification==0xff))
+    if (sosNotification!=mfgdata[5] && (sosNotification==0x01 || sosNotification==0xff))
     {
-      data[5] = sosNotification;
+      mfgdata[5] = sosNotification;
       updateflag++;
     }
 
-    if (updateflag>0)
-      LEUARTSentByDma(UART_CMD_INFOR, data, 6);
-    
-#else    
-    //FD tag
-	if(SendAlertNotification == 1)
-		data[1] = 0x01;
-	else if(SendAlertNotification == 0xff)
-		data[1] = 0xFF;
+#else
+
     //charging tag
-	if(systemStatus.blBatteryCharging == true)
-		data[2] = 0x55;
-	else
-		data[2] = 0xAA;
+    if ((systemStatus.blBatteryCharging? 0x55:0xAA)!=mfgdata[1])
+    {
+      mfgdata[1] = systemStatus.blBatteryCharging? 0x55:0xAA;
+      updateflag++;
+    }
     //low battery tag
-	if(lowBatteryLevelAlert == 0x01)
-		data[3] = 0x01;
-	else
-		data[3] = 0xFF;
+	if((lowBatteryLevelAlert==0x01? 0x01:0xFF)!=mfgdata[2])
+    {
+      mfgdata[2] = lowBatteryLevelAlert==0x01? 0x01:0xFF;
+      updateflag++;
+    }
     //time reset
-	if(blTimeReset == 0x01)
-		data[4] = 0x01;
-	else if(blTimeReset == 0xAA)
-		data[4] = 0xFF;
+    if (blTimeReset==0x01 && mfgdata[3] != 0x01)
+    {
+      mfgdata[3] = 0x01;
+      updateflag++;
+    } else if (blTimeReset==0x0AA && mfgdata[3]!=0xFF)
+    {
+      mfgdata[3] = 0xFF;
+      updateflag++;
+    }
     //SOS tag
-	if(sosNotification == 1)
-		data[5] = 0x01;
-	else if(sosNotification == 0xff)
-		data[5] = 0xFF;
-
-	LEUARTSentByDma(UART_CMD_INFOR, data, 6);
-#endif
-#else
-	static uint8_t data[4] = {SBLE_BROADCAST_UPDATE, 0xAA, 0xFF, 0xFF};
-
-#if 1  //add checking data change filter the send out ble if no data updated.
-        char updateflag=0;
-    //charging tag
-    if ((systemStatus.blBatteryCharging? 0x55:0xAA)!=data[1])
+    if (sosNotification!=mfgdata[4] && (sosNotification==0x01 || sosNotification==0xff))
     {
-      data[1] = systemStatus.blBatteryCharging? 0x55:0xAA;
+      mfgdata[4] = sosNotification;
       updateflag++;
     }
-    //low battery tag
-	if((lowBatteryLevelAlert==0x01? 0x01:0xFF)!=data[2])
-    {
-      data[2] = lowBatteryLevelAlert==0x01? 0x01:0xFF;
-      updateflag++;
-    }
-    //time reset
-    if (blTimeReset==0x01 && data[3] != 0x01)
-    {
-      data[3] = 0x01;
-      updateflag++;
-    } else if (blTimeReset==0x0AA && data[3]!=0xFF)
-    {
-      data[3] = 0xFF;
-      updateflag++;
-    }
-
-    if (updateflag>0)
-      LEUARTSentByDma(UART_CMD_INFOR, data, 4);
-
-#else
-
-	if(systemStatus.blBatteryCharging == true)
-		data[1] = 0x55;
-	else
-		data[1] = 0xAA;
-
-	if(lowBatteryLevelAlert == 0x01)
-		data[2] = 0x01;
-	else
-		data[2] = 0xFF;
-
-	if(blTimeReset == 0x01)
-		data[3] = 0x01;
-	else if(blTimeReset == 0xAA)
-		data[3] = 0xFF;
-
-	LEUARTSentByDma(UART_CMD_INFOR, data, 4);
 #endif
-#endif
+
+    if (updateflag>0  && BLE_STATE != BLE_STATE_CONNECTED)  //FIXME: don't send while BLE_STATE_CONNECTED, will disturb notify)
+      LEUARTSentByDma(UART_CMD_INFOR, mfgdata, sizeof(mfgdata));
+
 }
 
 void PermitUpdateBroadcast(void)
@@ -5289,7 +5247,7 @@ uint8_t resendCountCharging = 0;
 
 void SendNotificationAlert(void)
 {
-	static uint8_t TEMP[8] = {BLE_CHA, 0xFF, 0xAA, 0xFF, 0xFF, 0xAA, 0xAA};  //fix lost report data while reconnect in event duration.
+	static uint8_t NotifyData[7] = {BLE_CHA, 0xFF, 0xAA, 0xFF, 0xFF, 0xAA, 0xAA};  //fix lost report data while reconnect in event duration.
 	uint8_t index = 1; //0>>1 skip first byte dummy write.
 
     /* notification must be in connected, move the connected state check to last
@@ -5297,123 +5255,36 @@ void SendNotificationAlert(void)
 	//if(BLE_STATE != BLE_STATE_CONNECTED)
 	//	return;
 
-#if 0
-	static uint8_t oldlevel = 0;
-
-	// 1byte heart rate alert level
-	if((iHeartRate.component.heart > 100) && (iHeartRate.component.heart <= 110))
-		notificationAlertParameters.heartRateLevel = HEART_ALERT_LEVEL0;
-
-	if((iHeartRate.component.heart > 110) && (iHeartRate.component.heart <= 120))
-		notificationAlertParameters.heartRateLevel = HEART_ALERT_LEVEL1;
-
-	if((iHeartRate.component.heart > 120) && (iHeartRate.component.heart <= 130))
-		notificationAlertParameters.heartRateLevel = HEART_ALERT_LEVEL2;
-
-	if((iHeartRate.component.heart > 130) && (iHeartRate.component.heart <= 140))
-		notificationAlertParameters.heartRateLevel = HEART_ALERT_LEVEL3;
-
-	if((iHeartRate.component.heart > 140) && (iHeartRate.component.heart <= 150))
-		notificationAlertParameters.heartRateLevel = HEART_ALERT_LEVEL4;
-
-	if(iHeartRate.component.heart > 150 )
-		notificationAlertParameters.heartRateLevel = HEART_ALERT_LEVEL5;
-
-	index = 1;
-
-	if(notificationAlertParameters.heartRateLevel != oldlevel)
-	{
-		//保留字，无实际意义
-		TEMP[index] = notificationAlertParameters.heartRateLevel;
-		resendTimes.heartrateLevelResend++;
-		permitSend |= 0x01 << HEART_ALERT_GOT;
-
-		if(resendTimes.heartrateLevelResend > 2)
-		{
-			oldlevel = notificationAlertParameters.heartRateLevel;
-			resendTimes.heartrateLevelResend = 0;
-			permitSend &= ~(0x01 << HEART_ALERT_GOT);
-
-		}
-	}
-	else
-	{
-		TEMP[index] = 0xFF;
-	}
-	index++;
-
-	if(notificationAlertParameters.stepsCounterStatus == 0x01)
-	{
-		TEMP[index] = notificationAlertParameters.stepsCounterStatus;
-		resendTimes.stepCounterStatusResend++;
-		permitSend |= 0x01 << STEP_ALERT_GOT;
-
-		if(resendTimes.stepCounterStatusResend > 3)
-		{
-			notificationAlertParameters.stepsCounterStatus = 0;
-			resendTimes.stepCounterStatusResend = 0;
-			permitSend &= ~(0x01 << STEP_ALERT_GOT);
-		}
-	}
-	else
-	{
-		TEMP[index] = 0xFF;
-
-	}
-	index++;
-
-	if(notificationAlertParameters.wearStatus == 0x01)
-	{
-		TEMP[index] = notificationAlertParameters.wearStatus;
-		resendTimes.watchWearStatusResend++;
-		permitSend |= 0x01 << WEAR_ALERT_GOT;
-
-		if(resendTimes.watchWearStatusResend > 2)
-		{
-			notificationAlertParameters.wearStatus = 0;
-			resendTimes.watchWearStatusResend = 0;
-			permitSend &= ~(0x01 << WEAR_ALERT_GOT);
-		}
-	}
-	else
-	{
-		TEMP[index] = 0xFF;
-	}
-	index++;
-	
-#endif
-
-
-	//把call counter换成跌倒状态
-//	if(notificationAlertParameters.callsCounterStatus == 0x01)
-//	{
-//		TEMP[index] = notificationAlertParameters.callsCounterStatus;
 #if (MODEL_TYPE==1) //HEALTHCARE_TYPE
+#if 1  //patch stop permitSend condition after turn on PermitUpdateBroadcast() without BLE_STATE
+	if(resendTimes.fallCounterStatusresend > 0)
+	{
+        resendTimes.fallCounterStatusresend++;
+        if(resendTimes.fallCounterStatusresend > 1)
+        {
+			resendTimes.fallCounterStatusresend = 0;
+			permitSend &= ~(0x01 << FALL_ALERT_GOT);
+        }
+	}
+#endif
 	if(SendAlertNotification == 0x01)
 	{
-		TEMP[index] = 0x01;//跌倒
+		NotifyData[index] = 0x01;//FD tag
 
-//		resendTimes.callsCounterStatusresend++; //跌落检测需要连续发送5分钟,所以用时间来控制要发送多少次
 		permitSend |= 0x01 << FALL_ALERT_GOT;
 
-//		if(resendTimes.callsCounterStatusresend > 2)
-//		if(isSendAlertNotification == false)
-//		{
-		//	notificationAlertParameters.callsCounterStatus = 0;
-		//	resendTimes.callsCounterStatusresend = 0;
-
-//		}
 	}
 	else if (SendAlertNotification == 0xff)
 	{
-		TEMP[index] = 0xFF;
-		resendTimes.fallCounterStatusresend++; //will send one while flag switch back till EVENT_FD_DURATION
-
+		NotifyData[index] = 0xFF;
+		resendTimes.fallCounterStatusresend++; //start the resend count while get stop flag 0xff
+#if 0  //patch stop permitSend condition after turn on PermitUpdateBroadcast() without BLE_STATE
 		if(resendTimes.fallCounterStatusresend > 1)
 		{
 			resendTimes.fallCounterStatusresend = 0;
 			permitSend &= ~(0x01 << FALL_ALERT_GOT);
 		}
+#endif
 	}
 	index++;  //index 1 >> 2
 
@@ -5421,9 +5292,9 @@ void SendNotificationAlert(void)
 	if(isChargeStatusChange == 0x01)
 	{
 		if(systemStatus.blBatteryCharging)
-			TEMP[index] = 0x55; //在充电。
+			NotifyData[index] = 0x55; //在充电。
 		else
-			TEMP[index] = 0xAA; //没充电。
+			NotifyData[index] = 0xAA; //没充电。
 
 		resendTimes.chargeStatusResend++;
 		permitSend |= 0x01 << CHARGE_STATUS;
@@ -5439,7 +5310,7 @@ void SendNotificationAlert(void)
 
 	if(lowBatteryLevelAlert == 0x01)
 	{
-		TEMP[index] = 0x01;
+		NotifyData[index] = 0x01;
 		resendTimes.lowBatteryStatusResend++;
 		permitSend |= 0x01 << LOW_POWER_STATUS;
 
@@ -5451,31 +5322,43 @@ void SendNotificationAlert(void)
 		}
 	}
 	else
-		TEMP[index] = 0xFF;
+		NotifyData[index] = 0xFF;
 	index++;   //index 3 >> 4
 
-	if(sosNotification == 0x01)
+#if 1  //patch stop permitSend condition after turn on PermitUpdateBroadcast() without BLE_STATE
+	if(resendTimes.sosCounterStatusResend > 0)
 	{
-		TEMP[index] = 0x01;//SOS
-		permitSend |= 0x01 << SOS_ALERT_GOT;
+        resendTimes.sosCounterStatusResend++;
+        if(resendTimes.sosCounterStatusResend > 1)
+        {
+			resendTimes.sosCounterStatusResend = 0;
+			permitSend &= ~(0x01 << SOS_ALERT_GOT);
+        }
 	}
-	else if(sosNotification == 0xFF)
+#endif
+	if(sosNotification == 0x01)//sos alert
 	{
-		TEMP[index] = 0xFF;
+		NotifyData[index] = 0x01;//SOS
+		permitSend |= 0x01 << SOS_ALERT_GOT;
+		//LEDR_TOGGLE();  //move to CheckSOS()
+	}
+	else if(sosNotification == 0xFF)// no notification
+	{
+		NotifyData[index] = 0xFF;
 		resendTimes.sosCounterStatusResend++;
-
+#if 0  //patch stop permitSend condition after turn on PermitUpdateBroadcast() without BLE_STATE
 		if(resendTimes.sosCounterStatusResend > 1)
 		{
 			resendTimes.sosCounterStatusResend = 0;
 			permitSend &= ~(0x01 << SOS_ALERT_GOT);
 		}
-
+#endif
 	}
-	index++; //  //index 4 >> 5
+	index++;
 #elif (MODEL_TYPE==2) //CONSUMER_TYPE
 	if(lowBatteryLevelAlert == 0x01)
 	{
-		TEMP[index] = 0x01;
+		NotifyData[index] = 0x01;
 		resendTimes.lowBatteryStatusResend++;
 		permitSend |= 0x01 << LOW_POWER_STATUS;
 
@@ -5487,15 +5370,15 @@ void SendNotificationAlert(void)
 		}
 	}
 	else
-		TEMP[index] = 0xFF;
+		NotifyData[index] = 0xFF;
 	index++;
 
 	if(isChargeStatusChange == 0x01)
 	{
 		if(systemStatus.blBatteryCharging)
-			TEMP[index] = 0x55; //在充电。
+			NotifyData[index] = 0x55; //在充电。
 		else
-			TEMP[index] = 0xAA; //没充电。
+			NotifyData[index] = 0xAA; //没充电。
 
 		resendTimes.chargeStatusResend++;
 		permitSend |= 0x01 << CHARGE_STATUS;
@@ -5513,12 +5396,21 @@ void SendNotificationAlert(void)
 #endif
 	
 	
-	//TEMP[index++] = 0xAA;  //index 5 >> 6   dummy write
-	//TEMP[index++] = 0xAA;  //index 6 >> 7   dummy write
+	NotifyData[index++] = 0xAA;  //index 5 >> 6   dummy write
+	NotifyData[index++] = 0xAA;  //index 6 >> 7   dummy write
 
-	if(BLE_STATE==BLE_STATE_CONNECTED &&(permitSend & 0xFF) != 0) //connected and perimitSend
-		SendData2Host(TEMP, sizeof(TEMP));
-
+#if BGXXX==12
+    if (permitSend==0x00)
+      test2.typeint = 0;
+#endif    
+	if(BLE_STATE==BLE_STATE_CONNECTED &&(permitSend & 0xFF) != 0) //connected and permitSend
+    {
+		SendData2Host(NotifyData, index); //sizeof(NotifyData)
+#if BGXXX==12
+        test2.typeint ++;
+#endif
+    }
+    
 }
 
 #if 0
@@ -5598,9 +5490,6 @@ void CheckFall(void)
 		{
 			fallDetectedTimeCount = false;
 			fdStartTime = time(NULL);
-#if (BOARD_TYPE==2 && LED_TEST==0)
-            LEDB_ON();
-#endif
 		}
 	}
 
@@ -5624,9 +5513,21 @@ void CheckFall(void)
             }
 #endif
         }
+
+        if (isSOSDetected==true)
+        { //requirement not blend the led while FD and SOS on.
+#if (BOARD_TYPE==2 && LED_TEST==0)
+           if (LEDR_STAT()==0x01)
+             LEDB_ON();
+           else
+             LEDB_OFF();
+           
+         }else
+            LEDB_TOGGLE();
+#endif        
 #if (FD_EXPIRE==1)
-        if( (KEY1_LastReleaseTime <= KEY1_LastPressTime )&& ((fdCurrTime - KEY1_LastPressTime) >= EVENT_FD_TURN_OFF_PRESSING) ||
-              ((KEY1_LastReleaseTime > KEY1_LastPressTime) && (KEY1_LastReleaseTime - KEY1_LastPressTime) >= EVENT_FD_TURN_OFF_PRESSING) )
+        if( ((GetKEY1()==0x00) && (KEY1_LastReleaseTime <= KEY1_LastPressTime ) && ((fdCurrTime - KEY1_LastPressTime) >= EVENT_FD_TURN_OFF_PRESSING)) ||
+              ((fdCurrTime>=KEY1_LastReleaseTime)&&((fdCurrTime-KEY1_LastReleaseTime)<2)&&(KEY1_LastReleaseTime > KEY1_LastPressTime) && (KEY1_LastReleaseTime - KEY1_LastPressTime) >= EVENT_FD_TURN_OFF_PRESSING) )
 #else
         if(fdCurrTime - fdStartTime >= EVENT_FD_DURATION)
 #endif
@@ -5656,84 +5557,117 @@ void CheckSOS(void)
     return;
 #endif
     
+    /* Event off and no new pre-event, bypass */
     if (isSOSDetected==false && oldSOSStatus==currentSOSStatus) //No event, bypass
         return;
     
+    /* event on, toggle LED */
 	if(isSOSDetected)
-	{ //the blinking not put at the last of check expire process because we have some filter will 
+	{ //the blinking not put at the last of check expire process because we have some filter will return.
         LEDR_TOGGLE();
-    }
-#if (SOS_2S==1)
-          if (KEY1_LastReleaseTime>=KEY1_LastPressTime && (KEY1_LastReleaseTime-KEY1_LastPressTime)<=EVENT_SOS_PREFILTER) //press hold time short than 2s
-          {
-            oldSOSStatus = currentSOSStatus; //bypass the event this time.
-            prefilterBTime = 0; //clean filterB check flag.
-            if (isSOSDetected==false)
-                return;
-          }
-#endif
-    /* filterB: SOS prefilter */
-	if(oldSOSStatus!=currentSOSStatus && prefilterBTime==0)
-    {
-        prefilterBTime = time(NULL); //new event, record time for filterB
-    }
-    
-    if (prefilterBTime!=0)
-    {
-        sosCurrTime = time(NULL);
-        if (sosCurrTime-prefilterBTime<=EVENT_SOS_PREFILTER)
-        {
-            return;
-        }
-        else
-        {
-          if (GetKEY2()==0x00)  //SOSFilterB: check KEY2 pressed.
-          {
-            oldSOSStatus = currentSOSStatus; //bypass the event this time.
-            prefilterBTime = 0; //clean filterB check flag.
-            return;
-          }
-        }
-    }
-    
-	if(oldSOSStatus != currentSOSStatus)
-	{
-		oldSOSStatus = currentSOSStatus;
-		isSOSDetected = true;
-
-		if(sosDetectedTimeCount)
-		{
-			sosNotification = 0x01;
-			sosDetectedTimeCount = false;
-			sosStartTime = time(NULL);
-#if (BOARD_TYPE==2)
-            LEDR_ON();
-#endif
-		}
-	}
-
-	if(isSOSDetected)
-	{
+        
 		sosCurrTime = time(NULL);
-        //LEDR_TOGGLE();
+        
+        /* Stop condition */
+
 #if (SOS_EXPIRE==1)  //force expired by SW1 holding > 10 seconds.
+        //force expired by SW1 holding > 10 seconds
         /* case1: press holding >10, not release yet.
         case2:  press holding > 10, then released. */
-        if( (KEY1_LastReleaseTime <= KEY1_LastPressTime )&& ((sosCurrTime - KEY1_LastPressTime) >= EVENT_SOS_TURN_OFF_PRESSING) ||
-              ((KEY1_LastReleaseTime > KEY1_LastPressTime) && (KEY1_LastReleaseTime - KEY1_LastPressTime) >= EVENT_SOS_TURN_OFF_PRESSING) )
+        if( ((GetKEY1()==0x00) && (KEY1_LastReleaseTime <= KEY1_LastPressTime )&& ((sosCurrTime - KEY1_LastPressTime) >= EVENT_SOS_TURN_OFF_PRESSING)) ||
+              ((sosCurrTime>=KEY1_LastReleaseTime)&&((sosCurrTime-KEY1_LastReleaseTime)<2)&&(KEY1_LastReleaseTime > KEY1_LastPressTime) && (KEY1_LastReleaseTime - KEY1_LastPressTime) >= EVENT_SOS_TURN_OFF_PRESSING) )
 #else
         if(sosCurrTime - sosStartTime > EVENT_SOS_DURATION)
 #endif
-        {
-            sosDetectedTimeCount = true;
-            isSOSDetected = false;
-            sosNotification = 0xFF;
-#if (BOARD_TYPE==2)
-            LEDR_OFF();
+          {
+#if (SOS_EXPIRE==1)
+              /* filter stop exclusion */
+              //case 1: press holding >10, but it is same pressing trigger on the same time.
+              if (oldSOSStatus==currentSOSStatus)
+              {
+                  return; //bypass the same press of start trigger, think it is not stop action.
+              }
 #endif
-
+              
+              sosDetectedTimeCount = true;
+              isSOSDetected = false;
+              sosNotification = 0xFF;
+              LEDR_OFF();
+              oldSOSStatus = currentSOSStatus;
+              prefilterBTime = 0;
+          }
+    }
+    else //SOS off, add filters for start condition.
+    {
+  
+        /* filterB: SOS prefilter */
+        if(oldSOSStatus!=currentSOSStatus) //
+        {
+            prefilterBTime = KEY1_LastPressTime; //time(NULL); //new event, record time for filterB 
         }
-	}
+    
+        if (prefilterBTime!=0)
+        {
+            sosCurrTime = time(NULL);
+            // bypass condition, check next time.
+            // case1: trigger time short than EVENT_SOS_PREFILTER.
+            // case2: FD on, and SW1 pressing. check next time.
+            if (sosCurrTime-prefilterBTime<=EVENT_SOS_PREFILTER ||
+                ((isDetectedFall==true) && (GetKEY1()==0x00) && (sosCurrTime-prefilterBTime)<EVENT_FD_TURN_OFF_PRESSING))
+            { //time duration not long than EVENT_SOS_PREFILTER, check next time.
+                return;
+            }
+            else
+            {
+                //filter1: SW2 pressing: think as shutdonw pre-action.clean the trigger..
+                if (GetKEY2()==0x00)  //SOSFilterB: check KEY2 pressing.
+                {
+                    oldSOSStatus = currentSOSStatus; //bypass the event this time.
+                    prefilterBTime = 0; //clean filterB check flag.
+                    return;
+                }
+                //filter2: SW1 release and hold time < EVENT_SOS_KEY_MIN_HOLD: clean the trigger.
+                if (KEY1_LastReleaseTime>=KEY1_LastPressTime && (KEY1_LastReleaseTime-KEY1_LastPressTime)<=EVENT_SOS_PREFILTER) //press hold time short than 2s
+                {
+                    oldSOSStatus = currentSOSStatus; //bypass the event this time.
+                    prefilterBTime = 0; //clean filterB check flag.
+                    return;
+                }
+                //filter3: FD on and SW1 relase, and hold time >= EVENT_FD_TURN_OFF_PRESSING and SOS off: stop FD,clean the trigger.
+                //This filter apply must base on CheckFall after CheckSOS.
+                if (isDetectedFall==true && KEY1_LastReleaseTime>KEY1_LastPressTime && (KEY1_LastReleaseTime-KEY1_LastPressTime)>=EVENT_FD_TURN_OFF_PRESSING && isSOSDetected==0x00)
+                {
+                    oldSOSStatus = currentSOSStatus; //bypass the event this time.
+                    prefilterBTime = 0; //clean filterB check flag.
+                    return;
+                }
+#if (FD_EXPIRE==1)
+                //filter4: FD on and SW1 hold, and hold time >= EVENT_FD_TURN_OFF_PRESSING and SOS off: stop FD, clean the trigger.
+                if ((isDetectedFall==true) && (GetKEY1()==0x00) && (sosCurrTime-prefilterBTime)>=EVENT_FD_TURN_OFF_PRESSING)
+                {
+                    oldSOSStatus = currentSOSStatus; //bypass the event this time.
+                    prefilterBTime = 0; //clean filterB check flag.
+                    return;
+                }
+#endif
+            }
+        }
+    
+        if(oldSOSStatus != currentSOSStatus)
+        {
+            oldSOSStatus = currentSOSStatus;
+            isSOSDetected = true;
+
+            if(sosDetectedTimeCount)
+            {
+                sosNotification = 0x01;
+                sosDetectedTimeCount = false;
+                sosStartTime = time(NULL);
+
+            }
+        }
+    
+    }
 }
 #endif
 

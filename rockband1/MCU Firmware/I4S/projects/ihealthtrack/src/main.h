@@ -49,7 +49,7 @@
   #elif (BOARD_TYPE==2)
     #define Dev_Name 2
     #define APP_FW_VER_M  0
-    #define APP_FW_VER_S  20
+    #define APP_FW_VER_S  21
   #endif
  #else
  #error "Please specify VENDOR_TYPE!"
@@ -245,18 +245,22 @@ extern uint8_t NoTOUCHPressCount;
 #define LEDR_ON()       GPIO_PinOutClear(LED_GPIOPORT, LEDR_PIN)  //low active
 #define LEDR_OFF()      GPIO_PinOutSet(LED_GPIOPORT, LEDR_PIN)
 #define LEDR_TOGGLE()   GPIO_PinOutToggle(LED_GPIOPORT, LEDR_PIN)
+#define LEDR_STAT()     GPIO_PinOutGet(LED_GPIOPORT, LEDR_PIN)
 
 #define LEDG_ON()       GPIO_PinOutClear(LED_GPIOPORT, LEDG_PIN) 
 #define LEDG_OFF()      GPIO_PinOutSet(LED_GPIOPORT, LEDG_PIN)
 #define LEDG_TOGGLE()   GPIO_PinOutToggle(LED_GPIOPORT, LEDG_PIN)
+#define LEDG_STAT()     GPIO_PinOutGet(LED_GPIOPORT, LEDG_PIN)
 
 #define LEDB_ON()       GPIO_PinOutClear(LED_GPIOPORT, LEDB_PIN)
 #define LEDB_OFF()      GPIO_PinOutSet(LED_GPIOPORT, LEDB_PIN)
 #define LEDB_TOGGLE()   GPIO_PinOutToggle(LED_GPIOPORT, LEDB_PIN)
+#define LEDB_STAT()     GPIO_PinOutGet(LED_GPIOPORT, LEDB_PIN)
 
 #define LED_ON()        GPIO_PinOutClear(LED_GPIOPORT, LED_PIN)
 #define LED_OFF()       GPIO_PinOutSet(LED_GPIOPORT, LED_PIN)
 #define LED_TOGGLE()    GPIO_PinOutToggle(LED_GPIOPORT, LED_PIN)
+#define LED_STAT()      GPIO_PinOutGet(LED_GPIOPORT, LED_PIN)
 
 #endif
 

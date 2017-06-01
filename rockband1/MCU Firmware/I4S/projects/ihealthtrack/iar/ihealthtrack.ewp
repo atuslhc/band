@@ -4107,10 +4107,7 @@
           <state>MECH_TEST=0</state>
           <state>MFG_MODE=0</state>
           <state>P180F_PATCH=1</state>
-          <state>SOS_2S=1</state>
-          <state>SOS_EXPIRE=1</state>
           <state>P180F_ADCRAW_PATCH=1</state>
-          <state>FD_EXPIRE=1</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -5099,7 +5096,6 @@
           <state>MFG_MODE=0</state>
           <state>P180F_PATCH=0</state>
           <state>P180F_ADCRAW_PATCH=1</state>
-          <state>FD_EXPIRE=1</state>
         </option>
         <option>
           <name>CCPreprocFile</name>

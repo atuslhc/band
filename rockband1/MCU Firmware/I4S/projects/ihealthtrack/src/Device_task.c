@@ -1021,14 +1021,14 @@ void onRealtimeClockTick()
 	//去掉原来的测试notification
 	StepsDuringOneHour();
 #endif
-#if FALL_DETECT_SUPPORT
-	CheckFall();
-#endif
 #if SOS_HIT_SUPPORT
 	CheckSOS();
 #endif
+#if FALL_DETECT_SUPPORT  //note: base on stop action similar SOS trigger action, need put after CheckSOS.
+	CheckFall();
+#endif
 
-	SendNotificationAlert(); //Atus: i4_C put after next command.
+	SendNotificationAlert(); //Atus: i4_C put after next command, it is wrong sequence.
 //
 	PermitUpdateBroadcast();
 
@@ -1731,9 +1731,7 @@ void DeviceTask(void* argument)
               }
 #endif
 #if (0)   //for BLE driver debug.
-				LEDR_ON();
                 getBleDeviceInfo();
-                LEDR_OFF();
 #endif
 #if (0)  //for develope debug for all sensor control.
                     if (KEY2_count&0x01)

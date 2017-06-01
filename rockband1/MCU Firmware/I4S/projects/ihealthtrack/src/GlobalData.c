@@ -144,7 +144,7 @@ void ResetParaSettings(void)
 	systemSetting.blAmbTempSensorEnabled = false; //true;
 	systemSetting.blSkinTempSensorEnabled = false; //true;
 	systemSetting.blGyroSensorEnabled = false; //true;
-	systemSetting.blGeoMSensorEnabled = false; true;
+	systemSetting.blGeoMSensorEnabled = false; //true;
 	systemSetting.blPressureSensorEnabled = false; //true;
 	systemSetting.blCAPSensorEnabled = true;
 #endif

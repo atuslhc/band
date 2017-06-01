@@ -1,3 +1,9 @@
+2017.6.1 [version 0.21]
+* patch the SOS_2S=1, SOS_EXPIRE=1, FD_EXPIRE=1 compiler flag into common_vars.h as permanent configuration.
+
+2017.5.30 [version 0.21]
+* patch the EFM32 version 1.0.35~1.0.37 SOS and FD stop condition.
+
 2017.4.25 [version 0.20]
 * Add the SBLE_TYPE_BATTERY command for MCU->BLE update data, P180F_PATCH=1 with MCU and BLE.
 * Add the voltage parameter for GET_BATTERY_LEVEL command.

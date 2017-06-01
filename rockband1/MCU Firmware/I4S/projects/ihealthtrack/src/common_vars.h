@@ -25,6 +25,9 @@
 #endif
 #define FALL_DETECT_SUPPORT             1
 #define SOS_HIT_SUPPORT                 1
+#define SOS_2S                          1       //The SOS start condition filter 2 seconds SW1 holding.
+#define SOS_EXPIRE                      1       //The SOS expire(duration) type with key trigger(SW1), not for fix duration.
+#define FD_EXPIRE                       1       //The Fall Detect expire(duration) type with key trigger(SW1), not with fix duration.
 #define BATTERY_LIFE_OPTIMIZATION       0       //just use in i4_H code, will skip write flash.
 #define GESTURE_DISP_SUPPORT            0
 #define PPG_WORK_MODE_SET		        0
